@@ -132,18 +132,7 @@ $(document).ready(function(){
             var val = $(this).val();
             if(val != ""){
                 var name = $(this).attr("name");
-                if(name == "email"){
-                    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                    if(re.test(val) == false){
-                        $(this).before("<span class=\"error\">" + lg["not_an_email"] + "</span>");
-                        $(this).addClass("redborder");
-                        validated = 0;
-                    }else{
-                        form_data[name] = val;
-                    }
-                }else{
-                    form_data[name] = val;
-                }
+                form_data[name] = val;
             }else{
                 $(this).addClass("redborder");
                 $(this).before("<span class=\"error\">" + lg["field_required"] + "</span>");

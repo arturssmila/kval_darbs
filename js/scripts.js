@@ -442,31 +442,31 @@ $(document).ready(function() {
     	}
     });
 
-    $("#quote_block .more").on("click touchend", function() {
-        var number = $('#quote_block .language_dropdown_group').length;
+    $(".quote_block .more").on("click touchend", function() {
+        var number = $('.quote_block .language_dropdown_group').length;
         if(number > 4){
             console.log("nebūs");
         }else{
             var id = guid();
-            var last_rel = $("#quote_block .language_dropdown_group").last().attr("rel");
+            var last_rel = $(".quote_block .language_dropdown_group").last().attr("rel");
             last_rel++;
 
-            var closest = $("#quote_block .language_dropdown_group[rel=" + (last_rel-1) + "]").html();
+            var closest = $(".quote_block .language_dropdown_group[rel=" + (last_rel-1) + "]").html();
             $(this).before("<div class=\"language_dropdown_group\" id=\"" + id + "\" rel=\"" + last_rel + "\">" + closest + "</div>");
-            $("#quote_block .language_dropdown_group#" + id + " .language_file_item").remove();
-            $("#quote_block .language_dropdown_group[rel=" + last_rel + "] .language_from .text").text(lg["source_language"]);
-            $("#quote_block .language_dropdown_group[rel=" + last_rel + "] .language_from input").attr("value", "");
-            $("#quote_block .language_dropdown_group[rel=" + last_rel + "] .language_to_select").text(lg["source_languages"]);
-            $("#quote_block .language_dropdown_group#" + id + "[rel=" + last_rel + "] .file_sector .file_upload_call").attr("rel", last_rel);
+            $(".quote_block .language_dropdown_group#" + id + " .language_file_item").remove();
+            $(".quote_block .language_dropdown_group[rel=" + last_rel + "] .language_from .text").text(lg["source_language"]);
+            $(".quote_block .language_dropdown_group[rel=" + last_rel + "] .language_from input").attr("value", "");
+            $(".quote_block .language_dropdown_group[rel=" + last_rel + "] .language_to_select").text(lg["source_languages"]);
+            $(".quote_block .language_dropdown_group#" + id + "[rel=" + last_rel + "] .file_sector .file_upload_call").attr("rel", last_rel);
             //$(".file_upload_call:last-child").after("<label class=\"bloated simple primary button file_upload_call\" rel=\"" + last_rel + "\">" + lg.upload + "</label>");
 
-            var input = Math.floor($("#quote_block .segment:first input").length / 2);
+            var input = Math.floor($(".quote_block .segment:first input").length / 2);
 
             $("#" + id).find("input:first").attr("name", "langauge_from"/*_" + input*/);
             $("#" + id).find("input:last").attr("name", "langauge_to"/*_" + input*/);
             number = number + 1;
             if(number > 4){
-                $("#quote_block .more").hide();
+                $(".quote_block .more").hide();
                 $(".more_files_warning").addClass("show");
             }else{
                 if($(".more_files_warning").hasClass("show")){
@@ -514,6 +514,7 @@ $(document).ready(function() {
             }
         }
         changeSelectLang(curr_rel, form_data.to_langs, lg, 'quote_block');
+        $(".multi_select_languages[value='"+this_value+"']").trigger('click').trigger('click');
     });
 
     $(".multi_select_languages").click(function(){
@@ -746,7 +747,7 @@ function make_droppable(id){
     }
 }
 
-function language_select(thiss, id, form_data){//open language select modal
+function language_select(thiss, id, form_data, form_id){//open language select modal
     if(id == "vacancies_modal"){
         $("#language_select_modal .contents .columns ul li.other").removeClass("hide");
     }else{
@@ -766,7 +767,7 @@ function language_select(thiss, id, form_data){//open language select modal
     }
     if(id == "file_upload_modal"){
         $("#language_select_modal .columns .select_item input.multi_select_languages").each(function(){
-            $(this).attr("onclick","multi_select_langs($(this), 'file_upload_modal', 'quote_block', form_data)");
+            $(this).attr("onclick","multi_select_langs($(this), 'file_upload_modal', '"+form_id+"', form_data)");
         });
         if(thiss.hasClass("language_from")){
             from_to = "from";
@@ -966,8 +967,8 @@ function closeRow(thiss, form_data) {//delete language pair row and delete files
         }
     }
     form_data.faili[this_rel] = [];
-    $("#quote_block .more").show();
-    if($('#quote_block .language_dropdown_group').length < 5){
+    $(".quote_block .more").show();
+    if($('.quote_block .language_dropdown_group').length < 5){
         if($(".more_files_warning").hasClass("show")){
             $(".more_files_warning").removeClass("show");
         }

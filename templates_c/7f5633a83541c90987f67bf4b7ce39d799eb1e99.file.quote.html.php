@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2018-05-07 11:24:53
+<?php /* Smarty version Smarty-3.0.7, created on 2018-05-08 14:08:12
          compiled from ".\templates\./block/quote.html" */ ?>
-<?php /*%%SmartyHeaderCode:319035af00d55d605e8-03934669%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:58865af1851c517016-39777698%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '7f5633a83541c90987f67bf4b7ce39d799eb1e99' => 
     array (
       0 => '.\\templates\\./block/quote.html',
-      1 => 1525681488,
+      1 => 1525776776,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '319035af00d55d605e8-03934669',
+  'nocache_hash' => '58865af1851c517016-39777698',
   'function' => 
   array (
   ),
@@ -36,7 +36,7 @@ $_smarty_tpl->decodeProperties(array (
 						<div class="language_dropdown_group" rel="0">
 							<div class="dropdowns">
 								<div class="dropdown">
-									<div class="select language_from" onclick="language_select($(this),'file_upload_modal', form_data);">
+									<div class="select language_from" onclick="language_select($(this),'file_upload_modal', form_data, 'quote_block');">
 										<span class="text">
 											<?php echo $_smarty_tpl->getVariable('lg')->value['source_language'];?>
 
@@ -52,7 +52,7 @@ $_smarty_tpl->decodeProperties(array (
 								
 
 								<div class="dropdown">
-									<div class="select language_to" onclick="language_select($(this),'file_upload_modal', form_data);">
+									<div class="select language_to" onclick="language_select($(this),'file_upload_modal', form_data, 'quote_block');">
 										<span class="text language_to_select">
 											<?php echo $_smarty_tpl->getVariable('lg')->value['source_languages'];?>
 

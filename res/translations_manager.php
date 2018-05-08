@@ -244,6 +244,8 @@
 			//echo __LINE__;
 			echo "empty";
 			exit();
+		}else if($_POST["action"] == "create_request"){
+			
 		}
 		echo("error");
 		exit();
