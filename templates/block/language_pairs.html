@@ -1,0 +1,34 @@
+{if !empty($language_pairs_this) || !empty($pair_array)}
+	<div id="language_pairs" class="noselect">
+		<h4 class="title">
+			{$lg.lang_pairs}
+		</h4>
+
+		<div class="contents">
+			{if !empty($language_pairs_this)}
+				{foreach from=$language_pairs_this item=i}
+					{if !empty($i.long_link) && !empty($i.name)}
+						<div class="lang_pair_div">
+							<span class="pair_before">
+								{include file="./css/svg/down.svg"}
+							</span>
+							<a href="{$slang}{$i.long_link}">{$i.name}</a>
+						</div>
+					{/if}
+				{/foreach}
+			{/if}
+			{if !empty($pair_array)}
+				{foreach from=$pair_array item=i}
+						<div class="lang_pair_div">
+							<span class="pair_before">
+								{include file="./css/svg/down.svg"}
+							</span>
+							<a href="{$slang}{$i.long_link}">{$i.name}</a>
+						</div>
+				{/foreach}
+			{/if}
+		</div> <!-- / .contents -->
+	</div> <!-- / .quote_block -->
+{/if}
+
+

@@ -1,0 +1,124 @@
+@CHARSET "UTF-8";
+/***********************************************************************************/
+@font-face {
+	font-family: "Bangla_MN";
+	src: url("/css/fonts/Bangla_MN_Regular.eot");
+	src: 
+		local("☺"),
+		url("/css/fonts/Bangla_MN_Regular.woff") format("woff"),
+		url("/css/fonts/Bangla_MN_Regular.ttf") format("truetype"),
+		url("/css/fonts/Bangla_MN_Regular.svg") format("svg");
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: "Bangla_MN";
+	src: url("/css/fonts/Bangla_MN_Bold.eot");
+	src: 
+		local("☺"),
+		url("/css/fonts/Bangla_MN_Bold.woff") format("woff"),
+		url("/css/fonts/Bangla_MN_Bold.ttf") format("truetype"),
+		url("/css/fonts/Bangla_MN_Bold.svg") format("svg");
+	font-weight: bold;
+	font-style: normal;
+}
+/***********************************************************************************/
+
+@font-face {
+	font-family: "Baskerville_Italic";
+	src: url("/css/fonts/Baskerville_Italic.eot");
+	src: 
+		local("☺"),
+		url("/css/fonts/Baskerville_Italic.woff") format("woff"),
+		url("/css/fonts/Baskerville_Italic.ttf") format("truetype"),
+		url("/css/fonts/Baskerville_Italic.svg") format("svg");
+	font-weight: normal;
+	font-style: italic;
+}
+/*
+@font-face {
+	font-family: "Bangla_MN";
+	font-weight:normal;
+	font-style:normal;
+	src: url("/css/fonts/Bangla_MN_Regular.otf") format("opentype");
+	src: url("/css/fonts/Bangla_MN_Regular.woff") format("woff");
+}
+@font-face {
+	font-family: "Bangla_MN";
+	font-weight:bold;
+	font-style:normal;
+	src: url("/css/fonts/Bangla_MN_Bold.otf") format("opentype");
+	src: url("/css/fonts/Bangla_MN_Bold.woff") format("woff");
+}
+*/
+html {
+	position:relative;
+	height:100% !important;
+}
+body { 
+	position:relative !important;
+	margin:0px !important;
+	min-width:700px;
+	height:100% !important;
+	min-height:400px;
+	font-family: "Bangla_MN", serif;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+a:focus, img {outline:none;}
+img, a::-moz-focus-inner {border:0;}
+input[type="submit"]::-moz-focus-inner {border:0;}
+table {
+	margin:auto;
+}
+a {
+	cursor:pointer;
+	color:#383972;
+	text-decoration:none;
+}
+a:hover {
+	text-decoration:underline;
+}
+.clear {
+	clear:both;
+}
+.center {
+	text-align:center;
+}
+.vcenter {
+	vertical-align:middle;
+}
+.bold {
+	font-weight:bold;
+}
+.redborder {
+	border-color:#ce3036 !important;
+}
+.red {
+	color:red;
+}
+.error {
+	color:#ce3036;
+}
+.small {
+	font-size:10px;
+}
+.go_bottom {
+	display:none;
+}
+.page {
+	position:relative;
+	margin:0px auto;
+	padding:0px 30px;
+	width:960px;
+}
+#test {
+	position:fixed;
+	top:0px;
+	padding:0px 10px;
+	color:white;
+	background:rgba(255,0,0,0.5);
+	z-index:1000;
+}
+/********************************************************************/
+

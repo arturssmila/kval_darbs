@@ -1,0 +1,200 @@
+	<footer id="footer">
+		<div class="container">
+			<div class="row attributes">
+				<div class="item logo">
+					{include file="./css/svg/logo_footer.svg"}
+				</div>
+				<div class="item description">
+					<div class="contents">
+						{$lg.footer_text}
+					</div>
+				</div>
+				<div class="item info">
+					<div class="contents">
+						<div class="item">
+							<strong>{$lg.email}:</strong>
+							{$settings.email}
+						</div>
+						<div class="item">
+							<strong>{$lg.phone_short}:</strong>
+							{$settings.phone}
+						</div>
+						{if !empty($settings.facebook_link) || !empty($settings.twitter_link)}
+							<div class="item">
+								<strong>{$lg.social_media}:</strong>
+
+								<div class="social">
+									{if !empty($settings.facebook_link)}
+										<a href="{$settings.facebook_link}" class="item fb">
+											{include file="./css/svg/social/fb.svg"}
+										</a>
+									{/if}
+									{if !empty($settings.twitter_link)}
+										<a href="{$settings.twitter_link}" class="item tw">
+											{include file="./css/svg/social/tw.svg"}
+										</a>
+									{/if}
+								</div>
+							</div>
+						{/if}
+					</div>
+				</div>
+				<div class="item pay">
+					<span class="title">
+						{$lg.how_to_pay}
+					</span>
+					<div class="contents">
+						<div class="item">{include file="./css/svg/pay/visa.svg"}</div>
+						<div class="item">{include file="./css/svg/pay/master.svg"}</div>
+						<div class="item">{include file="./css/svg/pay/paypal.svg"}</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row contents middle">
+			{foreach from=$langs_all item=i}
+				{if !empty($i.shown_in_footer)}
+					<div class="section languages">
+						<h4 class="title">
+							<a style="cursor: default;">{$i.name}</a>
+				 			<div class="down show">{include file="./css/svg/down.svg"}</div>
+				 			<div class="up">{include file="./css/svg/up.svg"}</div>
+						</h4>
+
+						<div class="contents footer_dropdown">
+							{foreach from=$lang_gr item=g}
+								<div class="section">
+									<span class="title">
+										{$g.name}
+							 			<div class="down show">{include file="./css/svg/down.svg"}</div>
+							 			<div class="up">{include file="./css/svg/up.svg"}</div>
+									</span>
+									<div class="contents footer_dropdown">
+										{foreach from=$lang_items item=ii}
+											{if $g.id == $ii.parent_id}
+												<a href="{$slang}{$ii.long_link}" class="item">
+													<i class="icon" style="background-image:url('/cms/css/flags/{$ii.lang_iso_code}.svg')"></i>
+													{$ii.name}
+												</a>	
+											{/if}
+										{/foreach}	
+									</div>
+								</div>
+							{/foreach}	
+						</div>
+					</div>
+				{/if}
+			{/foreach}
+			{foreach from=$serv_list item=i}
+				{if !empty($i.shown_in_footer)}
+					<div class="section">
+						<h4 class="title">
+							<a href="{$slang}{$i.long_link}">{$i.name}</a>
+				 			<div class="down show">{include file="./css/svg/down.svg"}</div>
+				 			<div class="up">{include file="./css/svg/up.svg"}</div>
+						</h4>
+
+						{if $i.alias_id == "langs"}
+						{else}
+							<ul class="footer_dropdown">
+								{foreach from=$services item=ii}
+									{if $ii.parent_id == $i.id}
+										<li>
+											<a href="{$slang}{$ii.long_link}" class="item">
+												{$ii.name}
+											</a>
+										</li>
+									{/if}
+								{/foreach}
+							</ul>
+						{/if}
+					</div>
+				{/if}
+			{/foreach}
+			</div>
+
+			<div class="row sub">
+				{$lg.copyright}
+				{if !empty($menu_x)}
+					{foreach from=$menu_x item=i}
+						<a href="{$slang}{$i.long_link}" class="item">
+							| {$i.name}
+						</a>
+					{/foreach}
+				{/if}
+			</div>
+		</div>
+	</footer>
+	{if !empty($reset_user)}
+		{include file="reset_password.html"}
+	{/if}
+
+	{$settings.anal_code}
+	<script type="text/javascript" src="/cms/js/jquery.js"></script>	
+	<script type="text/javascript" src="/cms/js/jquery_transform.js"></script>	
+	<script type="text/javascript" src="/cms/js/scripts.js?{$cms_js_date}"></script>	
+	<script type="text/javascript" src="/js/libs/modal.js"></script>
+	<script type="text/javascript" src="/js/libs/lunr.min.js"></script>
+	<script type="text/javascript" src="/js/libs/moment.js"></script>
+	<script type="text/javascript" src="/js/libs/pikaday/pikaday.js"></script>
+	<script>
+	    var picker = new Pikaday({ 
+	    	field: document.getElementById('date'), 
+	    	format: 'YYYY.MM.DD', 
+	    	showDaysInNextAndPreviousMonths: true,
+	    	minDate: new Date(),
+			i18n: {
+			    previousMonth: 'Previous Month',
+			    nextMonth: 'Next Month',
+			    months: [{for $i=1 to 12} '{$i|get_arh_name}', {/for}],
+			    weekdays: [{for $i=1 to 7} '{$i|get_week_days:"L"}', {/for}],
+			    weekdaysShort: [{for $i=1 to 7} '{$i|get_week_days:"S"}', {/for}]
+			}
+	    });
+	</script>
+	<script type="text/javascript" src="/js/common.js?{$js_date}"></script>
+	<script type="text/javascript" src="/js/scripts.js?{$js_date}"></script>
+	{if (($cat.0.template == "vacancies") || (!empty($vacancies)))}
+		<script type="text/javascript" src="/js/vacancy.js?{$js_date}"></script>
+	{/if}
+	{if $cat.0.template == "register"}
+		<script type="text/javascript" src="/js/register.js?{$js_date}"></script>
+	{/if}
+	{if $cat.0.template == "forgot_password"}
+		<script type="text/javascript" src="/js/forgot_password.js?{$js_date}"></script>
+	{/if}
+	{if $cat.0.template == "logged_in"}
+		<script type="text/javascript" src="/js/translation_manager.js?{$js_date}"></script>
+		{*<script>
+		 	var eleGroup = document.querySelectorAll('.date_input');
+			for(x in eleGroup) {
+				new Pikaday({ 
+			    	field: eleGroup[x], 
+			    	format: 'YYYY.MM.DD', 
+			    	showDaysInNextAndPreviousMonths: true,
+			    	selectYears: true,
+			        minDate: new Date(1900, 0, 1),
+			        maxDate: moment().toDate(),
+					i18n: {
+					    previousMonth: 'Previous Month',
+					    nextMonth: 'Next Month',
+					    months: [{for $i=1 to 12} '{$i|get_arh_name}', {/for}],
+					    weekdays: [{for $i=1 to 7} '{$i|get_week_days:"L"}', {/for}],
+					    weekdaysShort: [{for $i=1 to 7} '{$i|get_week_days:"S"}', {/for}]
+					}
+			    });
+			}
+		</script>*}
+	{/if}
+	{if !empty($manager.user.admin)}
+		{if ($cat.0.template == "logged_in") && ($manager.user.admin == "1")}
+			<script type="text/javascript" src="/js/manager_admin.js?{$js_date}"></script>
+		{/if}
+	{/if}
+	{if !empty($reset_user)}
+		<script type="text/javascript" src="/js/reset_password.js?{$js_date}"></script>
+	{/if}
+</body>
+</html>
+
+					

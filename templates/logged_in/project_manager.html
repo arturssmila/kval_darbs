@@ -1,0 +1,15 @@
+<h1>{$lg.translators}</h1>
+<div class="contents">
+	<div class="controls top">
+		<div class="item{if $manager.curr_page == 0} active{/if}">
+			<a {if $manager.curr_page != 0}href="{$manager.route.url}/0"{/if}>
+				LIST
+			</a>
+		</div>
+		<div class="item{if $manager.curr_page == 1} active{/if}">
+			<a {if $manager.curr_page != 1}href="{$manager.route.url}/1"{/if}>
+				CREATE NEW
+			</a>
+		</div>
+	</div>
+</div>

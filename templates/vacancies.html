@@ -1,0 +1,76 @@
+{*<div class="modal" id="vacancies_modal">
+		<div class="modal_cell">
+			<div class="modal_center_block">
+				<div class="modal_center">
+					<div class="close">✖</div>
+					<div id="file_upload_modal_center">
+						<div class="title">{$lg.upload_cv|upper}</div>
+						<div class="contents">
+							<div class="teaser">{$lg.acceptable_formats} {$settings.accepted_formats}.</div>
+							<div class="size_warning">{$lg.cv_file_size_limit}</div>
+							<div class="box file_upload">
+								<form class="box__input" enctype="multipart/form-data">
+									{include file="./css/svg/inbox.svg"}
+									<div class="loading"></div>
+								    <label class="file_label" for="file" style="display: none">
+									    <input class="box__file" id="cv_file_input" type="file" name="file" id="file">
+									    <div class="file_label_content"></div>
+									</label>
+								    <div class="captcha_warning">{$lg.captcha_warning}</div>
+								    <div class="one_file_error">{$lg.one_file_allowed|upper}</div>
+									<div class="g-recaptcha" data-sitekey="6LdPXUwUAAAAALdakwEfry6veX7CzKiSIF78sAwz" data-callback="enableBtn"
+									data-expired-callback="enableBtn"></div>
+								</form>
+								<div class="box__uploading">Uploading&hellip;</div>
+								<div class="box__success">
+								</div>
+								<div class="box__error">Error! <span></span>.</div>
+							    <button class="box__button" type="submit">{$lg.upload}</button>
+							</div>
+							<div id="modal_files_list">
+								
+							</div>
+						</div>
+					</div>
+					<div id="language_select_modal">
+						<div class="title">{$lg.select_languages|upper}</div>
+						<div class="selected_languages"></div>
+						<div class="contents">
+							<div class="columns">
+								<ul>
+									<li class="select_item">
+										<input value="other" class="multi_select_languages other" type="checkbox" onclick="multi_select_langs($(this), 'vacancies_modal');"><span><input id="other_language" class="" tips="other" placeholder="{$lg.other_lang}"></span></li>
+									{foreach from=$lang_gr item=g}
+										{foreach from=$lang_items item=i name=lieta}
+											{if $i.parent_id == $g.id}
+												<li class="select_item">
+												<input value="{$i.id}" class="multi_select_languages" type="checkbox" onclick="multi_select_langs($(this), 'vacancies_modal');"><span>{$i.name}</span></li>
+											{/if}
+										{/foreach}
+									{/foreach}
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>*}
+<div class="gray_section separated">
+	<div class="container">	
+		<div class="box">
+			<h4 class="title">
+				{$vacancy_holder.0.name}
+			</h4>
+	{if !empty($vacancy_holder.0.content)}
+			<div class="contents">
+				{$vacancy_holder.0.content}
+			</div>
+	{/if}
+			<h4 class="title">
+				{$lg.vaccancy_apply}
+			</h4>
+			{include file="./block/vacancy_form.html"}
+		</div>
+	</div>
+</div>

@@ -1,0 +1,131 @@
+<div class="gray_section separated">
+	<div class="container">
+		<div class="box">
+			<div class="contents">
+				<h1 class="title">
+					{$cat.0.name}
+				</h1>
+				<div class="contents">
+					{$cat.0.content}
+				</div>
+				<div id="registration_form" class="centered_form">
+					<div class="segment" mode="b">
+						<span class="title">
+							{$lg.client_type}*:
+						</span>
+						<div class="dropdown">
+							<div class="select">
+								<span class="text">
+									{$lg.legal_person}
+								</span>
+								{include file="./css/svg/down.svg"}
+							</div>
+							<input class="required" name="user_type" type="hidden" info_type="user" value="j">
+							<div class="items">
+								<div class="contents scrollable">
+									{*foreach from=$vacancies item=i*}
+										<span class="item" onClick="changeUserType(this, 'j', 'j');">{$lg.legal_person}</span>
+										<span class="item" onClick="changeUserType(this, 'f', 'f');">{$lg.individual}</span>
+									{*/foreach*}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="segment company" mode="j">
+						<span class="title">
+							{$lg.company}*:
+						</span>
+						<input class="required" name="company" type="company" info_type="user_data">
+					</div>
+					<div class="segment countries" mode="j">
+						<span class="title">
+							{$lg.country}*:
+						</span>
+						<div class="dropdown">
+							<div class="select">
+								<span class="text">
+									{$lg.country}*:
+								</span>
+								{include file="./css/svg/down.svg"}
+							</div>
+							<input class="required" name="country" type="hidden" info_type="user_data">
+							<div class="items">
+								<div class="contents scrollable">
+									{foreach from=$country_list item=i}
+										<span class="item" onClick="resetInputDropdown(this, {$i.id});">{$i.name}</span>
+									{/foreach}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="segment names" mode="b">
+						<div class="input_container">
+							<span class="title">
+								{$lg.first_name}*:
+							</span>
+							<input class="required" name="name" type="text" info_type="user">
+						</div>
+						<div class="input_container">
+							<span class="title">
+								{$lg.last_name}*:
+							</span>
+							<input class="required" name="surname" type="text" info_type="user">
+						</div>
+					</div>
+					<div class="segment email" mode="b">
+						<span class="title">
+							{$lg.email}*:
+						</span>
+						<input class="required" name="mail" type="email" info_type="user">
+					</div>
+					<div class="segment personal_code hide" mode="f">
+						<span class="title">
+							{$lg.personal_code}*:
+						</span>
+						<input class="" name="personal_code" type="personal_code" info_type="user_data">
+					</div>
+					<div class="segment registration_nr" mode="j">
+						<span class="title">
+							{$lg.registration_nr}*:
+						</span>
+						<input class="required" name="registration_nr" type="registration_nr" info_type="user_data">
+					</div>
+					<div class="segment pvn_reg_nr" mode="j">
+						<span class="title">
+							{$lg.pvn_reg_nr}*:
+						</span>
+						<input class="required" name="pvn_reg_nr" type="pvn_reg_nr" info_type="user_data">
+					</div>
+					<div class="segment phone" mode="b">
+						<span class="title">
+							{$lg.phone}*:
+						</span>
+						<input class="required" name="phone" type="phone" info_type="user_data">
+					</div>
+					<div class="segment passwords" mode="b">
+						<span class="title">
+							{$lg.password}*:
+						</span>
+						<input class="required" name="password" type="password" info_type="user">
+						<span class="title">
+							{$lg.password_again}*:
+						</span>
+						<input class="required" name="password2" type="password" info_type="user">
+						<input name="active" type="hidden" info_type="user">
+						<input class="required" name="link" type="hidden" value="http://{$smarty.server.SERVER_NAME}/{$lang}{$cat.0.long_link}">
+					</div>
+					<div class="controls center">
+						<span class="bloated primary submit button" id="signup_button">
+							{$lg.signup}
+						</span>
+						<img class="loading hide" src="/css/images/loading.gif" >
+						<span class="text hide" id="registration_done">{$lg.registration_done}</span>
+					</div>
+					<script type="text/javascript">
+						var sender_email = "{$settings.form_mail}";
+					</script>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

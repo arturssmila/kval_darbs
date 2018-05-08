@@ -1,0 +1,20 @@
+<div class="right">
+	{*{if !empty($this.injected.sidebar.items)}
+		<div class="box">
+			<div class="contents">
+				<h3 class="title">{$this.injected.sidebar.name}</h3>
+
+				<ul>
+					{foreach from=$this.injected.sidebar.items item=i}
+						<li><a href="{$slang}{$i.long_link}">{$i.name}</a></li>
+					{/foreach}
+				</ul>
+			</div>
+		</div>
+	{/if}*}
+	{include file="./block/language_pairs.html"}
+	{*<div id="open_quote"><div class="container"><span class="button primary bloated get_quote">
+				{$lg.get_quote}
+			</span></div></div>*}
+	{include file="./block/quote.html"}
+</div>

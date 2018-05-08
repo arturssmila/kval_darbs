@@ -1,0 +1,30 @@
+
+<div class="attributes statlikecoms" rel="{$post_data.id}">
+	<div class="item">{include file="./css/svg/news/date.svg"}{($post_data.date|substr:8:2)|intval}.{($post_data.date|substr:5:2)}.{($post_data.date|substr:0:4)}</div>
+	<div class="item views stat">{include file="./css/svg/news/views.svg"} <span>0</span></div>
+	<div class="item social">
+		{include file="./css/svg/news/share.svg"}
+		<div class="share_block">			
+			<a
+				class="share_button facebook"
+				target="_blank"
+				href="https://www.facebook.com/sharer/sharer.php?u=http://{$smarty.server.HTTP_HOST}{$slang}{$post_data.long_link}{if (!empty($post_data.images.0.image_big) || !empty($post_data.images.0.image_small))}&picture=http://{$smarty.server.HTTP_HOST}/images/galleries/{if !empty($post_data.images.0.image_big)}{$post_data.images.0.image_big}{else}{$post_data.images.0.image_small}{/if}{/if}">
+				{include file="../css/svg/social/fb.svg"}
+			</a>		
+			<a
+				class="share_button twitter"
+				target="_blank"
+				href="https://twitter.com/intent/tweet?url=http://{$smarty.server.HTTP_HOST}{$slang}/{$post_data.long_link}">
+				{include file="../css/svg/social/tw.svg"}
+			</a>
+			{*
+			<a
+				class="share_button google"
+				target="_blank"
+				href="https://plus.google.com/share?url=http://{$smarty.server.HTTP_HOST}{$slang}/{$post_data.long_link}">
+				{include file="../css/svg/social/go.svg"}
+			</a>
+			*}
+		</div>
+	</div>
+</div>

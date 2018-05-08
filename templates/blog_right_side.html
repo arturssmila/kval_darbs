@@ -1,0 +1,29 @@
+<div class="right">
+	<div class="box">
+		<div class="contents">
+			<h3 class="title first">Categories <div class="down show">{include file="./css/svg/down.svg"}</div>
+			 			<div class="up">{include file="./css/svg/up.svg"}</div></h3>
+
+			<ul>
+				{foreach from=$blog_cat item=i}
+					<li><a href="{$slang}{$i.long_link}">{$i.name}</a></li>
+				{/foreach}
+			</ul>
+
+			<h3 class="title second">Popular articles <div class="down show">{include file="./css/svg/down.svg"}</div>
+			 			<div class="up">{include file="./css/svg/up.svg"}</div></h3>
+			<div class="posts">
+				{foreach from=$popular_posts item=i}
+					<div class="item post">
+						<a href="{$slang}{$i.long_link}" class="image" style="background-image:url('/images/meta/{$i.image}')"></a>
+						<h4 class="title">
+							<a href="{$slang}{$i.long_link}">
+								{$i.name}
+							</a>
+						</h4>
+					</div>
+				{/foreach}
+			</div>
+		</div>
+	</div>
+</div>

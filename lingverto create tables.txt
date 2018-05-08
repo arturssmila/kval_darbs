@@ -1,0 +1,125 @@
+CREATE TABLE translation_requests (
+	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	date_due date,
+	time_due time,
+	time_zone varchar(80),
+	first_name varchar(50) NOT NULL,
+	last_name varchar(50) NOT NULL,
+	email varchar(256) NOT NULL,
+	phone varchar(16),
+	comment_text varchar(5000)
+);
+
+CREATE TABLE request_languages (
+	id INT(11) AUTO_INCREMENT NOT NULL,
+	lang_from varchar(5),
+	lang_to varchar(600),
+	request_id INT(11) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (request_id) REFERENCES translation_requests(id)
+);
+
+CREATE TABLE request_files (
+	id INT(11) AUTO_INCREMENT NOT NULL,
+	file_path varchar(80) NOT NULL,
+	languages_id INT(11),
+	request_id INT(11) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (languages_id) REFERENCES request_languages(id),
+	FOREIGN KEY (request_id) REFERENCES translation_requests(id)
+);
+
+ALTER TABLE request_files
+ADD file_name varchar(256) NOT NULL;
+
+
+
+
+
+
+CREATE TABLE vacancy_requests (
+	id INT(11) AUTO_INCREMENT NOT NULL,
+	vacancy_name_id varchar(5) NOT NULL,
+	recorded_vacancy_name varchar(50) NOT NULL,
+	first_name varchar(50) NOT NULL,
+	last_name varchar(50) NOT NULL,
+	email varchar(256) NOT NULL,
+	cv_file_path varchar(80) NOT NULL,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE vacancy_languages (
+	id INT(11) AUTO_INCREMENT NOT NULL,
+	vacancy_id INT(11) NOT NULL,
+	language_from varchar(30),
+	language_to varchar(30),
+	rate decimal(10,2) NULL,
+	currency varchar(3) NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (vacancy_id) REFERENCES vacancy_requests(id)
+);
+
+CREATE TABLE vacancy_questions (
+	id INT(11) AUTO_INCREMENT NOT NULL,
+	vacancy_id INT(11) NOT NULL,
+	question_id varchar(5) NOT NULL,
+	recorded_question_text varchar(600) NOT NULL,
+	question_answer varchar(600) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (vacancy_id) REFERENCES vacancy_requests(id)
+);
+
+ALTER TABLE `vacancy_requests` ADD `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `cv_file_path`;
+
+CREATE TABLE employee_language_pairs (
+	id INT(11) AUTO_INCREMENT NOT NULL,
+	employee_id INT(11) NOT NULL,
+	pair_id INT(11) NOT NULL,
+	when_learned DATE NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (employee_id) REFERENCES users(id)//maybe not use if Innodb vai myisam 
+);
+
+ALTER TABLE `employee_language_pairs` ADD `rate` DECIMAL(10,2) NULL DEFAULT NULL AFTER `when_learned`;
+
+ALTER TABLE `employee_language_pairs` ADD `currency` VARCHAR(3) CHARACTER SET utf32 COLLATE utf32_general_ci NULL AFTER `rate`;
+
+
+CREATE TABLE language_pair_specialities (
+	id INT(11) AUTO_INCREMENT NOT NULL,
+	pair_id INT(11) NOT NULL,
+	speciality_id INT(11) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (pair_id) REFERENCES employee_language_pairs(id)
+);
+
+
+CREATE TABLE submitted_work(
+	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	user_id INT(11) NOT NULL,
+	date_due date,
+	time_due time,
+	time_zone varchar(80),
+	comment_text varchar(5000),
+	FOREIGN KEY user_id REFERENCES users(id)
+);
+
+CREATE TABLE submitted_pairs(
+	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	work_id INT(11) NOT NULL,
+	lang_from varchar(5),
+	lang_to varchar(600),
+	FOREIGN KEY work_id REFERENCES submitted_work(id)
+);
+
+CREATE TABLE submitted_files(
+	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	work_id INT(11) NOT NULL,
+	pair_id INT(11) NOT NULL,
+	file_path varchar(80) NOT NULL,
+	FOREIGN KEY work_id REFERENCES submitted_work(id),
+	FOREIGN KEY pair_id REFERENCES submitted_pairs(id)
+);
+

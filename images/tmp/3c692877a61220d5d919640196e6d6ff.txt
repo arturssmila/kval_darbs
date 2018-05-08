@@ -1,0 +1,7 @@
+CREATE TABLE `manager_answers` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+ `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ `question_id` int(11) NOT NULL,
+ `content` text NOT NULL,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8

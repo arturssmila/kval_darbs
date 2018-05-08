@@ -1,0 +1,15 @@
+﻿format	
+1	44	1	0	0	0	0	.	
+
+codepage	UTF-8	
+
+HansaVersion	
+8.1 2016-02-28 (build 81310770)	
+
+build3	
+1042	Liepāja,	Tirgoņu iela Nr.	21/23	0			0		0	0												0	0	0	0	0	0						0		E1021								0	0	0	0	0							0																													0							0	0	0	0				0		0	0												0	0	0	0	0	0						0		E1503			Lūdzu paziņojiet  savus e-pastus, lai varam nosūtīt rēķinus.					0	0	0	0	0							0																													0							0	0	0	0				0		0	0	
+
+TEST	TEST	0			0		0	0												0	0	0	0	0	0						0		ETEST1								0	0	0	0	0							0																													0							0	0	0	0				0		0	0	
+
+
+

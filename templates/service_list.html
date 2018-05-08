@@ -1,0 +1,65 @@
+{include file="./block/header.html"}
+
+<div class="gray_section separated">
+	<div class="container">
+		{include file="./block/right_side.html"}
+		<div class="left">
+			<div class="box">
+				<div class="contents">
+					<h2 class="title">{$cat.0.name}</h2>
+					{$cat.0.content}
+
+				</div>
+			</div>
+			<div class="card_block">
+				{if $cat.0.alias_id == "expertise"}
+					{$services = $expertise_items}
+				{/if}
+				{foreach from=$services item=i}
+					{if $i.parent_id == $cat.0.id}
+						<a class="card" href="{$slang}{$i.long_link}">
+							{if !empty($i.image_thumb)}
+								{if ((($i.image_thumb|substr:-4:4)|strtolower)==".svg")}
+									<div class="icon">
+										{include file="../images/meta/{$i.image_thumb}"}
+									</div>
+								{/if}
+							{else}
+								<div class="icon">{include file="./css/svg/service.svg"}</div>
+							{/if}
+							<span class="title">
+								{$i.name}
+							</span>
+
+							<p class="description">
+								{$i.teaser}				
+							</p>
+						</a>
+					{/if}
+				{/foreach}
+			</div>
+			{if !empty($vacancy_holder)}
+				<div class="box">
+					<div class="contents">
+						{include file="./block/vacancies.html"}
+						{if !empty($vacancies)}
+							<div class="centered_text">
+								<span class="button primary bloated" onClick="toggleVacancyForm($(this));">
+									{$lg.vaccancy_apply}
+								</span>
+							</div>
+						{/if}
+					</div>
+				</div>
+				{if !empty($vacancies)}
+					<div class="box" id="toggle_vacancy_form">
+						<div class="contents">
+							<h2 class="title">{$lg.vaccancy_apply}</h2>
+							{include file="./block/vacancy_form.html"}
+						</div>
+					</div>
+				{/if}
+			{/if}
+		</div>
+	</div>
+</div>

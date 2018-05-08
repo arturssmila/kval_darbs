@@ -1,0 +1,145 @@
+{include file="./block/header.html" inner=false}
+
+<div id="guarantees_block">
+	<div class="guarantees_cell noselect">
+		<div class="container">
+			<div class="title">
+				{$lg.secure_collaboration}
+			</div>
+			<div class="contents">
+				<div class="contents_line">
+					<div class="item">
+						{include file="./css/svg/badges/1.svg"}
+					</div>
+					<div class="item">
+						{include file="./css/svg/badges/2.svg"}
+					</div>
+					<div class="item">
+						{include file="./css/svg/badges/3.svg"}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="gray_section">
+	<div class="container">
+		{include file="./block/quote.html"}
+
+		<div class="service_block">
+			<h4 class="title">
+				{$lg.services}
+			</h4>	
+			<span class="subtitle">
+				{$lg.services_teaser}
+			</span>
+
+			<div class="card_block of_3">
+			{foreach from=$serv_list item=i}
+				{if $i.alias_id != "expertise"}
+					<a class="card" href="{$slang}{$i.long_link}">
+						{if !empty($i.image_thumb)}
+							{if ((($i.image_thumb|substr:-4:4)|strtolower)==".svg")}
+								<div class="icon">
+									{include file="../images/meta/{$i.image_thumb}"}
+								</div>
+							{/if}
+						{else}
+							<div class="icon">{include file="./css/svg/service.svg"}</div>
+						{/if}
+						<span class="title">
+							{$i.name}
+						</span>
+
+						<p class="description">
+							{$i.teaser}				
+						</p>
+					</a>
+				{/if}
+			{/foreach}
+			</div>
+
+		</div>
+
+	</div> <!-- / .container -->
+</div> <!-- / .gray_section -->
+
+{include file="./block/bubbles.html" expertises=$expertise_items}
+
+<div class="gray_section">
+	<div class="container">
+		<h4 class="title">
+			{$testimonials_page.0.name}
+		</h4>
+		<span class="subtitle">
+			{$testimonials_page.0.teaser}
+		</span>
+		<div id="testimonials_block">
+			<div class="contents">
+				{foreach from=$testimonials item=i}
+					<div class="item">
+						<div class="description">
+							{$i.content}
+						</div>
+
+						<div class="attributes">
+							<span class="title">
+								{$i.name}
+							</span>
+							<span class="subtitle">
+								{$i.teaser}
+							</span>
+						</div>
+					</div>
+				{/foreach}
+				{assign var="count" 0}
+				{foreach from=$testimonials item=ii}
+					{assign var="count" ($count + 1)}
+				{/foreach}
+				{if $count > 1}
+					<div class="controls">
+						<div class="item left">{include file="./css/svg/down.svg"}</div>
+						<div class="item right">{include file="./css/svg/down.svg"}</div>
+					</div>
+				{/if}
+			</div>
+			{if !empty($sponsors)}
+				<div id="sponsors_block">
+					<div class="contents container">
+						{*{assign var="count" 0}
+						{foreach from=$sponsors item=i name=item}
+							{assign "was_last" 0}
+							{if $count % 5 == 0}
+								<div class="{if ($count > 4)}lesser_row{else}sponsor_row{/if}">
+							{/if}
+							<div class="item" style="background-image:url('/images/meta/{$i.image}')"></div>
+							{if $count % 5 == 4}
+								</div>
+								{assign "was_last" 1}
+							{/if}
+							{assign var="count" ($count + 1)}
+						{/foreach}
+						{if ($smarty.foreach.item.last) && (was_last == 0)}
+							</div>
+						{/if}*}
+						<div class="sponsors">
+							{assign var="count" 0}
+							{foreach from=$sponsors item=i name=item}
+								<div class="item" style="background-image:url('/images/meta/{$i.image}')"></div>
+								{assign var="count" ($count + 1)}
+							{/foreach}
+						</div>
+					</div>
+
+						<div class="title">
+							<span id="more_sponsors" style="display: none;">
+								{$lg.see_more|upper}
+							</span>
+						</div>
+
+				</div>
+			{/if}
+		</div>
+	</div> <!-- / .container -->
+</div> <!-- / .gray_section -->
+

@@ -1,0 +1,35 @@
+format	
+1	44	1	0	0	0	0	.	
+
+codepage	UTF-8	
+
+HansaVersion	
+8.1 2016-02-28 (build 81310770)	
+
+build3
+1008	Krimuldas,	p	Lejasmelderi
+
+1009	Krimuldas,	p	Meþasikðòi
+
+1013	Rîga,	Mazâ Nometòu iela	27	
+
+1014	Rîga,	Brîvîbas iela	251	
+
+1015	Rîga,	Barona iela	19
+
+1016	Rîga,	Blaumaòa iela	17	
+
+1017	Rîga,	Bruòinieku iela	123
+
+1019	Rîga,	Bruòinieku	43
+
+1020	Rîga,	Sadovòikova iela	20
+
+1021	Rîga,	Bruòinieku iela 87	lit 1
+
+1042	Rîga,	Kaïíu	6
+
+TEST1	TEST	0	0
+
+
+

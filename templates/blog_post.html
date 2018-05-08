@@ -1,0 +1,63 @@
+<div class="gray_section separated">
+	<div class="container">	
+		{include file="blog_right_side.html"}
+		<div class="left">
+			<div class="box post">
+				<div class="contents">
+					<h3 class="title">
+						{$cat.0.name}
+					</h3>
+
+					<div class="image" style="background-image:url('/images/meta/{$cat.0.image_big}')"></div>
+
+					<div class="description">
+						{$cat.0.content}
+					</div>
+						{include file="post_stats.html" post_data=$cat.0}
+				</div>
+			</div>
+
+			<div class="box comments">
+				<div class="contents">
+					<h3 class="title">
+						{$lg.comments}
+					</h3>
+
+					<div class="authorize">
+						{if !empty($session.user)}
+						{else}
+							<span class="title">
+								{$lg.authorize_to_comment}:
+							</span>
+							<div class="item">
+								{include file="./css/svg/social/fb.svg"}
+							</div>
+							<div class="item">
+								{include file="./css/svg/social/tw.svg"}
+							</div>
+							<a class="item" onclick="if(handle=window.open('https://accounts.google.com/o/oauth2/auth?state=%2Fprofile&amp;'+'redirect_uri=http://{$smarty.server.HTTP_HOST}/cms/libs/go.php&amp;'+'response_type=code&amp;'+'client_id={$settings.google_client_id}&amp;'+'approval_prompt=force&amp;'+'scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile','PRE' ,'width=800, height=500, left='+(screen.width?(screen.width-800)/2:0)+', top='+(screen.height?(screen.height-400)/2:0)+',scrollbars=no')){ handle.focus();return false; }">
+								{include file="./css/svg/social/gp.svg"}
+
+							</a>
+						{/if}
+					</div>
+
+					<div class="controls">
+						<textarea id="comment" class="input"></textarea>
+						{if !empty($session.user)}
+							<div class="text_right controls">
+						<a class="bloated primary button" href="javascript:void(0)" id="add_comment" onclick="add_comment({$session.user.id},$('#comment').val(),{$cat.0.id},'{$lang}');">{$lg.to_comment}</a>
+							</div>
+						{/if}
+					</div>
+
+					<div class="data statlikecoms" rel="{$cat.0.id}">
+					</div>
+
+					<div class="testimonials comments_{$cat.0.id}" id="post_comments">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

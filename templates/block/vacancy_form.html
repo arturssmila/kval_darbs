@@ -1,0 +1,158 @@
+
+<form id="apply_vacancy" class="centered_form">
+	<div class="segment names">
+		<div class="input_container">
+			<input class="required" name="first_name" type="text" placeholder="{$lg.first_name}*">
+		</div>
+		<div class="input_container">
+			<input class="required" name="last_name" type="text" placeholder="{$lg.last_name}*">
+		</div>
+	</div>
+	<div class="segment email">
+		<input class="required" name="email" type="email" placeholder="{$lg.email}*">
+	</div>
+	<div class="segment prof">
+		<span class="title">
+			{$lg.choose_vacancy}:
+		</span>
+		<div class="dropdown">
+			<div class="select">
+				<span class="text">
+					{$vacancies.0.name}
+				</span>
+				<input class="required" name="position_id" id="position_id_input" type="hidden" value="{$vacancies.0.id}">
+				<input class="required" name="position_name" id="position_input" type="hidden" value="{$vacancies.0.name}">
+				{include file="./css/svg/down.svg"}
+			</div>
+			<div class="items">
+			<script type="text/javascript">
+				{if !empty($vacancies.0.editor_type_lang_select)}
+					var editor_start = true;
+					var editor = true;
+				{else}
+					var editor_start = false;
+					var editor = false;
+				{/if}
+				var starting_vacancy = "{$vacancies.0.name}";
+				var starting_vacancy_id = "{$vacancies.0.id}";
+
+			</script>
+				<div class="contents scrollable">
+					{foreach from=$vacancies item=i}
+						<span class="item" onclick="resetInputWithId(this,{if !empty($i.editor_type_lang_select)}true{else}false{/if})" id="{$i.id}">{$i.name}</span>
+					{/foreach}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="segment langs">
+		<span class="title">
+			{$lg.languages}*:
+		</span>
+		<div class="language_dropdown_group" rel="0">
+			<div class="dropdowns">
+				<div class="dropdown lang">
+					<div class="select language_from" onclick="language_select($(this),'vacancies_modal', form_cv_data);">
+						<span class="text">
+							{$lg.source_language}
+						</span>
+						<input type="hidden" name="language_from">
+						{include file="./css/svg/down.svg"}
+					</div>
+					{*<div class="items">
+						<div class="contents scrollable">
+							{foreach from=$lang_gr item=g}
+								{foreach from=$lang_items item=i}
+									{if $i.parent_id == $g.id}
+										<span class="item" val="{$i.id}" onclick="resetInput(this)">{$i.name}</span>
+									{/if}
+								{/foreach}
+							{/foreach}
+						</div>
+					</div>*}
+				</div>						
+
+				<div class="dropdown lang">
+					<div class="select language_to" onclick="language_select($(this),'vacancies_modal', form_cv_data);">
+						<span class="text language_to_select">
+							{$lg.source_languages}
+						</span>
+						{include file="./css/svg/down.svg"}
+						<input type="hidden" name="language_to_1">
+					</div>
+					{*<div class="items">
+						<div class="contents">
+							{foreach from=$lang_gr item=g}
+								{foreach from=$lang_items item=i}
+									{if $i.parent_id == $g.id}
+										<span class="item">{$i.name}</span>
+									{/if}
+								{/foreach}
+							{/foreach}
+						</div>
+					</div>*}
+				</div>
+			</div>
+			<span class="title">
+				{$lg.vacancy_rate}:
+				<span class="regular">{$lg.vacancy_rate_numbers}</span>
+			</span>
+			<div class="rate_block">
+				<input class="required price" name="vacancy_rate" type="text" placeholder="{$lg.vacancy_rate}">
+				<div class="currency_container">
+					<div class="dropdown currency">
+						<div class="select currency">
+							<span class="text">
+								{$currencies.0}
+							</span>
+						{if $currencies|@count > 1}
+							{include file="./css/svg/down.svg"}
+						{/if}
+						</div>
+							<input type="hidden" name="currency" value="{$currencies.0}">
+						{if $currencies|@count > 1}
+							<div class="items">
+								<div class="contents">
+									{foreach from=$currencies item=g}
+										<span class="item" onclick="resetInputNoRel(this, 'currency', form_cv_data);">{$g}</span>
+									{/foreach}
+								</div>
+							</div>
+						{/if}
+					</div>
+				</div>
+			</div>
+			<span class="close" onClick="closeRow(this, form_data);">✖</span>
+		</div>
+		<span class="more">
+			+ {$lg.more_vacancy_langs}
+		</span>
+	</div>
+	<div class="segment questions">
+		<script type="text/javascript">
+			var min_character_count = {$settings.vacancy_min_characters};
+			var max_character_count = {$settings.vacancy_max_characters};
+		</script>
+		{foreach from=$vacancy_questions item=i}
+			<div class="question {if $i.parent_id != $vacancies.0.id}hide{/if}">
+				<span class="title">{$i.name}*</span>
+				<textarea class="required" v_id="{$i.parent_id}" q_id="{$i.id}"></textarea>
+				<span class="notifier">
+					{$lg.min_symbols}: {$settings.vacancy_min_characters}</span>; <span class="notifier"> 
+					{$lg.max_symbols}: {$settings.vacancy_max_characters}
+				</span>
+			</div>
+		{/foreach}
+	</div>
+	<div class="segment upload">
+		<span class="title">
+			{$lg.upload_cv}*
+		</span>
+		<div class="bloated simple primary button" id="vacancy_cv" rel="0" onClick="callFileUploadModal(this, 'vacancies_modal')">{$lg.upload}</div>
+	</div>
+	<div class="controls center">
+		<span class="bloated primary submit button" id="send_application">
+			{$lg.send_application}
+		</span>
+	</div>
+</form>

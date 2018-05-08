@@ -1,0 +1,33 @@
+<div id="bubble_block">
+	{foreach from=$serv_list item=i}
+		{if $i.alias_id == "expertise"}
+			{assign "real_deal" $i}
+			{break}
+		{/if}
+	{/foreach}
+	<div class="container">
+		<h4 class="title">
+			{$real_deal.name}
+		</h4>
+		<span class="subtitle">
+			{$real_deal.teaser}
+		</span>
+	</div>
+
+	<div class="contents container">
+		<div class="section">
+			{assign var="items" value=$expertises}
+
+			{foreach from=$items key=n item=i}
+				<a class="item" href="{$slang}{$i.long_link}">
+					{if !empty($i.image_thumb)}
+						<div class="icon">{include file="./images/meta/{$i.image_thumb}"}</div>
+					{/if}
+					<span class="title">
+						{$i.name}
+					</span>
+				</a>
+			{/foreach}
+		</div> <!-- / .section -->
+	</div> <!-- / .contents -->
+</div> <!-- / #bubble_block -->

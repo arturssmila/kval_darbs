@@ -1,0 +1,46 @@
+<div class="container noselect">
+	<div id="header_block">
+		<h1 class="title">
+			{$cat.0.name}
+		</h1>	
+
+		{if !empty($cat.0.teaser)}
+		<h2 class="subtitle">
+			{$cat.0.teaser}
+		</h2>
+		{/if}
+
+		{if !isset($inner)}
+			{$inner = true}
+		{/if}
+
+		{if $inner == false}
+		<div class="contents">
+			{$cat.0.content}
+		</div>
+		{/if}
+
+		<div class="controls">
+			<span class="button primary bloated get_quote">
+				{$lg.get_quote}
+			</span>
+			<span class="button bloated" id="ask_button">
+				{$lg.ask_question}
+			</span>
+		</div>
+
+		<div class="icon">{include file="./css/svg/scroll.svg"}</div>
+	</div>
+</div>
+
+{*
+<div id="get_quote" class="modal">
+	<div class="container">
+		<div class="six columns offset-by-three">
+			<span class="close">&#x2716;</span>
+
+			{include file="./block/quote.html"}
+		</div>
+	</div>
+</div>
+*}

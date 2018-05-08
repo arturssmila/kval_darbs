@@ -1,0 +1,32 @@
+<div class="container">
+	<div id="header_block">
+		<h1 class="title">
+			{$cat.0.name}
+		</h1>	
+	</div>
+</div>
+
+<div class="gray_section separated">
+	<div class="container">	
+		{include file="blog_right_side.html"}
+		<div class="left posts">
+			{foreach from=$blogs item=i}
+				<div class="box post">
+					<div class="contents">
+						<h3 class="title">
+							<a href="{$slang}{$i.long_link}">
+								{$i.name}
+							</a>
+						</h3>
+						<a href="{$slang}{$i.long_link}" class="image" style="background-image:url('/images/meta/{$i.image}')"></a>
+						<div class="description">
+							{$i.teaser}
+							<a class="more" href="{$slang}{$i.long_link}">{$lg.read_more}...</a>
+						</div>
+						{include file="post_stats.html" post_data=$i}
+					</div>
+				</div>
+			{/foreach}
+		</div>
+	</div>
+</div>

@@ -1,0 +1,42 @@
+	<table>
+		<thead>
+			<tr>
+				<th>
+					{$lg.date}
+				</th>
+				<th>
+					{$lg.subject}
+				</th>
+				<th>
+					{$lg.question}
+				</th>
+				<th>
+					{$lg.status}
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{foreach from=$manager.data item=i}
+			<tr height="200" style="overflow: hidden;">
+				<td>
+					{$i.created}
+				</td>
+				<td>
+					<a href="http://{$smarty.server.HTTP_HOST}{$slang}{$cat.0.long_link}/{$manager.apartments.0.estate_id}/{$manager.apartments.0.id}/{$manager.curr_page}?msg={$i.id}">
+						{$i.subject}
+					</a>
+				</td>
+				<td>
+					{$i.content}
+				</td>
+				<td>
+					{if ($i.state == 2)}
+						<span class="text_success">{$lg.answered}</span>
+					{else}
+						{$lg.not_answered}
+					{/if}
+				</td>
+			</tr>
+			{/foreach}
+		</tbody>
+	</table>

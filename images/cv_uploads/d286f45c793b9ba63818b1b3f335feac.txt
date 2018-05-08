@@ -1,0 +1,69 @@
+	<table>
+		<thead>
+			<tr>
+				<th>
+					{$lg.date}
+				</th>
+				<th>
+					{$lg.subject}
+				</th>
+				<th>
+					{$lg.question}
+				</th>
+				<th>
+					{$lg.status}
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{foreach from=$manager.data item=i}
+			<tr height="200" style="overflow: hidden;">
+				<td>
+					{$i.created}
+				</td>
+				<td>
+					<a href="http://{$smarty.server.HTTP_HOST}{$slang}{$cat.0.long_link}/{$manager.apartments.0.estate_id}/{$manager.apartments.0.id}/{$manager.curr_page}?msg={$i.id}">
+						{$i.subject}
+					</a>
+				</td>
+				<td>
+					{$i.content}
+				</td>
+				<td>
+					{if ($i.state == 2)}
+						<span class="text_success">{$lg.answered}</span>
+					{else}
+						{$lg.not_answered}
+					{/if}
+				</td>
+			</tr>
+			{/foreach}
+		</tbody>
+	</table>
+
+
+Site key
+Use this in the HTML code your site serves to users.
+6LdPXUwUAAAAALdakwEfry6veX7CzKiSIF78sAwz
+
+Secret key
+Use this for communication between your site and Google. Be sure to keep it a secret.
+6LdPXUwUAAAAAPbO3Y4diUkhyqvBBYQPqhTebF0f
+
+
+CLIENT SIDE INTEGRATION:
+Paste this snippet before the closing </head> tag on your HTML template:
+<script src='https://www.google.com/recaptcha/api.js'></script>
+
+Paste this snippet at the end of the <form> where you want the reCAPTCHA widget to appear:
+<div class="g-recaptcha" data-sitekey="6LdPXUwUAAAAALdakwEfry6veX7CzKiSIF78sAwz"></div>
+
+
+SERVER SIDE INTEGRATION:
+The reCAPTCHA documentation site describes more details and advanced configurations.
+When your users submit the form where you integrated reCAPTCHA, you'll get as part of the payload a string with the name "g-recaptcha-response".
+In order to check whether Google has verified that user, send a POST request with these parameters:
+URL: https://www.google.com/recaptcha/api/siteverify
+secret (required)	6LdPXUwUAAAAAPbO3Y4diUkhyqvBBYQPqhTebF0f
+response (required)	The value of 'g-recaptcha-response'.
+remoteip	The end user's ip address.
