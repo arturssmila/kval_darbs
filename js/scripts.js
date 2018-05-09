@@ -899,18 +899,23 @@ function resetInputNoRel(elem, variable, form_data){
 }*/
 
 function changeSelectLang(curr_rel, to_langs, lg, form_id){//update name of selected language
-    if(to_langs[curr_rel].length == 0){
-        $("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text(lg["source_languages"]);
-        return;
-    }
-    if(to_langs[curr_rel].length > 1){
-        $("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text(to_langs[curr_rel].length + " " + lg["languages"]);
-        return;
-    }
-    if(to_langs[curr_rel].length == 1){
-        $("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text("1 " + lg["language"]);
-        return;
-    }
+	if(curr_rel in to_langs){
+		if(to_langs[curr_rel].length == 0){
+			$("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text(lg["source_languages"]);
+			return;
+		}
+		if(to_langs[curr_rel].length > 1){
+			$("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text(to_langs[curr_rel].length + " " + lg["languages"]);
+			return;
+		}
+		if(to_langs[curr_rel].length == 1){
+			$("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text("1 " + lg["language"]);
+			return;
+		}
+    	}else{
+		$("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text(lg["source_languages"]);
+		return;
+    	}
 }
 
 function guid() {
@@ -1381,6 +1386,10 @@ function multi_select_langs(thiss, id, form_id, form_data){//function to control
                                 }
                             }
                             form_data.to_langs[curr_rel].splice (i, 1);
+                           /* if(form_data.to_langs[curr_rel].length == 0){
+                            	form_data.to_langs.splice (curr_rel, 1);
+                            }*/
+                            //console.log(form_data);
                             //form_data.to_langs[curr_rel][i] = "";
                             changeSelectLang(curr_rel, form_data.to_langs, lg, form_id);
                             break;
