@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2018-05-08 13:54:47
+<?php /* Smarty version Smarty-3.0.7, created on 2018-05-09 10:28:06
          compiled from ".\templates\./logged_in/submit_work.html" */ ?>
-<?php /*%%SmartyHeaderCode:215135af181f71a1d58-10862069%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:299345af2a306294167-26997270%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '1cf03923eb3b6cdd35c00d726c18d28a92dfd0e5' => 
     array (
       0 => '.\\templates\\./logged_in/submit_work.html',
-      1 => 1525776883,
+      1 => 1525850676,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '215135af181f71a1d58-10862069',
+  'nocache_hash' => '299345af2a306294167-26997270',
   'function' => 
   array (
   ),
@@ -36,7 +36,7 @@ $_smarty_tpl->decodeProperties(array (
 						<div class="language_dropdown_group" rel="0">
 							<div class="dropdowns">
 								<div class="dropdown">
-									<div class="select language_from" onclick="language_select($(this),'file_upload_modal', form_data, 'submit_work');">
+									<div class="select language_from" onclick="language_select_nocapt($(this),'file_upload_modal_logged', form_data, 'submit_work');">
 										<span class="text">
 											<?php echo $_smarty_tpl->getVariable('lg')->value['source_language'];?>
 
@@ -52,7 +52,7 @@ $_smarty_tpl->decodeProperties(array (
 								
 
 								<div class="dropdown">
-									<div class="select language_to" onclick="language_select($(this),'file_upload_modal', form_data, 'submit_work');">
+									<div class="select language_to" onclick="language_select_nocapt($(this),'file_upload_modal_logged', form_data, 'submit_work');">
 										<span class="text language_to_select">
 											<?php echo $_smarty_tpl->getVariable('lg')->value['source_languages'];?>
 
@@ -66,7 +66,7 @@ $_smarty_tpl->decodeProperties(array (
 							</div>
 							<div class="file_sector">
 							
-								<label class="bloated simple primary button file_upload_call"  rel="0" onClick="callFileUploadModal(this, 'file_upload_modal');">
+								<label class="bloated simple primary button file_upload_call"  rel="0" onClick="callFileUploadModalAdmin(this, 'file_upload_modal_logged', 'submit_work');">
 									<?php echo $_smarty_tpl->getVariable('lg')->value['upload'];?>
 
 								</label>
@@ -237,53 +237,10 @@ $_smarty_tpl->tpl_vars['n']->first = $_smarty_tpl->tpl_vars['n']->iteration == 1
 				</div>
 
 				<div class="controls center page_one">
-					<span class="bloated primary submit button" id="toggle_details">
-						<?php echo $_smarty_tpl->getVariable('lg')->value['continue'];?>
+					<span class="bloated primary submit button" id="submit_work_button">
+						<?php echo $_smarty_tpl->getVariable('lg')->value['submit'];?>
 
 					</span>
-				</div>
-
-				<div class="segments page_two">
-					<div class="segment">
-						<span class="title">
-							<?php echo $_smarty_tpl->getVariable('lg')->value['quote_five'];?>
-
-						</span>
-
-						<div id="personal_data">
-							<div class="segment">
-								<span class="title">
-									<?php echo $_smarty_tpl->getVariable('lg')->value['first_name'];?>
-<span class="primary"> *</span>
-								</span>
-								<input class="required" name="first_name" type="text">
-							</div>
-							<div class="segment">
-								<span class="title">
-									<?php echo $_smarty_tpl->getVariable('lg')->value['last_name'];?>
-<span class="primary"> *</span>
-								</span>
-								<input class="required" name="last_name" type="text">
-							</div>
-							<div class="segment">
-								<span class="title">
-									<?php echo $_smarty_tpl->getVariable('lg')->value['email'];?>
-<span class="primary"> *</span>
-								</span>
-								<input class="required" name="email" type="email">
-							</div>
-							<div class="segment phone">
-								<span class="title">
-									<?php echo $_smarty_tpl->getVariable('lg')->value['phone'];?>
-
-								</span>
-								<div class="controls">
-									<input type="text" name="phone_country_code" placeholder="+371" class="phone">
-									<input type="text" name="phone" class="phone">
-								</div>
-							</div>
-						</div>
-					</div> <!-- / .segment -->
 				</div>
 
 				<div class="controls center page_two">

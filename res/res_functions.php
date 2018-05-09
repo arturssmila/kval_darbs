@@ -71,4 +71,81 @@
 				break;
 		}
 	}
+
+	function prepareFiles($form_data, $key, $langs_id, $request_id){//puts files to upload folder and creates sql entries with languages id if has one
+		if(!empty($langs_id)){
+			$langs_ids = " languages_id,";
+			$langs_id = "', '" . $langs_id;
+		}else{
+			$langs_ids = "";
+			$langs_id = "";
+		}
+		if(!empty($form_data->faili[$key]) && isset($form_data->faili[$key])){
+			foreach ($form_data->faili[$key] as $keyy=>$valuee){
+				if(!empty($form_data->file_names[$key][$keyy])){
+					$file_name = $form_data->file_names[$key][$keyy];
+					$file_name_name = ", file_name";
+				}else{
+					$file_name = "";
+					$file_name_name = "";
+				}
+				$path = $valuee;
+				if($path != "big" && $path != "error" && $path != "format"){
+					$res = moveUploaded($path, "uploads");
+					//var_dump($res);
+					if($res != false){
+						$query = "INSERT INTO request_files (file_path," . $langs_ids . " request_id" . $file_name_name . ")
+						VALUES ('" . $res . $langs_id . "', '" . $request_id . "', '" . $file_name . "')";
+						mysql_query($query);
+					}
+				}
+			}
+		}
+	}
+
+	function upload($file) {
+		global $settings;
+		if (empty($file["tmp_name"])) {
+			$file["tmp_name"] = $file["name"];
+		}
+
+		$tmp_expl = explode(".", $file["name"]);
+		$ext = end($tmp_expl);
+
+		$formats = explode(",", $settings["accepted_formats"]);
+		$formats = implode("", $formats);
+		$formats = explode(" ", $formats);
+
+		if (!in_array(strtolower($ext), $formats)) {
+			//header('HTTP/1.0 400 Bad Request', true, 400);
+			return "format";
+			//exit();
+		}
+			//var_dump($formats);
+
+		//echo $ext;
+
+		//out($file["tmp_name"]);
+		$name = str_replace(" ", "", $file["name"]);
+		$rand = uniqid(rand(10000,99999), true);
+		//var_dump($rand);
+		$id1 = md5($rand);
+
+		$file_size = filesize ( $file["tmp_name"] );
+		if(!($file_size > 31457280)){
+			/*out($_SERVER['DOCUMENT_ROOT']);*/
+			//out(file_exists( dirname( dirname(__FILE__) ) ));
+			if( file_exists( dirname( dirname(__FILE__) ) ) ){
+				$path = dirname(dirname(__FILE__)) . "/images/tmp/" . $id1 . "." . $ext/* . "__$name"*/;
+				$path = str_replace('\\', '/', $path);
+				move_uploaded_file($file["tmp_name"], $path);
+			}else{
+				$path = "error";
+			}
+
+			return $path;
+		}else{
+			return "big";
+		}
+	}
 ?>

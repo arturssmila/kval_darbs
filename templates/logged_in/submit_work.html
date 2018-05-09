@@ -14,7 +14,7 @@
 						<div class="language_dropdown_group" rel="0">
 							<div class="dropdowns">
 								<div class="dropdown">
-									<div class="select language_from" onclick="language_select($(this),'file_upload_modal', form_data, 'submit_work');">
+									<div class="select language_from" onclick="language_select_nocapt($(this),'file_upload_modal_logged', form_data, 'submit_work');">
 										<span class="text">
 											{$lg.source_language}
 										</span>
@@ -39,7 +39,7 @@
 								
 
 								<div class="dropdown">
-									<div class="select language_to" onclick="language_select($(this),'file_upload_modal', form_data, 'submit_work');">
+									<div class="select language_to" onclick="language_select_nocapt($(this),'file_upload_modal_logged', form_data, 'submit_work');">
 										<span class="text language_to_select">
 											{$lg.source_languages}
 										</span>
@@ -63,7 +63,7 @@
 							<div class="file_sector">
 								{*<input type="hidden" id="file_upload_path" name="file_upload_servername" rel="0">*}
 							
-								<label class="bloated simple primary button file_upload_call"  rel="0" onClick="callFileUploadModal(this, 'file_upload_modal');">
+								<label class="bloated simple primary button file_upload_call"  rel="0" onClick="callFileUploadModalAdmin(this, 'file_upload_modal_logged', 'submit_work');">
 									{$lg.upload}
 								</label>
 							</div>
@@ -255,12 +255,15 @@
 				</div>
 
 				<div class="controls center page_one">
-					<span class="bloated primary submit button" id="toggle_details">
+					{*<span class="bloated primary submit button" id="toggle_details">
 						{$lg.continue}
+					</span>*}
+					<span class="bloated primary submit button" id="submit_work_button"{* data-validate="#quote_block"*}>
+						{$lg.submit}
 					</span>
 				</div>
 
-				<div class="segments page_two">
+				{*<div class="segments page_two">
 					<div class="segment">
 						<span class="title">
 							{$lg.quote_five}
@@ -296,7 +299,7 @@
 							</div>
 						</div>
 					</div> <!-- / .segment -->
-				</div>
+				</div>*}
 
 				<div class="controls center page_two">
 					<span class="simple bloated primary submit button" id="go_back">

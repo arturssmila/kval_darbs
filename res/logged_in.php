@@ -262,7 +262,7 @@
 	}
 	/* ==================================================== */
 
-	function upload($file) {
+	/*function upload($file) {
 		global $id, $database, $database_prefix;
 
 		if (empty($file["tmp_name"])) {
@@ -287,7 +287,7 @@
 		//stop
 
 		move_uploaded_file($file["tmp_name"], $path);
-	}
+	}*/
 
 	function refresh() {
 		header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");

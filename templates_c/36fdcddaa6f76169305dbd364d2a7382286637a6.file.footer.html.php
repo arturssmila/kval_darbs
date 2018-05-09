@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2018-04-25 17:20:22
+<?php /* Smarty version Smarty-3.0.7, created on 2018-05-09 11:19:49
          compiled from ".\templates\footer.html" */ ?>
-<?php /*%%SmartyHeaderCode:197215ae08ea654e167-39294056%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:138385af2af2562ba96-85602463%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '36fdcddaa6f76169305dbd364d2a7382286637a6' => 
     array (
       0 => '.\\templates\\footer.html',
-      1 => 1524666014,
+      1 => 1525853689,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '197215ae08ea654e167-39294056',
+  'nocache_hash' => '138385af2af2562ba96-85602463',
   'function' => 
   array (
   ),
@@ -213,7 +213,14 @@ if ($_smarty_tpl->_count($_from) > 0){
 	<?php echo $_smarty_tpl->getVariable('settings')->value['anal_code'];?>
 
 	<script type="text/javascript" src="/cms/js/jquery.js"></script>	
-	<script type="text/javascript" src="/cms/js/jquery_transform.js"></script>	
+	<script type="text/javascript" src="/cms/js/jquery_transform.js"></script>
+	<script type="text/javascript">
+	<?php if ($_smarty_tpl->getVariable('cat')->value[0]['template']=="logged_in"){?>
+	var logged_in = true;
+	<?php }else{ ?>
+	var logged_in = false;
+	<?php }?>
+	</script>	
 	<script type="text/javascript" src="/cms/js/scripts.js?<?php echo $_smarty_tpl->getVariable('cms_js_date')->value;?>
 "></script>	
 	<script type="text/javascript" src="/js/libs/modal.js"></script>
@@ -265,6 +272,8 @@ $_smarty_tpl->tpl_vars['i']->first = $_smarty_tpl->tpl_vars['i']->iteration == 1
 	<?php }?>
 	<?php if ($_smarty_tpl->getVariable('cat')->value[0]['template']=="logged_in"){?>
 		<script type="text/javascript" src="/js/translation_manager.js?<?php echo $_smarty_tpl->getVariable('js_date')->value;?>
+"></script>
+		<script type="text/javascript" src="/js/no_captcha_form.js?<?php echo $_smarty_tpl->getVariable('js_date')->value;?>
 "></script>
 	<?php }?>
 	<?php if (!empty($_smarty_tpl->getVariable('manager',null,true,false)->value['user']['admin'])){?>

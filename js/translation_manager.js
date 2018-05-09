@@ -125,62 +125,38 @@ $(document).ready(function(){
 
     $("#submit_work_button").click(function(){
         var validated = 1;
-        $("#personal_data .segment .error").remove();
-        $("#personal_data .segment input.required").removeClass("redborder");
-        $("#personal_data .segment input.phone").removeClass("redborder");
-        $("#personal_data .segment input.required").each(function(){
-            var val = $(this).val();
-            if(val != ""){
-                var name = $(this).attr("name");
-                form_data[name] = val;
-            }else{
-                $(this).addClass("redborder");
-                $(this).before("<span class=\"error\">" + lg["field_required"] + "</span>");
+        $("#submit_work .segment .error").remove();
+        $("#submit_work .segment input.required").removeClass("redborder");
+        $("#submit_work .segment textarea.required").removeClass("redborder");
+        $(".dropdown .select.language_to, .dropdown .select.language_from").removeClass("redborder");
+        $("#submit_work").removeClass("redborder");
+        if($("#submit_work .segment textarea").val() != ""){
+            form_data.comment = $(".quote_block .segment textarea").val();
+        }
+        $("#submit_work .segment.langs .language_dropdown_group").each(function(){
+            var this_rel = $(this).attr("rel");
+            if(!(this_rel in form_data.from_langs)){
+                $(this).find(".select.language_from").addClass("redborder");
+                $(this).find(".select.language_from").before("<span class=\"error\">" + lg["field_required"] + "</span>");
+                validated = 0;
+            }else if(form_data.from_langs[this_rel] == null || form_data.from_langs[this_rel] == ""){
+                $(this).find(".select.language_from").addClass("redborder");
+                $(this).find(".select.language_from").before("<span class=\"error\">" + lg["field_required"] + "</span>");
+                validated = 0;
+            }
+            if(!(this_rel in form_data.to_langs)){
+                $(this).find(".select.language_to").addClass("redborder");
+                $(this).find(".select.language_to").before("<span class=\"error\">" + lg["field_required"] + "</span>");
+                validated = 0;
+            }else if(form_data.to_langs[this_rel] == null || form_data.to_langs[this_rel] == ""){
+                $(this).find(".select.language_to").addClass("redborder");
+                $(this).find(".select.language_to").before("<span class=\"error\">" + lg["field_required"] + "</span>");
                 validated = 0;
             }
         });
-        $("#personal_data .segment .controls input.phone").each(function(){
-            var val = $(this).val();
-            var name = $(this).attr("name");
-            if(val != ""){
-                if(name == "phone_country_code"){
-                    var re = /^(\+?\d{1,3}|\d{1,4})$/;
-                    if(re.test(val) == false){
-                        $(this).before("<span class=\"error\">" + lg["not_a_country_code"] + "</span>");
-                        $(this).addClass("redborder");
-                        validated = 0;
-                    }else{
-                        form_data[name] = val;
-                    }
-                }else if(name == "phone"){
-                    allowed_ch = "0123456789";
-                    var result = "";
-                    for(i=0;i<val.length;i++)
-                    {
-                        if(allowed_ch.indexOf(val.substr(i,1)) != -1)
-                        {
-                          result = result + "" + val.substr(i,1);
-                        }
-                    }
-                    if(result.length < 8 || result.length > 15)
-                    {
-                        validated = 0;
-                        $(this).before("<span class=\"error\">" + lg["not_a_valid_number"] + "</span>");
-                        $(this).addClass("redborder");
-                    }else{
-                        form_data[name] = val;
-                    }
-                }
-            }else{
-                delete form_data[name];
-            }
-        });
-        if($("#submit_work .segment textarea").val() != ""){
-            form_data.comment = $("#quote_block .segment textarea").val();
-        }
         if(validated == 1){
             $.ajax({
-                url: '/res/requests.php',  //server script to process data
+                url: '/res/translations_manager.php',  //server script to process data
                 type: 'POST',
                 data: {form_data: JSON.stringify(form_data), action: "create_request"},
                 async: true,
@@ -213,7 +189,7 @@ $(document).ready(function(){
                         $(".language_dropdown_group[rel=\"0\"] .language_from input").removeAttr('value');
                         $(".language_dropdown_group[rel=\"0\"] .language_to .language_to_select").text(lg["source_languages"]);
                         $(".language_dropdown_group[rel=\"0\"] .language_to input").removeAttr('value');
-                        updateDropdownFileList(0, "quote_block", form_data);
+                        updateDropdownFileList(0, "submit_work", form_data);
                         $(".more_files_warning.show").removeClass("show");
                         $(".quote_block .more").removeAttr("style");
                     }

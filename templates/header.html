@@ -459,7 +459,7 @@
 			</form>
 		</div>
 	</div>
-	<div class="modal" id="file_upload_modal">
+	<div class="modal" id="{if $cat.0.template != "logged_in"}file_upload_modal{else}file_upload_modal_logged{/if}">
 		<div class="modal_cell">
 			<div class="modal_center_block">
 				<div class="modal_center">
@@ -471,17 +471,19 @@
 							<div class="teaser">{$lg.acceptable_formats} {$settings.accepted_formats}.</div>
 							<div class="size_warning">{$lg.file_size_limit}</div>
 							<div class="box file_upload">
-								<form class="box__input" enctype="multipart/form-data">
+								<form class="box__input{if $cat.0.template == "logged_in"} display_svg{/if}" enctype="multipart/form-data">
 									{include file="./css/svg/inbox.svg"}
 									<div class="loading"></div>
-								    <label class="file_label" for="file" style="display: none">
+								    <label class="file_label" for="file" {if $cat.0.template != "logged_in"}style="display: none"{/if}>
 									    <input class="box__file" mode="" id="modal_file_input" type="file" name="file" id="file" multiple>
 									    <div class="file_label_content"></div>
 									</label>
-								    <div class="captcha_warning">{$lg.captcha_warning}</div>
+								    {if $cat.0.template != "logged_in"}<div class="captcha_warning">{$lg.captcha_warning}</div>{/if}
 								    {*<div class="one_file_error">{$lg.one_file_allowed|upper}</div>*}
+								    {if $cat.0.template != "logged_in"}
 									<div class="g-recaptcha" data-sitekey="6LdPXUwUAAAAALdakwEfry6veX7CzKiSIF78sAwz{*$settings.recaptcha_site_key*}" data-callback="enableBtn"
 									data-expired-callback="enableBtn"></div>
+									{/if}
 								</form>
 								<div class="box__uploading">Uploading&hellip;</div>
 								<div class="box__success">

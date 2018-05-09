@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2018-05-08 14:08:12
+<?php /* Smarty version Smarty-3.0.7, created on 2018-05-09 09:22:58
          compiled from ".\templates\./block/quote.html" */ ?>
-<?php /*%%SmartyHeaderCode:58865af1851c517016-39777698%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:264245af293c2456087-86039286%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '7f5633a83541c90987f67bf4b7ce39d799eb1e99' => 
     array (
       0 => '.\\templates\\./block/quote.html',
-      1 => 1525776776,
+      1 => 1525787599,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '58865af1851c517016-39777698',
+  'nocache_hash' => '264245af293c2456087-86039286',
   'function' => 
   array (
   ),
@@ -66,7 +66,7 @@ $_smarty_tpl->decodeProperties(array (
 							</div>
 							<div class="file_sector">
 							
-								<label class="bloated simple primary button file_upload_call"  rel="0" onClick="callFileUploadModal(this, 'file_upload_modal');">
+								<label class="bloated simple primary button file_upload_call"  rel="0" onClick="callFileUploadModal(this, 'file_upload_modal', 'quote');">
 									<?php echo $_smarty_tpl->getVariable('lg')->value['upload'];?>
 
 								</label>

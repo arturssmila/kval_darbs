@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2018-04-20 14:01:12
+<?php /* Smarty version Smarty-3.0.7, created on 2018-05-09 09:54:15
          compiled from ".\templates\header.html" */ ?>
-<?php /*%%SmartyHeaderCode:39655ad9c8787a1ba4-58822913%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:326895af29b17d12420-32476551%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '993a4f4a79418d6aa41c40045b97b005c86ba121' => 
     array (
       0 => '.\\templates\\header.html',
-      1 => 1524222070,
+      1 => 1525848853,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '39655ad9c8787a1ba4-58822913',
+  'nocache_hash' => '326895af29b17d12420-32476551',
   'function' => 
   array (
   ),
@@ -673,7 +673,7 @@ if ($_smarty_tpl->_count($_from) > 0){
 			</form>
 		</div>
 	</div>
-	<div class="modal" id="file_upload_modal">
+	<div class="modal" id="<?php if ($_smarty_tpl->getVariable('cat')->value[0]['template']!="logged_in"){?>file_upload_modal<?php }else{ ?>file_upload_modal_logged<?php }?>">
 		<div class="modal_cell">
 			<div class="modal_center_block">
 				<div class="modal_center">
@@ -690,18 +690,20 @@ if ($_smarty_tpl->_count($_from) > 0){
 							<div class="size_warning"><?php echo $_smarty_tpl->getVariable('lg')->value['file_size_limit'];?>
 </div>
 							<div class="box file_upload">
-								<form class="box__input" enctype="multipart/form-data">
+								<form class="box__input<?php if ($_smarty_tpl->getVariable('cat')->value[0]['template']=="logged_in"){?> display_svg<?php }?>" enctype="multipart/form-data">
 									<?php $_template = new Smarty_Internal_Template("./css/svg/inbox.svg", $_smarty_tpl->smarty, $_smarty_tpl, $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null);
  echo $_template->getRenderedTemplate();?><?php unset($_template);?>
 									<div class="loading"></div>
-								    <label class="file_label" for="file" style="display: none">
+								    <label class="file_label" for="file" <?php if ($_smarty_tpl->getVariable('cat')->value[0]['template']!="logged_in"){?>style="display: none"<?php }?>>
 									    <input class="box__file" mode="" id="modal_file_input" type="file" name="file" id="file" multiple>
 									    <div class="file_label_content"></div>
 									</label>
-								    <div class="captcha_warning"><?php echo $_smarty_tpl->getVariable('lg')->value['captcha_warning'];?>
-</div>
+								    <?php if ($_smarty_tpl->getVariable('cat')->value[0]['template']!="logged_in"){?><div class="captcha_warning"><?php echo $_smarty_tpl->getVariable('lg')->value['captcha_warning'];?>
+</div><?php }?>
+								    <?php if ($_smarty_tpl->getVariable('cat')->value[0]['template']!="logged_in"){?>
 									<div class="g-recaptcha" data-sitekey="6LdPXUwUAAAAALdakwEfry6veX7CzKiSIF78sAwz" data-callback="enableBtn"
 									data-expired-callback="enableBtn"></div>
+									<?php }?>
 								</form>
 								<div class="box__uploading">Uploading&hellip;</div>
 								<div class="box__success">

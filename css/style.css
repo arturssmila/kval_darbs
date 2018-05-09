@@ -2966,6 +2966,10 @@ body.modal_active {
 	display: none;
 }
 
+.box__input.display_svg > svg{
+  display: inline-block;
+}
+
 #inbox_svg.hide {
 display: none; }
 

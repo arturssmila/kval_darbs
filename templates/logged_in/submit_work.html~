@@ -1,0 +1,318 @@
+<h1>{$lg.submit_work}</h1>
+<div class="contents">
+	<div class="centered_text">
+		<div id="submit_work" class="noselect quote_block">
+			<div id="close_quote">✖</div>
+
+			<div class="contents">
+				<div class="segments">
+					<div class="segment page_one">
+						<span class="title">
+							{$lg.quote_one}
+						</span>
+
+						<div class="language_dropdown_group" rel="0">
+							<div class="dropdowns">
+								<div class="dropdown">
+									<div class="select language_from" onclick="language_select_nocapt($(this),'file_upload_modal_logged', form_data, 'submit_work');">
+										<span class="text">
+											{$lg.source_language}
+										</span>
+										<input type="hidden" name="language_from">
+										{include file="./css/svg/down.svg"}
+									</div>
+									{*<div class="items">
+										<div class="contents scrollable">
+											{foreach from=$lang_gr item=g}
+												{foreach from=$lang_items item=i}
+													{if $i.parent_id == $g.id}
+														<span class="item" val="{$i.id}" onclick="resetInput(this)">{$i.name}</span>
+													{/if}
+												{/foreach}
+											{/foreach}
+										</div>
+									</div>*}
+								</div>
+
+								<span class="divider">&rarr;</span>
+
+								
+
+								<div class="dropdown">
+									<div class="select language_to" onclick="language_select_nocapt($(this),'file_upload_modal_logged', form_data, 'submit_work');">
+										<span class="text language_to_select">
+											{$lg.source_languages}
+										</span>
+										{include file="./css/svg/down.svg"}
+									</div>
+										<input type="hidden" name="language_to_1">
+									{*<div class="items">
+										<div class="contents">
+											{foreach from=$lang_gr item=g}
+												{foreach from=$lang_items item=i}
+													{if $i.parent_id == $g.id}
+														<span class="item">{$i.name}</span>
+													{/if}
+												{/foreach}
+											{/foreach}
+										</div>
+									</div>*}
+								</div>
+								<span class="close" onClick="closeRow(this, form_data);">✖</span>
+							</div>
+							<div class="file_sector">
+								{*<input type="hidden" id="file_upload_path" name="file_upload_servername" rel="0">*}
+							
+								<label class="bloated simple primary button file_upload_call"  rel="0" onClick="callFileUploadModal(this, 'file_upload_modal', 'submit_work');">
+									{$lg.upload}
+								</label>
+							</div>
+						</div>
+						<span class="more">
+							{$lg.more_files}
+						</span>
+						<div class="more_files_warning">{$lg.more_files_warning}</div>
+
+						
+
+					</div> <!-- / .segment -->
+
+					{*<div class="segment page_one file_upload_form">
+						<span class="title">
+							{$lg.quote_two}
+						</span>
+
+						<input type="hidden" id="file_upload_path" name="file_upload_servername" rel="0">
+						
+						<label class="bloated simple primary button file_upload_call"  rel="0">
+							{$lg.upload}
+						</label>
+					</div>*} <!-- / .segment -->
+
+
+
+					{*<form class="box" method="post" action="" enctype="multipart/form-data">
+					  <div class="box__input">
+					    <input class="box__file" type="file" name="files[]" id="file" data-multiple-caption=" files selected" multiple />
+					    <label for="file"><strong>Choose a file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
+					    <button class="box__button" type="submit">{$lg.upload}</button>
+					  </div>
+					  <div class="box__uploading">Uploading&hellip;</div>
+					  <div class="box__success">Done!</div>
+					  <div class="box__error">Error! <span></span>.</div>
+					</form>*}
+
+
+
+
+					<div class="segment page_one">
+						<span class="title">
+							{$lg.quote_three}
+						</span>
+
+						{assign var="daysLeftThisYear" value=(365 - $smarty.now|date_format:"%j")}
+
+						<div class="dropdown small date">
+							<input type="text" id="date" name="date">
+							<div class="select">
+								<span class="text">
+									{$lg.date}
+								</span>
+								{include file="./css/svg/down.svg"}
+							</div>
+							{*
+							<div class="items">
+								<div class="contents">
+									{for $n=1 to $daysLeftThisYear}
+										{assign var="add" value=($n*24*60*60)}
+										<span class="item">
+											{($smarty.now + $add)|date_format:'%d.%m'}
+										</span>
+									{/for}
+								</div>
+							</div>
+							*}
+						</div>
+
+						<div class="dropdown small">
+							<div class="select">
+								<span class="text">
+									{$lg.time}
+								</span>
+								<input name="time" id="time_input" type="hidden">
+								{include file="./css/svg/down.svg"}
+							</div>
+							<div class="items">
+								<div class="contents scrollable">
+									{for $n=0 to 23}
+										<span class="item" onclick="resetInputNoRel(this, 'time', form_data)">{$n}:00</span>
+									{/for}
+								</div>
+							</div>
+						</div>
+						<div class="dropdown wide">
+							<div class="select">
+								<span class="text">
+									(GMT+02:00) Riga, Helsinki, Kyiv, Sofia, Tallinn, Vilnius
+								</span>
+								<input name="time_zone" type="hidden" value="(GMT+02:00) Riga, Helsinki, Kyiv, Sofia, Tallinn, Vilnius">
+								{include file="./css/svg/down.svg"}
+							</div>
+							<div class="items time_zone">
+								<div class="contents time_zone_select  scrollable">
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Europe/Helsinki">(GMT+02:00) Riga, Helsinki, Kyiv, Sofia, Tallinn, Vilnius</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Etc/GMT+12">(GMT-12:00) International Date Line West</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Pacific/Midway">(GMT-11:00) Midway Island, Samoa</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Pacific/Honolulu">(GMT-10:00) Hawaii</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="US/Alaska">(GMT-09:00) Alaska</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Los_Angeles">(GMT-08:00) Pacific Time (US & Canada)</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Tijuana">(GMT-08:00) Tijuana, Baja California</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="US/Arizona">(GMT-07:00) Arizona</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Chihuahua">(GMT-07:00) Chihuahua, La Paz, Mazatlan</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="US/Mountain">(GMT-07:00) Mountain Time (US & Canada)</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Managua">(GMT-06:00) Central America</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="US/Central">(GMT-06:00) Central Time (US & Canada)</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Mexico_City">(GMT-06:00) Guadalajara, Mexico City, Monterrey</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Canada/Saskatchewan">(GMT-06:00) Saskatchewan</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Bogota">(GMT-05:00) Bogota, Lima, Quito, Rio Branco</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="US/Eastern">(GMT-05:00) Eastern Time (US & Canada)</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="US/East-Indiana">(GMT-05:00) Indiana (East)</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Canada/Atlantic">(GMT-04:00) Atlantic Time (Canada)</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Caracas">(GMT-04:00) Caracas, La Paz</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Manaus">(GMT-04:00) Manaus</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Santiago">(GMT-04:00) Santiago</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Canada/Newfoundland">(GMT-03:30) Newfoundland</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Sao_Paulo">(GMT-03:00) Brasilia</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Argentina/Buenos_Aires">(GMT-03:00) Buenos Aires, Georgetown</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Godthab">(GMT-03:00) Greenland</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Montevideo">(GMT-03:00) Montevideo</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="America/Noronha">(GMT-02:00) Mid-Atlantic</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Atlantic/Cape_Verde">(GMT-01:00) Cape Verde Is.</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Atlantic/Azores">(GMT-01:00) Azores</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Africa/Casablanca">(GMT+00:00) Casablanca, Monrovia, Reykjavik</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Etc/Greenwich">(GMT+00:00) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Europe/Amsterdam">(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Europe/Belgrade">(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Europe/Brussels">(GMT+01:00) Brussels, Copenhagen, Madrid, Paris</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Europe/Sarajevo">(GMT+01:00) Sarajevo, Skopje, Warsaw, Zagreb</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Africa/Lagos">(GMT+01:00) West Central Africa</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Amman">(GMT+02:00) Amman</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Europe/Athens">(GMT+02:00) Athens, Bucharest, Istanbul</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Beirut">(GMT+02:00) Beirut</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Africa/Cairo">(GMT+02:00) Cairo</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Africa/Harare">(GMT+02:00) Harare, Pretoria</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Jerusalem">(GMT+02:00) Jerusalem</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Europe/Minsk">(GMT+02:00) Minsk</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Africa/Windhoek">(GMT+02:00) Windhoek</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Kuwait">(GMT+03:00) Kuwait, Riyadh, Baghdad</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Europe/Moscow">(GMT+03:00) Moscow, St. Petersburg, Volgograd</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Africa/Nairobi">(GMT+03:00) Nairobi</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Tbilisi">(GMT+03:00) Tbilisi</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Tehran">(GMT+03:30) Tehran</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Muscat">(GMT+04:00) Abu Dhabi, Muscat</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Baku">(GMT+04:00) Baku</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Yerevan">(GMT+04:00) Yerevan</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Kabul">(GMT+04:30) Kabul</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Yekaterinburg">(GMT+05:00) Yekaterinburg</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Karachi">(GMT+05:00) Islamabad, Karachi, Tashkent</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Calcutta">(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Calcutta">(GMT+05:30) Sri Jayawardenapura</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Katmandu">(GMT+05:45) Kathmandu</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Almaty">(GMT+06:00) Almaty, Novosibirsk</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Dhaka">(GMT+06:00) Astana, Dhaka</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Rangoon">(GMT+06:30) Yangon (Rangoon)</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Bangkok">(GMT+07:00) Bangkok, Hanoi, Jakarta</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Krasnoyarsk">(GMT+07:00) Krasnoyarsk</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Hong_Kong">(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Kuala_Lumpur">(GMT+08:00) Kuala Lumpur, Singapore</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Irkutsk">(GMT+08:00) Irkutsk, Ulaan Bataar</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Australia/Perth">(GMT+08:00) Perth</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Taipei">(GMT+08:00) Taipei</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Tokyo">(GMT+09:00) Osaka, Sapporo, Tokyo</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Seoul">(GMT+09:00) Seoul</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Yakutsk">(GMT+09:00) Yakutsk</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Australia/Adelaide">(GMT+09:30) Adelaide</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Australia/Darwin">(GMT+09:30) Darwin</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Australia/Brisbane">(GMT+10:00) Brisbane</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Australia/Canberra">(GMT+10:00) Canberra, Melbourne, Sydney</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Australia/Hobart">(GMT+10:00) Hobart</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Pacific/Guam">(GMT+10:00) Guam, Port Moresby</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Vladivostok">(GMT+10:00) Vladivostok</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Asia/Magadan">(GMT+11:00) Magadan, Solomon Is., New Caledonia</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Pacific/Auckland">(GMT+12:00) Auckland, Wellington</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Pacific/Fiji">(GMT+12:00) Fiji, Kamchatka, Marshall Is.</span>
+								   <span onclick="resetInputNoRel(this, 'time_zone', form_data)" class="item" value="Pacific/Tongatapu">(GMT+13:00) Nuku'alofa</span>
+								</div>
+							</div>
+						</div>
+					</div>  <!-- / .segment -->
+					<div class="segment page_one">
+						<span class="title">
+							{$lg.quote_four}
+						</span>
+						<textarea></textarea>
+					</div>
+				</div>
+
+				<div class="controls center page_one">
+					{*<span class="bloated primary submit button" id="toggle_details">
+						{$lg.continue}
+					</span>*}
+					<span class="bloated primary submit button" id="submit_work_button"{* data-validate="#quote_block"*}>
+						{$lg.submit}
+					</span>
+				</div>
+
+				{*<div class="segments page_two">
+					<div class="segment">
+						<span class="title">
+							{$lg.quote_five}
+						</span>
+
+						<div id="personal_data">
+							<div class="segment">
+								<span class="title">
+									{$lg.first_name}<span class="primary"> *</span>
+								</span>
+								<input class="required" name="first_name" type="text">
+							</div>
+							<div class="segment">
+								<span class="title">
+									{$lg.last_name}<span class="primary"> *</span>
+								</span>
+								<input class="required" name="last_name" type="text">
+							</div>
+							<div class="segment">
+								<span class="title">
+									{$lg.email}<span class="primary"> *</span>
+								</span>
+								<input class="required" name="email" type="email">
+							</div>
+							<div class="segment phone">
+								<span class="title">
+									{$lg.phone}
+								</span>
+								<div class="controls">
+									<input type="text" name="phone_country_code" placeholder="+371" class="phone">
+									<input type="text" name="phone" class="phone">
+								</div>
+							</div>
+						</div>
+					</div> <!-- / .segment -->
+				</div>*}
+
+				<div class="controls center page_two">
+					<span class="simple bloated primary submit button" id="go_back">
+						{$lg.go_back}
+					</span>
+
+					<span class="bloated primary submit button" id="submit_work_button"{* data-validate="#quote_block"*}>
+						{$lg.submit}
+					</span>
+				</div>
+			</div> <!-- / .contents -->
+		</div> <!-- / .quote_block -->
+
+
+</div>
+</div>
