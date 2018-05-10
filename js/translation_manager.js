@@ -245,9 +245,10 @@ function changeSpecialities(pair_id, table_id){
                     console.log("ree"); 
                 }else if(response == "ok"){
                     $(".to_toggle[toggle_id='"+pair_id+"'] .button.bloated.primary").addClass("hide");
-                    $(".to_toggle[toggle_id='"+pair_id+"'] .done_text").removeClass("hide").delay(3000).queue(function(next){
+                    $(".to_toggle[toggle_id='"+pair_id+"'] .done_text").removeClass("hide").delay(1500).queue(function(next){
                         $(this).addClass("hide");
                         $(".to_toggle[toggle_id='"+pair_id+"'] .button.bloated.primary.submit").removeClass("hide");
+                        location.reload();
                         next();
                     });
                 }           

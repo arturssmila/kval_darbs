@@ -75,6 +75,53 @@
 					exit();
 				}
 				break;
+			case "changePairSpecialityRate":
+				if(!checkPermission(1, 0)){
+					//echo __LINE__;
+					echo(json_encode("error"));
+					exit();
+				}
+				if((!empty($_POST["main_id"])) && (!empty($_POST["second_id"])) && (!empty($_POST["field"])) && (!empty($_POST["value"]))){
+					$value = $_POST["value"];
+					$value = str_replace(",", ".", $value);
+					$field = htmlspecialchars($_POST["field"], ENT_QUOTES, "UTF-8", true);
+					if((!empty($value)) && ((is_numeric($value)) || (is_float($value)))){
+						$result = mysql_query("SHOW COLUMNS FROM `language_pair_specialities` LIKE '".$field."'");
+						$check_field = getSqlRows($result);
+						if(!empty($check_field)) {
+							$result = mysql_query("SELECT * FROM `language_pair_specialities` WHERE  (pair_id='".$_POST["main_id"]."') AND (speciality_id='".$_POST["second_id"]."')");
+							$check_row = getSqlRows($result);
+							if(!empty($check_row)){
+								$query = "UPDATE language_pair_specialities
+										SET $field='$value'
+										WHERE (pair_id='".$_POST["main_id"]."') AND (speciality_id='".$_POST["second_id"]."')";
+								$result = mysql_query($query);
+								$numRows = mysql_affected_rows();
+								if(!empty($numRows)){
+									echo(json_encode("ok"));
+									exit();
+								}else{
+						//echo __LINE__;
+									echo(json_encode("error"));
+									exit();
+								}
+							}else{
+						//echo __LINE__;
+								echo(json_encode("error"));
+								exit();
+							}
+						}else{
+						//echo __LINE__;
+							echo(json_encode("error"));
+							exit();
+						}
+					}else{
+						//echo __LINE__;
+						echo(json_encode("error"));
+						exit();
+					}
+				}
+				break;
 			case "changeDateLearned":
 				if((!empty($_POST["main_id"])) && (!empty($_POST["field"])) && (!empty($_POST["value"]))){
 					$query = "SELECT * FROM employee_language_pairs WHERE id=\"" . $_POST["main_id"] . "\"";//get all language pairs of employee
