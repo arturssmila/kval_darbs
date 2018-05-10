@@ -106,35 +106,11 @@
 								<tr class="hide to_toggle" toggle_id="{$i.employee_pair_id}">
 									<td class="employee_specialities" colspan="5">
 										<table class="employee_specialities_table">
-											<thead><tr><th>{$lg.speciality}</th><th>{$lg.vacancy_rate}</th><th>{$lg.knows_speciality}</th></tr></thead>
+											<thead><tr><th>{$lg.speciality}</th><th>{$lg.add_remove}</th></tr></thead>
 											{foreach from=$manager.expertise_items key=keyy item=ii}
 												<tr class="employee_specialities_row">
 													<td class="employee_specialities_cell">
 														{$ii.name}
-													</td>
-													<td class="employee_specialities_cell">
-														{if !empty($ii.rate) && !empty($ii.currency)}
-															<div class="original"><span class="cell_content">{$ii.rate}</span><span> {$ii.currency}</span>
-															<span class="in_text_element">
-																<button class="button" onClick="openChangeInput(this)">...</button>
-															</span>
-															</div>
-														{else}
-															<div class="original"><span class="cell_content">-</span>
-															<span class="in_text_element">
-																<button class="button" onClick="openChangeInput(this)">...</button>
-															</span></div>
-														{/if}
-														<div class="changable hide">
-															<input type="text" class="short" value="{$i.rate}">
-															<span class="in_text_element">
-																<button class="button primary" onClick="changeCellValue_2ids(this, '{$i.employee_pair_id}', '$ii.id', 'rate', '/res/translations_manager.php', 'changePairSpecialityRate')">{$lg.done}
-																</button>
-																<button class="button primary" onClick="cancelUpdate(this)">
-																	✖
-																</button>
-															</span>
-														</div>
 													</td>
 													<td class="employee_specialities_cell">
 														<input class="speciality" type="checkbox" value="{$ii.id}"

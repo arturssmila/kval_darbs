@@ -11,7 +11,7 @@
 	function getPrice($id){
 		$query = "SELECT * FROM language_pair_prices WHERE pair_id=\"" . $id . "\"";//get all language pairs of employee
 		$rs= mysql_query($query);
-		$returnable = getSqlRows($rs);//yes, pears
+		$returnable = getSqlRows($rs);
 		return $returnable;
 	}
 ?>
@@ -43,39 +43,110 @@
 		<tbody>
 			<?php if(!empty($language_pairs)):?>
 				<?php foreach ($language_pairs as $i): ?>
+					<?php $prices = getPrice($i["id"]);?>
 					<tr class="ui hover">
 						<td class="head_td right_black_border top_bottom_black_border">
 							<?= $i["name"] ?>
 						</td>
 						<td class="center_t">
-							<input type="text" <?php
-							if(empty($prices)){
-								echo "value='0'";
-							}else{
-								foreach($prices as $key=>$item){
-									if($item["speciality"] == "regular"){
-										echo("value='".$item["rate"]."'");
-										break;
-									}
-								}
-							} ?> onchange="toggleCheckbox('pair_<?= $i["id"] ?>_<?= $i["id"] ?>[]')" >
+							<div class="original">
+								<span class="cell_content"><?php
+									if(empty($prices)){
+										echo "0";
+									}else{
+										$was = false;
+										foreach($prices as $key=>$item){
+											if($item["speciality"] == "regular"){
+												echo($item["rate"]);
+												$was = true;
+												break;
+											}
+										}
+										if($was == false){
+											echo "0";
+										}
+									} ?>
+								</span>
+								<span class="in_text_element">
+									<button class="button" onClick="openChangeInput(this)">...</button>
+								</span>
+							</div>
+							<div class="changable hide">
+								<input class="short" type="text" value="<?php if(empty($prices)){
+										echo "0";
+									}else{
+										$was = false;
+										foreach($prices as $key=>$item){
+											if($item["speciality"] == "regular"){
+												echo($item["rate"]);
+												$was = true;
+												break;
+											}
+										}
+										if($was == false){
+											echo "0";
+										}
+									}?>">
+								<span class="in_text_element">
+									<button class="button positive" onClick="changeCellValue_2ids(this, '<?php echo($i["id"]); ?>', 'regular', 'rate', '/admin/includes/admin/language_pair_prices/helper.php', 'changePairRate')">
+										<?= al("done") ?>
+									</button>
+									<button class="button danger" onClick="cancelUpdate(this)">
+										✖
+									</button>
+								</span>
+							</div>
 						</td>
 					<?php foreach ($expertise_items as $ii): ?>
-					<?php $prices = getPrice($i["id"]);?>
 						<td class="center_t">
-							<input name="pair_<?= $i["id"] ?>_<?= $ii["id"] ?>[]" type="text" <?php
-							if(empty($prices)){
-								echo "value='0'";
-							}else{
-								foreach($prices as $key=>$item){
-									if($item["speciality"] == $ii["id"]){
-										echo("value='".$item["value"]."'");
-									}
-								}
-							}
-							?> onchange="toggleCheckbox('pair_<?= $i["id"] ?>_<?= $ii["id"] ?>[]')" >
-							<input tips="no" name="pair_<?= $i["id"] ?>_<?= $ii["id"] ?>[]" type="hidden" <?php echo("value=\"".$i["id"]."\""); ?>>
-							<input tips="uz" name="pair_<?= $i["id"] ?>_<?= $ii["id"] ?>[]" type="hidden" <?php echo("value=\"".$ii["id"]."\""); ?>>
+							<div class="original">
+								<span class="cell_content"><?php
+									if(empty($prices)){
+										echo "0";
+									}else{
+										$was = false;
+										foreach($prices as $key=>$item){
+											if($item["speciality"] == $ii["id"]){
+												echo($item["rate"]);
+												$was = true;
+												break;
+											}
+										}
+										if($was == false){
+											echo "0";
+										}
+									} ?>
+								</span>
+								<span class="in_text_element">
+									<button class="button" onClick="openChangeInput(this)">...</button>
+								</span>
+							</div>
+							<div class="changable hide">
+								<input class="short" type="text" value="<?php
+									if(empty($prices)){
+										echo "0";
+									}else{
+										$was = false;
+										foreach($prices as $key=>$item){
+											if($item["speciality"] == $ii["id"]){
+												echo($item["rate"]);
+												$was = true;
+												break;
+											}
+										}
+										if($was == false){
+											echo "0";
+										}
+									} ?>">
+								<span class="in_text_element">
+									<button class="button primary" onClick="changeCellValue_2ids(this, '<?php echo($i["id"]) ?>', '<?php echo($ii["id"]) ?>', 'rate', '/admin/includes/admin/language_pair_prices/helper.php', 'changePairRate')">
+										<?= al("done") ?>
+									</button>
+									<button class="button primary" onClick="cancelUpdate(this)">
+										✖
+									</button>
+								</span>
+							</div>
 						</td>
 					<?php endforeach; ?>
 					</tr>

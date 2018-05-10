@@ -148,4 +148,34 @@
 			return "big";
 		}
 	}
+	
+	function getToLangs($form_data, $key){
+		$to_langs = "";
+		if(count($form_data->to_langs[$key]) > 1){
+			foreach ($form_data->to_langs[$key] as $keyy=>$valuee){
+				if($keyy > 0){
+					$to_langs .= "," . $valuee;
+				}else{
+					$to_langs .= $valuee;
+				}
+			}
+			return $to_langs;
+		}else{
+			if(!empty($form_data->to_langs[$key][0])){
+				$to_langs = $form_data->to_langs[$key][0];
+				return $to_langs;
+			}else{
+				return "";
+			}
+		}
+	}
+	
+	function moveUploaded($path, $target){
+		$new_path = str_replace("/tmp/", "/".$target."/", $path);
+		$code = copy($path, $new_path);
+		if(!$code){
+			out($code);
+		}
+		return $new_path;
+	}
 ?>

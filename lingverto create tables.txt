@@ -93,6 +93,7 @@ CREATE TABLE language_pair_specialities (
 	PRIMARY KEY (id),
 	FOREIGN KEY (pair_id) REFERENCES employee_language_pairs(id)
 );
+ALTER TABLE `language_pair_specialities` ADD `rate` DECIMAL(10,2) NULL DEFAULT NULL AFTER `speciality_id`;
 
 CREATE TABLE language_pair_prices(
 	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,

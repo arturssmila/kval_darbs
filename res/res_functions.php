@@ -136,7 +136,7 @@
 			/*out($_SERVER['DOCUMENT_ROOT']);*/
 			//out(file_exists( dirname( dirname(__FILE__) ) ));
 			if( file_exists( dirname( dirname(__FILE__) ) ) ){
-				$path = dirname(dirname(__FILE__)) . "/images/tmp/" . $id1 . "." . $ext/* . "__$name"*/;
+				$path = dirname(dirname(__FILE__)) . "/images/tmp/" . $id1 . "." . $ext;/* . "__$name"*/
 				$path = str_replace('\\', '/', $path);
 				move_uploaded_file($file["tmp_name"], $path);
 			}else{

@@ -123,85 +123,85 @@ $(document).ready(function(){
         }
     });
 
-    $("#submit_work_button").click(function(){
-        var validated = 1;
-        $("#submit_work .segment .error").remove();
-        $("#submit_work .segment input.required").removeClass("redborder");
-        $("#submit_work .segment textarea.required").removeClass("redborder");
-        $(".dropdown .select.language_to, .dropdown .select.language_from").removeClass("redborder");
-        $("#submit_work").removeClass("redborder");
-        if($("#submit_work .segment textarea").val() != ""){
-            form_data.comment = $(".quote_block .segment textarea").val();
-        }
-        $("#submit_work .segment.langs .language_dropdown_group").each(function(){
-            var this_rel = $(this).attr("rel");
-            if(!(this_rel in form_data.from_langs)){
-                $(this).find(".select.language_from").addClass("redborder");
-                $(this).find(".select.language_from").before("<span class=\"error\">" + lg["field_required"] + "</span>");
-                validated = 0;
-            }else if(form_data.from_langs[this_rel] == null || form_data.from_langs[this_rel] == ""){
-                $(this).find(".select.language_from").addClass("redborder");
-                $(this).find(".select.language_from").before("<span class=\"error\">" + lg["field_required"] + "</span>");
-                validated = 0;
-            }
-            if(!(this_rel in form_data.to_langs)){
-                $(this).find(".select.language_to").addClass("redborder");
-                $(this).find(".select.language_to").before("<span class=\"error\">" + lg["field_required"] + "</span>");
-                validated = 0;
-            }else if(form_data.to_langs[this_rel] == null || form_data.to_langs[this_rel] == ""){
-                $(this).find(".select.language_to").addClass("redborder");
-                $(this).find(".select.language_to").before("<span class=\"error\">" + lg["field_required"] + "</span>");
-                validated = 0;
-            }
-        });
-        if(validated == 1){
-            $.ajax({
-                url: '/res/translations_manager.php',  //server script to process data
-                type: 'POST',
-                data: {form_data: JSON.stringify(form_data), action: "create_request"},
-                async: true,
-                success: function(data) {  
-                    if(data == "big"){
-                        alert("the files exceed 30 mb");
-                    }else if(data == "empty"){
-                        alert("empty form!");
-                    }else if(data == "ok"){
-                        alert(lg.form_submitted);
-                        form_data.from_langs = [];
-                        form_data.to_langs = [];
-                        form_data.faili = [];
-                        form_data.file_names = [];
-                        form_data.file_sizes = [];
-                        form_data.time_zone = $(".quote_block input[name=\"time_zone\"]").val();
-                        $('.language_dropdown_group').each(function(){
-                            var rel = $(this).attr("rel");
-                            if(rel > 0){
-                                $(this).remove();
-                            }
-                        });
-                        $(".file_upload_call").each(function(){
-                            var rel = $(this).attr("rel");
-                            if(rel > 0){
-                                $(this).remove();
-                            }
-                        });
-                        $(".language_dropdown_group[rel=\"0\"] .language_from .text").text(lg["source_language"]);
-                        $(".language_dropdown_group[rel=\"0\"] .language_from input").removeAttr('value');
-                        $(".language_dropdown_group[rel=\"0\"] .language_to .language_to_select").text(lg["source_languages"]);
-                        $(".language_dropdown_group[rel=\"0\"] .language_to input").removeAttr('value');
-                        updateDropdownFileList(0, "submit_work", form_data);
-                        $(".more_files_warning.show").removeClass("show");
-                        $(".quote_block .more").removeAttr("style");
-                    }
-                },
-                error: function(data) {
-                    alert("Something went wrong!");  
-                    console.log(data);
-                }
-            });
-        }else{
-
-        }
+	$("#submit_work_button").click(function(){
+		var validated = 1;
+		$("#submit_work .segment .error").remove();
+		$("#submit_work .segment input.required").removeClass("redborder");
+		$("#submit_work .segment textarea.required").removeClass("redborder");
+		$(".dropdown .select.language_to, .dropdown .select.language_from").removeClass("redborder");
+		$("#submit_work").removeClass("redborder");
+		if($("#submit_work .segment textarea").val() != ""){
+			form_data.comment = $(".quote_block .segment textarea").val();
+		}
+		$("#submit_work .segment.langs .language_dropdown_group").each(function(){
+			var this_rel = $(this).attr("rel");
+			if(!(this_rel in form_data.from_langs)){
+				$(this).find(".select.language_from").addClass("redborder");
+				$(this).find(".select.language_from").before("<span class=\"error\">" + lg["field_required"] + "</span>");
+				validated = 0;
+			}else if(form_data.from_langs[this_rel] == null || form_data.from_langs[this_rel] == ""){
+				$(this).find(".select.language_from").addClass("redborder");
+				$(this).find(".select.language_from").before("<span class=\"error\">" + lg["field_required"] + "</span>");
+				validated = 0;
+			}
+			if(!(this_rel in form_data.to_langs)){
+				$(this).find(".select.language_to").addClass("redborder");
+				$(this).find(".select.language_to").before("<span class=\"error\">" + lg["field_required"] + "</span>");
+				validated = 0;
+			}else if(form_data.to_langs[this_rel] == null || form_data.to_langs[this_rel] == ""){
+				$(this).find(".select.language_to").addClass("redborder");
+				$(this).find(".select.language_to").before("<span class=\"error\">" + lg["field_required"] + "</span>");
+				validated = 0;
+			}
+		});
+		if(validated == 1){
+			$.ajax({
+				url: '/res/translations_manager.php',  //server script to process data
+				type: 'POST',
+				data: {form_data: JSON.stringify(form_data), action: "create_request"},
+				async: true,
+				success: function(data) {  
+					console.log(data);
+					if(data == "big"){
+						alert("the files exceed 30 mb");
+					}else if(data == "empty"){
+						alert("empty form!");
+					}else if(data == "ok"){
+						alert(lg.form_submitted);
+						form_data.from_langs = [];
+						form_data.to_langs = [];
+						form_data.faili = [];
+						form_data.file_names = [];
+						form_data.file_sizes = [];
+						form_data.time_zone = $(".quote_block input[name=\"time_zone\"]").val();
+						$('.language_dropdown_group').each(function(){
+							var rel = $(this).attr("rel");
+							if(rel > 0){
+								$(this).remove();
+							}
+						});
+						$(".file_upload_call").each(function(){
+							var rel = $(this).attr("rel");
+							if(rel > 0){
+								$(this).remove();
+							}
+						});
+						$(".language_dropdown_group[rel=\"0\"] .language_from .text").text(lg["source_language"]);
+						$(".language_dropdown_group[rel=\"0\"] .language_from input").removeAttr('value');
+						$(".language_dropdown_group[rel=\"0\"] .language_to .language_to_select").text(lg["source_languages"]);
+						$(".language_dropdown_group[rel=\"0\"] .language_to input").removeAttr('value');
+						updateDropdownFileList(0, "submit_work", form_data);
+						$(".more_files_warning.show").removeClass("show");
+						$(".quote_block .more").removeAttr("style");
+					}
+				},
+				error: function(data) {
+					alert("Something went wrong!");  
+					console.log(data);
+				}
+			});
+		}else{
+		}
     });
 
     equalheight("#manager .row_table .visible_row .cell");
