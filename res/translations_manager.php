@@ -345,12 +345,12 @@
 							}
 						}
 						if($complete_size > 31457280){
-							echo json_encode("big");
+							echo "big";
 							exit();
 						}
 					}else{
 						echo __LINE__;
-						echo(json_encode("empty"));
+						echo "empty";
 						exit();
 					}
 					
@@ -369,7 +369,7 @@
 						}
 					}else{
 						echo __LINE__;
-						echo(json_encode("empty"));
+						echo "empty";
 						exit();
 					}
 					$comment_name = "";
@@ -378,10 +378,10 @@
 						$comment_name = ", comment_text";
 						$comment = ", '" . htmlspecialchars($form_data->comment, ENT_QUOTES, "UTF-8", true) . "'";
 					}
-					/*$query = "INSERT INTO submitted_work (user_id" . $time_names . $comment_name . ")
+					$query = "INSERT INTO submitted_work (user_id" . $time_names . $comment_name . ")
 						VALUES ('".$_SESSION["user"]["id"]."'" . $time_string . $comment . ")";
 					$submitted_work_info = mysql_query($query);
-					$submitted_id = mysql_insert_id();*/
+					$submitted_id = mysql_insert_id();
 					//out($form_data);
 
 					$from_cou = 0;
@@ -403,7 +403,7 @@
 						}
 					}
 					if((($from_cou > 0) && ($to_cou > 0)) && ($from_cou == $to_cou) && ($from_cou == $file_cou)){
-						//var_dump("from: $from_cou, to: $to_cou.");
+						//var_dump("from: $from_cou, to: $to_cou, files: $file_cou.");
 						for($i = 0; $i < $from_cou; $i++){
 							if((!empty($form_data->to_langs[$i])) && (!empty($form_data->from_langs[$i]))){
 								$to_langs = getToLangs($form_data, $i);
@@ -415,221 +415,26 @@
 									continue;//if the user added a language pair but then deleted it, the array index might still be there
 								}
 								$to_langs = explode(",", $to_langs);
-								var_dump($to_langs);
 								foreach($to_langs as $key=>$value){
-									/*$query = "INSERT INTO submitted_pairs (work_id, lang_from, lang_to)
-									VALUES ('" . $from_langs . "', '" . $to_langs . "', '" . $submitted_id . "')";
-									mysql_query($query);
-									$langs_id = mysql_insert_id();
-									if(!empty($form_data->faili[$key])){
-										prepareFiles($form_data, $key, $langs_id, $request_id);
+									if(!empty($form_data->faili[$i])){
+										$query = "INSERT INTO submitted_pairs (work_id, lang_from, lang_to)
+										VALUES ('" . $submitted_id . "', '" . $from_langs . "', '" . $value . "')";
+										mysql_query($query);
+										$langs_id = mysql_insert_id();
+										prepareFilesForSubmit($form_data, $i, $langs_id, $submitted_id);
 									}else{
-										
-									}*/
+										//echo __LINE__;
+										echo "empty";
+										exit();
+									}
 								}
 							}
 						}
 					}else{
-						echo(json_encode("empty"));
+										//echo __LINE__;
+						echo "empty";
 						exit();
 					}
-					/*if(!empty($form_data->from_langs)){
-						if(($from_cou >= $to_cou) && ($from_cou >= $file_cou)){//from languages leading    from:2 to:0/1/2 files: 0/1/2
-							foreach ($form_data->from_langs as $key=>$value){
-								if(!empty($form_data->faili[$key]) && !empty($form_data->to_langs[$key])){
-									$to_langs = getToLangs($form_data, $key);
-									if(!empty($form_data->from_langs[$key])){
-										$query = "INSERT INTO request_languages (lang_from, lang_to, request_id)
-							VALUES ('" . $value . "', '" . $to_langs . "', '" . $request_id . "')";
-									}else{
-										$query = "INSERT INTO request_languages (lang_to, request_id)
-							VALUES ('" . $to_langs . "', '" . $request_id . "')";
-									}
-									mysql_query($query);
-									$index = $key;
-									$langs_id = mysql_insert_id();
-									if(!empty($form_data->faili[$key]) && isset($form_data->faili[$key])){
-										prepareFiles($form_data, $key, $langs_id, $request_id);
-									}
-								}else if(!empty($form_data->faili[$key])){
-									$langs_id = "";
-									$to_langs = getToLangs($form_data, $key);
-									if(!empty($form_data->from_langs[$key])){
-										$query = "INSERT INTO request_languages (lang_from, lang_to, request_id)
-							VALUES ('" . $value . "', '" . $to_langs . "', '" . $request_id . "')";
-										mysql_query($query);
-										$index = $key;
-										$langs_id = mysql_insert_id();
-									}
-									prepareFiles($form_data, $key, $langs_id, $request_id);
-								}else if(!empty($form_data->to_langs[$key])){
-									if(!empty($form_data->from_langs[$key])){
-									$to_langs = getToLangs($form_data, $key);
-										$query = "INSERT INTO request_languages (lang_from, lang_to, request_id)
-							VALUES ('" . $value . "', '" . $to_langs . "', '" . $request_id . "')";
-										mysql_query($query);
-										$index = $key;
-										$langs_id = mysql_insert_id();
-									}else{
-										$to_langs = getToLangs($form_data, $key);
-										$query = "INSERT INTO request_languages (lang_to, request_id)
-								VALUES ('" . $to_langs . "', '" . $request_id . "')";
-										mysql_query($query);
-										$index = $key;
-									}
-								}
-							}
-							//echo "first!";
-						}else if(($from_cou < $to_cou) && ($from_cou >= $file_cou)){//to languages leading    from:0/1 to:2 files: 0/1/2
-							foreach ($form_data->to_langs as $key=>$value){
-								if((!empty($form_data->to_langs[$key])) && (!empty($form_data->from_langs[$key]))){
-									$to_langs = getToLangs($form_data, $key);
-									$from_langs = "";
-									if(!empty($form_data->from_langs[$key])){
-										$from_langs = $form_data->from_langs[$key];
-									}
-									$query = "INSERT INTO request_languages (lang_from, lang_to, request_id)
-							VALUES ('" . $from_langs . "', '" . $to_langs . "', '" . $request_id . "')";
-									mysql_query($query);
-									$langs_id = mysql_insert_id();
-									if(!empty($form_data->faili[$key])){
-										prepareFiles($form_data, $key, $langs_id, $request_id);
-									}
-								}else if(!empty($form_data->to_langs[$key])){
-									$to_langs = getToLangs($form_data, $key);
-									$query = "INSERT INTO request_languages (lang_to, request_id)
-							VALUES ('" . $to_langs . "', '" . $request_id . "')";
-									mysql_query($query);
-									$langs_id = mysql_insert_id();
-									if(!empty($form_data->faili[$key])){
-										prepareFiles($form_data, $key, $langs_id, $request_id);
-									}
-								}else if(!empty($form_data->from_langs[$key])){
-									$query = "INSERT INTO request_languages (lang_from, request_id)
-							VALUES ('" . $value . "', '" . $request_id . "')";
-									mysql_query($query);
-									$langs_id = mysql_insert_id();
-									if(!empty($form_data->faili[$key])){
-										prepareFiles($form_data, $key, $langs_id, $request_id);
-									}
-								}else if(!empty($form_data->faili[$key])){
-									$langs_id = "";
-									prepareFiles($form_data, $key, $langs_id, $request_id);
-								}
-							}
-							//echo "second!";
-						}else if(($from_cou >= $to_cou) && ($from_cou < $file_cou)){//vajag from pa priekšu un tad vēl failus atsevišķi no indeksa     from:2 to:0/1/2 files: 3/4/...
-							$index = 0;
-							foreach ($form_data->from_langs as $key=>$value){
-								if((!empty($form_data->to_langs[$key])) && (!empty($form_data->from_langs[$key]))){
-									$to_langs = getToLangs($form_data, $key);
-									$query = "INSERT INTO request_languages (lang_from, lang_to, request_id)
-							VALUES ('" . $value . "', '" . $to_langs . "', '" . $request_id . "')";
-									mysql_query($query);
-									$index = $key;
-									$langs_id = mysql_insert_id();
-									if(!empty($form_data->faili[$key])){
-										prepareFiles($form_data, $key, $langs_id, $request_id);
-									}
-								}else if(!empty($form_data->to_langs[$key])){
-									$to_langs = getToLangs($form_data, $key);
-									$query = "INSERT INTO request_languages (lang_to, request_id)
-							VALUES ('" . $to_langs . "', '" . $request_id . "')";
-									mysql_query($query);
-									$index = $key;
-									$langs_id = mysql_insert_id();
-									if(!empty($form_data->faili[$key])){
-										prepareFiles($form_data, $key, $langs_id, $request_id);
-									}
-								}else if(!empty($form_data->from_langs[$key])){
-									$query = "INSERT INTO request_languages (lang_from, request_id)
-							VALUES ('" . $value . "', '" . $request_id . "')";
-									mysql_query($query);
-									$index = $key;
-									$langs_id = mysql_insert_id();
-									if(!empty($form_data->faili[$key])){
-										prepareFiles($form_data, $key, $langs_id, $request_id);
-									}
-								}else if(!empty($form_data->faili[$key])){
-									$langs_id = "";
-									prepareFiles($form_data, $key, $langs_id, $request_id);
-									$index = $key;
-								}
-							}
-							$langs_id = "";
-							$index++;
-							if($file_cou > $from_cou){
-								for( $index; $index < (count($form_data->faili)); $index++ ){
-									prepareFiles($form_data, $index, $langs_id, $request_id);
-								}
-							}
-							//echo "third!";
-						}else if(($from_cou < $to_cou) && ($from_cou < $file_cou)){//vajag to pa priekšu un tad vēl failus atsevišķi no indeksa    from:0/1 to:2 files: 3/4/... vai from:0/1 to:3 files:2
-							$index = 0;
-							foreach ($form_data->to_langs as $key=>$value){
-								if((!empty($form_data->to_langs[$key])) && (!empty($form_data->from_langs[$key]))){
-									$to_langs = getToLangs($form_data, $key);
-									$query = "INSERT INTO request_languages (lang_from, lang_to, request_id)
-							VALUES ('" . $form_data->from_langs[$key] . "', '" . $to_langs . "', '" . $request_id . "')";
-									mysql_query($query);
-									$index = $key;
-									$langs_id = mysql_insert_id();
-									if(!empty($form_data->faili[$key])){
-										prepareFiles($form_data, $key, $langs_id, $request_id);
-									}
-								}else if(!empty($form_data->to_langs[$key])){
-									$to_langs = getToLangs($form_data, $key);
-									$query = "INSERT INTO request_languages (lang_to, request_id)
-							VALUES ('" . $to_langs . "', '" . $request_id . "')";
-									mysql_query($query);
-									$index = $key;
-									$langs_id = mysql_insert_id();
-									if(!empty($form_data->faili[$key])){
-										prepareFiles($form_data, $key, $langs_id, $request_id);
-									}
-								}else if(!empty($form_data->from_langs[$key])){
-									$query = "INSERT INTO request_languages (lang_from, request_id)
-							VALUES ('" . $value . "', '" . $request_id . "')";
-									mysql_query($query);
-									$index = $key;
-									$langs_id = mysql_insert_id();
-									if(!empty($form_data->faili[$key])){
-										prepareFiles($form_data, $key, $langs_id, $request_id);
-									}
-								}else if(!empty($form_data->faili[$key])){
-									$langs_id = "";
-									prepareFiles($form_data, $key, $langs_id, $request_id);
-									$index = $key;
-								}
-							}
-							$langs_id = "";
-							$index++;
-							//var_dump($index);
-							if($file_cou > $to_cou){
-								for( $index; $index < (count($form_data->faili)); $index++ ){
-									prepareFiles($form_data, $index, $langs_id, $request_id);
-								}	
-							}
-							//echo "fourth!";						
-						}
-					}else if(!empty($form_data->to_langs)){//if to langs not empty
-						deleteOldFiles($_SERVER['DOCUMENT_ROOT'] . "/images/tmp");
-						if($to_cou >= $file_cou){
-							$index = prepareTo($form_data, $request_id);
-						}else if($to_cou < $file_cou){
-							$index = prepareTo($form_data, $request_id);
-							$langs_id = "";
-							for( $index; $index < (count($form_data->faili)); $index++ ){
-								prepareFiles($form_data, $index, $langs_id, $request_id);
-							}
-						}
-					}else if(!empty($form_data->faili)){
-						deleteOldFiles($_SERVER['DOCUMENT_ROOT'] . "/images/tmp");
-						foreach ($form_data->faili as $key=>$value){
-							$langs_id = "";
-							prepareFiles($form_data, $key, $langs_id, $request_id);
-						}
-					}*/
 
 					//var_dump($request_id);
 					//var_dump($query);
@@ -648,7 +453,7 @@
 				    $rs= mysql_query($query);
 					$quote_files = getSqlRows($rs);*/
 
-					echo json_encode("ok");
+					echo "ok";
 					exit();
 				break;
 		}			
@@ -657,12 +462,14 @@
 		exit();
 	}
 	
-	function prepareFilesForSubmit($form_data, $key, $langs_id, $submit_id){//puts files to upload folder and creates sql entries with languages id if has one
+	function prepareFilesForSubmit($form_data, $key, $langs_id, $work_id){//puts files to upload folder and creates sql entries with languages id if has one
 		if(!empty($langs_id)){
-			$langs_ids = " languages_id,";
+			$langs_ids = " pair_id,";
 			$langs_id = "', '" . $langs_id;
 		}else{
-			return "error";
+										//echo __LINE__;
+			echo(json_encode("empty"));
+			exit();
 		}
 		if(!empty($form_data->faili[$key]) && isset($form_data->faili[$key])){
 			foreach ($form_data->faili[$key] as $keyy=>$valuee){
@@ -675,13 +482,26 @@
 				}
 				$path = $valuee;
 				if($path != "big" && $path != "error" && $path != "format"){
-					$res = moveUploaded($path, "completed_jobs");
+					$res = moveUploaded($path, "submitted_jobs");
 					//var_dump($res);
 					if($res != false){
-						$query = "INSERT INTO request_files (file_path," . $langs_ids . " request_id" . $file_name_name . ")
-						VALUES ('" . $res . $langs_id . "', '" . $request_id . "', '" . $file_name . "')";
-						mysql_query($query);
+						$query = "INSERT INTO submitted_files (file_path," . $langs_ids . " work_id" . $file_name_name . ")
+						VALUES ('" . $res . $langs_id . "', '" . $work_id . "', '" . $file_name . "')";
+						$query_result = mysql_query($query);
+						if(!$query_result){
+										//echo __LINE__;
+							echo(json_encode("empty"));
+							exit();
+						}
+					}else{
+						echo __LINE__;
+						echo(json_encode("empty"));
+						exit();
 					}
+				}else{
+										//echo __LINE__;
+					echo(json_encode("empty"));
+					exit();
 				}
 			}
 		}

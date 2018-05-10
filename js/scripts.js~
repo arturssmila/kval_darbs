@@ -130,6 +130,7 @@ $(document).ready(function() {
         toggle_question_form($("#page_question_form .title"));
     });
 
+    
     var question_submit_clicked = false;
     $('#page_question_form form .controls span').click(function(){
         var sender_name = '';
@@ -281,21 +282,199 @@ $(document).ready(function() {
         }
     });
 
-    $(".controls .get_quote").click(function() {
-        if(!($("quote_block").is(':visible'))){
-            $('#quote_block').toggleClass('show');
-            if($('#open_quote').is(':visible')){
-                $('#open_quote').toggle();
-            }
-        }else{
-            if(!($('#open_quote').is(':visible'))){
-                $('#open_quote').toggle();
-            }
-        }
-        $('html, body').animate({
-            scrollTop: $("#quote_block").offset().top - 150
-        }, 500);
-    });
+    if(!logged_in){
+		$(".controls .get_quote").click(function() {
+			if(!($("quote_block").is(':visible'))){
+				$('#quote_block').toggleClass('show');
+				if($('#open_quote').is(':visible')){
+					$('#open_quote').toggle();
+				}
+			}else{
+				if(!($('#open_quote').is(':visible'))){
+					$('#open_quote').toggle();
+				}
+			}
+			$('html, body').animate({
+				scrollTop: $("#quote_block").offset().top - 150
+			}, 500);
+		});
+		$("#blog .right .contents .title.first, #blog_cat .right .contents .title.first, #blog_post .right .contents .title.first").click(function(){
+			if($(document).width() < 769){
+				$(this).children(".down").toggleClass("show");
+				$(this).children(".up").toggleClass("show");
+				$(this).next("ul").toggleClass("show");
+			}
+		});
+	
+		$("#blog .right .contents .title.second, #blog_cat .right .contents .title.second, #blog_post .right .contents .title.second").click(function(){
+			if($(document).width() < 769){
+				$(this).children(".down").toggleClass("show");
+				$(this).children(".up").toggleClass("show");
+				$(this).next(".posts").toggleClass("show");
+			}
+		});
+		$("#more_sponsors").click(function() {
+			if(sponsors_open == false){
+				$(".sponsors").removeClass("sponsors_close");
+				$("#more_sponsors").text(lg.see_less.toUpperCase());
+				$(".sponsors").addClass("sponsors_open");
+				sponsors_open = true;
+			}else if(sponsors_open == true){
+				$(".sponsors").removeClass("sponsors_open");
+				$(".sponsors").addClass("sponsors_close");
+				$("#more_sponsors").text(lg.see_more.toUpperCase());
+				sponsors_open = false;
+			}
+		});
+		$('input#modal_file_input:file').on("change", function(){
+			if($("input#modal_file_input").attr("mode") == "quote"){
+				checkFiles(this.files, curr_rel, "quote_block", form_data);
+			}else if($("input#modal_file_input").attr("mode") == "vacancy"){
+				checkFiles(this.files, curr_rel, "apply_vacancy", form_cv_data);
+			}else if($("input#modal_file_input").attr("mode") == "submit_work"){
+				checkFiles(this.files, curr_rel, "submit_work", form_data);
+			}
+		});
+		$("#testimonials_block .controls .item").click(function() {
+			$parent = $(this).parent().parent();
+			$testimonial = $parent.children(".item:visible");
+	
+			$testimonial.hide();
+	
+			if ($(this).hasClass("left")) {
+				if ($testimonial.prev(".item").length <= 0) {
+					$parent.children(".item:last").show();
+					return;
+				}
+	
+				$testimonial.prev(".item").show();
+			}
+	
+			if ($(this).hasClass("right")) {
+				if ($testimonial.next(".item").length <= 0) {
+					$parent.children(".item:first").show();
+					return;
+				}
+	
+				$testimonial.next(".item").show();
+			}
+		});
+		$("#submit_quote").click(function(){
+			var validated = 1;
+			$("#personal_data .segment .error").remove();
+			$("#personal_data .segment input.required").removeClass("redborder");
+			$("#personal_data .segment input.phone").removeClass("redborder");
+			$("#personal_data .segment input.required").each(function(){
+				var val = $(this).val();
+				if(val != ""){
+					var name = $(this).attr("name");
+					if(name == "email"){
+						var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+						if(re.test(val) == false){
+							$(this).before("<span class=\"error\">" + lg["not_an_email"] + "</span>");
+							$(this).addClass("redborder");
+							validated = 0;
+						}else{
+							form_data[name] = val;
+						}
+					}else{
+						form_data[name] = val;
+					}
+				}else{
+					$(this).addClass("redborder");
+					$(this).before("<span class=\"error\">" + lg["field_required"] + "</span>");
+					validated = 0;
+				}
+			});
+			$("#personal_data .segment .controls input.phone").each(function(){
+				var val = $(this).val();
+				var name = $(this).attr("name");
+				if(val != ""){
+					if(name == "phone_country_code"){
+						var re = /^(\+?\d{1,3}|\d{1,4})$/;
+						if(re.test(val) == false){
+							$(this).before("<span class=\"error\">" + lg["not_a_country_code"] + "</span>");
+							$(this).addClass("redborder");
+							validated = 0;
+						}else{
+							form_data[name] = val;
+						}
+					}else if(name == "phone"){
+						allowed_ch = "0123456789";
+						var result = "";
+						for(i=0;i<val.length;i++)
+						{
+							if(allowed_ch.indexOf(val.substr(i,1)) != -1)
+							{
+							  result = result + "" + val.substr(i,1);
+							}
+						}
+						if(result.length < 8 || result.length > 15)
+						{
+							validated = 0;
+							$(this).before("<span class=\"error\">" + lg["not_a_valid_number"] + "</span>");
+							$(this).addClass("redborder");
+						}else{
+							form_data[name] = val;
+						}
+					}
+				}else{
+					delete form_data[name];
+				}
+			});
+			if($("#quote_block .segment textarea").val() != ""){
+				form_data.comment = $("#quote_block .segment textarea").val();
+			}
+			if(validated == 1){
+				$.ajax({
+					url: '/res/requests.php',  //server script to process data
+					type: 'POST',
+					data: {form_data: JSON.stringify(form_data), action: "create_request"},
+					async: true,
+					success: function(data) {  
+						if(data == "big"){
+							alert("the files exceed 30 mb");
+						}else if(data == "empty"){
+							alert("empty form!");
+						}else if(data == "ok"){
+							alert(lg.form_submitted);
+							form_data.from_langs = [];
+							form_data.to_langs = [];
+							form_data.faili = [];
+							form_data.file_names = [];
+							form_data.file_sizes = [];
+							form_data.time_zone = $("#quote_block input[name=\"time_zone\"]").val();
+							$('.language_dropdown_group').each(function(){
+								var rel = $(this).attr("rel");
+								if(rel > 0){
+									$(this).remove();
+								}
+							});
+							$(".file_upload_call").each(function(){
+								var rel = $(this).attr("rel");
+								if(rel > 0){
+									$(this).remove();
+								}
+							});
+							$(".language_dropdown_group[rel=\"0\"] .language_from .text").text(lg["source_language"]);
+							$(".language_dropdown_group[rel=\"0\"] .language_from input").removeAttr('value');
+							$(".language_dropdown_group[rel=\"0\"] .language_to .language_to_select").text(lg["source_languages"]);
+							$(".language_dropdown_group[rel=\"0\"] .language_to input").removeAttr('value');
+							updateDropdownFileList(0, "quote_block", form_data);
+							$(".more_files_warning.show").removeClass("show");
+							$("#quote_block .more").removeAttr("style");
+						}
+					},
+					error: function(data) {
+						alert("Something went wrong!");  
+						console.log(data);
+					}
+				});
+			}else{
+	
+			}
+		});
+    }
 
     $(".burger").click(function() {
         $(".tablet_menu").toggleClass("show");
@@ -325,22 +504,6 @@ $(document).ready(function() {
     $('#close_quote').click(function(){
         $('#quote_block').toggleClass('show');
         $('#open_quote').toggle();
-    });
-
-    $("#blog .right .contents .title.first, #blog_cat .right .contents .title.first, #blog_post .right .contents .title.first").click(function(){
-        if($(document).width() < 769){
-            $(this).children(".down").toggleClass("show");
-            $(this).children(".up").toggleClass("show");
-            $(this).next("ul").toggleClass("show");
-        }
-    });
-
-    $("#blog .right .contents .title.second, #blog_cat .right .contents .title.second, #blog_post .right .contents .title.second").click(function(){
-        if($(document).width() < 769){
-            $(this).children(".down").toggleClass("show");
-            $(this).children(".up").toggleClass("show");
-            $(this).next(".posts").toggleClass("show");
-        }
     });
 
     $(document).on("click", '#footer .row.contents .section .title .down.show, #footer .row.contents .section .text .down.show, #footer .row.contents .section .title .up.show, #footer .row.contents .section .text .up.show', function(){
@@ -397,19 +560,7 @@ $(document).ready(function() {
         $(".page_two").hide();
     });
 
-    $("#more_sponsors").click(function() {
-        if(sponsors_open == false){
-            $(".sponsors").removeClass("sponsors_close");
-            $("#more_sponsors").text(lg.see_less.toUpperCase());
-            $(".sponsors").addClass("sponsors_open");
-            sponsors_open = true;
-        }else if(sponsors_open == true){
-            $(".sponsors").removeClass("sponsors_open");
-            $(".sponsors").addClass("sponsors_close");
-            $("#more_sponsors").text(lg.see_more.toUpperCase());
-            sponsors_open = false;
-        }
-    });
+   
 
     $("#date").change(function() {
        $("#date").parent().find(".text").html($(this).val());
@@ -417,30 +568,7 @@ $(document).ready(function() {
 
     var menu_size = $("#header .menu").children().length;
 
-    $("#testimonials_block .controls .item").click(function() {
-    	$parent = $(this).parent().parent();
-    	$testimonial = $parent.children(".item:visible");
 
-    	$testimonial.hide();
-
-    	if ($(this).hasClass("left")) {
-    		if ($testimonial.prev(".item").length <= 0) {
-    			$parent.children(".item:last").show();
-    			return;
-    		}
-
-    		$testimonial.prev(".item").show();
-    	}
-
-    	if ($(this).hasClass("right")) {
-    		if ($testimonial.next(".item").length <= 0) {
-    			$parent.children(".item:first").show();
-    			return;
-    		}
-
-    		$testimonial.next(".item").show();
-    	}
-    });
 
     $(".quote_block .more").on("click touchend", function() {
         var number = $('.quote_block .language_dropdown_group').length;
@@ -477,15 +605,7 @@ $(document).ready(function() {
     });
 
 
-    $('input#modal_file_input:file').on("change", function(){
-        if($("input#modal_file_input").attr("mode") == "quote"){
-            checkFiles(this.files, curr_rel, "quote_block", form_data);
-        }else if($("input#modal_file_input").attr("mode") == "vacancy"){
-            checkFiles(this.files, curr_rel, "apply_vacancy", form_cv_data);
-        }else if($("input#modal_file_input").attr("mode") == "submit_work"){
-            checkFiles(this.files, curr_rel, "submit_work", form_data);
-        }
-    });
+    
 
     $('input[name="date"]').change(function(){
         form_data.date = $(this).val(); 
@@ -519,124 +639,8 @@ $(document).ready(function() {
         $(".multi_select_languages[value='"+this_value+"']").trigger('click').trigger('click');
     });
 
-    $(".multi_select_languages").click(function(){
-    });
 
-    $("#submit_quote").click(function(){
-        var validated = 1;
-        $("#personal_data .segment .error").remove();
-        $("#personal_data .segment input.required").removeClass("redborder");
-        $("#personal_data .segment input.phone").removeClass("redborder");
-        $("#personal_data .segment input.required").each(function(){
-            var val = $(this).val();
-            if(val != ""){
-                var name = $(this).attr("name");
-                if(name == "email"){
-                    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                    if(re.test(val) == false){
-                        $(this).before("<span class=\"error\">" + lg["not_an_email"] + "</span>");
-                        $(this).addClass("redborder");
-                        validated = 0;
-                    }else{
-                        form_data[name] = val;
-                    }
-                }else{
-                    form_data[name] = val;
-                }
-            }else{
-                $(this).addClass("redborder");
-                $(this).before("<span class=\"error\">" + lg["field_required"] + "</span>");
-                validated = 0;
-            }
-        });
-        $("#personal_data .segment .controls input.phone").each(function(){
-            var val = $(this).val();
-            var name = $(this).attr("name");
-            if(val != ""){
-                if(name == "phone_country_code"){
-                    var re = /^(\+?\d{1,3}|\d{1,4})$/;
-                    if(re.test(val) == false){
-                        $(this).before("<span class=\"error\">" + lg["not_a_country_code"] + "</span>");
-                        $(this).addClass("redborder");
-                        validated = 0;
-                    }else{
-                        form_data[name] = val;
-                    }
-                }else if(name == "phone"){
-                    allowed_ch = "0123456789";
-                    var result = "";
-                    for(i=0;i<val.length;i++)
-                    {
-                        if(allowed_ch.indexOf(val.substr(i,1)) != -1)
-                        {
-                          result = result + "" + val.substr(i,1);
-                        }
-                    }
-                    if(result.length < 8 || result.length > 15)
-                    {
-                        validated = 0;
-                        $(this).before("<span class=\"error\">" + lg["not_a_valid_number"] + "</span>");
-                        $(this).addClass("redborder");
-                    }else{
-                        form_data[name] = val;
-                    }
-                }
-            }else{
-                delete form_data[name];
-            }
-        });
-        if($("#quote_block .segment textarea").val() != ""){
-            form_data.comment = $("#quote_block .segment textarea").val();
-        }
-        if(validated == 1){
-            $.ajax({
-                url: '/res/requests.php',  //server script to process data
-                type: 'POST',
-                data: {form_data: JSON.stringify(form_data), action: "create_request"},
-                async: true,
-                success: function(data) {  
-                    if(data == "big"){
-                        alert("the files exceed 30 mb");
-                    }else if(data == "empty"){
-                        alert("empty form!");
-                    }else if(data == "ok"){
-                        alert(lg.form_submitted);
-                        form_data.from_langs = [];
-                        form_data.to_langs = [];
-                        form_data.faili = [];
-                        form_data.file_names = [];
-                        form_data.file_sizes = [];
-                        form_data.time_zone = $("#quote_block input[name=\"time_zone\"]").val();
-                        $('.language_dropdown_group').each(function(){
-                            var rel = $(this).attr("rel");
-                            if(rel > 0){
-                                $(this).remove();
-                            }
-                        });
-                        $(".file_upload_call").each(function(){
-                            var rel = $(this).attr("rel");
-                            if(rel > 0){
-                                $(this).remove();
-                            }
-                        });
-                        $(".language_dropdown_group[rel=\"0\"] .language_from .text").text(lg["source_language"]);
-                        $(".language_dropdown_group[rel=\"0\"] .language_from input").removeAttr('value');
-                        $(".language_dropdown_group[rel=\"0\"] .language_to .language_to_select").text(lg["source_languages"]);
-                        $(".language_dropdown_group[rel=\"0\"] .language_to input").removeAttr('value');
-                        updateDropdownFileList(0, "quote_block", form_data);
-                        $(".more_files_warning.show").removeClass("show");
-                        $("#quote_block .more").removeAttr("style");
-                    }
-                },
-                error: function(data) {
-                    alert("Something went wrong!");  
-                    console.log(data);
-                }
-            });
-        }else{
 
-        }
-    });
 
     $("body").on("change", "#file_upload", function() {
         var filename = $(this).val().split('\\').pop();
@@ -675,15 +679,6 @@ function equalheight(container){
         }
     });
 }
-
-/*$(window).load(function() {
-  equalheight('.main article');
-});
-
-
-$(window).resize(function(){
-  equalheight('.main article');
-});*/
 
 function dragenter(e, id){
     e.preventDefault();
@@ -904,18 +899,23 @@ function resetInputNoRel(elem, variable, form_data){
 }*/
 
 function changeSelectLang(curr_rel, to_langs, lg, form_id){//update name of selected language
-    if(to_langs[curr_rel].length == 0){
-        $("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text(lg["source_languages"]);
-        return;
-    }
-    if(to_langs[curr_rel].length > 1){
-        $("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text(to_langs[curr_rel].length + " " + lg["languages"]);
-        return;
-    }
-    if(to_langs[curr_rel].length == 1){
-        $("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text("1 " + lg["language"]);
-        return;
-    }
+	if(curr_rel in to_langs){
+		if(to_langs[curr_rel].length == 0){
+			$("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text(lg["source_languages"]);
+			return;
+		}
+		if(to_langs[curr_rel].length > 1){
+			$("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text(to_langs[curr_rel].length + " " + lg["languages"]);
+			return;
+		}
+		if(to_langs[curr_rel].length == 1){
+			$("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text("1 " + lg["language"]);
+			return;
+		}
+    	}else{
+		$("#"+form_id+" .language_dropdown_group[rel=" + curr_rel + "] .language_to_select").text(lg["source_languages"]);
+		return;
+    	}
 }
 
 function guid() {
@@ -1096,11 +1096,7 @@ function updateDropdownFileList(curr_rel, form_id, form_data){// update file lis
         $("#"+form_id+" .language_dropdown_group[rel=\"" + curr_rel + "\"] .dropdowns >.close").after("<div class=\"language_file_item\" rel=\"" + curr_rel + "\" rel_1=\"-1\"></div>");
     }else{
         for(i = 0; i < form_data.file_names[curr_rel].length; i++){
-            if(form_id == "quote_block"){
-                $("#"+form_id+" .language_dropdown_group[rel=\"" + curr_rel + "\"] .dropdowns >.close").after("<div class=\"language_file_item\" rel=\"" + curr_rel + "\" rel_1=\"" + i + "\"><span class=\"close\" onClick=\"removeFileLine($(this), '"+curr_mode+"', form_data, 'quote_block')\">✖</span>" + form_data.file_names[curr_rel][i] + " " + ((form_data.file_sizes[curr_rel][i])/1024/1024).toFixed(2)  + " MB</div>");
-            }else if(form_id == "apply_vacancy"){
-                $("#"+form_id+" .language_dropdown_group[rel=\"" + curr_rel + "\"] .dropdowns >.close").after("<div class=\"language_file_item\" rel=\"" + curr_rel + "\" rel_1=\"" + i + "\"><span class=\"close\" onClick=\"removeFileLine($(this), '"+curr_mode+"', form_cv_data, 'apply_vacancy')\">✖</span>" + form_data.file_names[curr_rel][i] + " " + ((form_data.file_sizes[curr_rel][i])/1024/1024).toFixed(2)  + " MB</div>");
-            }
+        	$("#"+form_id+" .language_dropdown_group[rel=\"" + curr_rel + "\"] .dropdowns >.close").after("<div class=\"language_file_item\" rel=\"" + curr_rel + "\" rel_1=\"" + i + "\"><span class=\"close\" onClick=\"removeFileLine($(this), '"+curr_mode+"', form_data, '"+form_id+"')\">✖</span>" + form_data.file_names[curr_rel][i] + " " + ((form_data.file_sizes[curr_rel][i])/1024/1024).toFixed(2)  + " MB</div>");
         }
     }
     return;
@@ -1390,6 +1386,10 @@ function multi_select_langs(thiss, id, form_id, form_data){//function to control
                                 }
                             }
                             form_data.to_langs[curr_rel].splice (i, 1);
+                           /* if(form_data.to_langs[curr_rel].length == 0){
+                            	form_data.to_langs.splice (curr_rel, 1);
+                            }*/
+                            //console.log(form_data);
                             //form_data.to_langs[curr_rel][i] = "";
                             changeSelectLang(curr_rel, form_data.to_langs, lg, form_id);
                             break;

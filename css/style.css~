@@ -265,7 +265,7 @@ span.error+span.error{
 }
 
 .redborder {
-  border-color: red !important; }
+  border-color: red; }
 
 .error, input.error:focus {
   color: red;

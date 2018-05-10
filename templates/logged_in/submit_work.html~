@@ -63,7 +63,7 @@
 							<div class="file_sector">
 								{*<input type="hidden" id="file_upload_path" name="file_upload_servername" rel="0">*}
 							
-								<label class="bloated simple primary button file_upload_call"  rel="0" onClick="callFileUploadModal(this, 'file_upload_modal', 'submit_work');">
+								<label class="bloated simple primary button file_upload_call"  rel="0" onClick="callFileUploadModalAdmin(this, 'file_upload_modal_logged', 'submit_work');">
 									{$lg.upload}
 								</label>
 							</div>
