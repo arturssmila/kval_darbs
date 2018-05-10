@@ -146,59 +146,10 @@
 				break;
 
 			case "new_projects":
-				/*require_once '/Paginator.class.php';
+				require_once '/Paginator.class.php';
 				$limit      = ( (isset( $_GET['cat2'] )) && (!empty($_GET['cat2'])) ) ? ((!is_numeric($_GET['cat2'])) ? "all" : $_GET['cat2']) : 20;
 				$page       = ( isset( $_GET['cat1'] ) ) ? ((is_numeric($_GET['cat1'])) ? $_GET['cat1'] : 1) : 1;
-				$links      = ( isset( $_GET['links'] ) ) ? $_GET['links'] : 7;*/
-				//$Paginator  = new Paginator( "SELECT * FROM submitted_work WHERE accepted='0' ORDER BY created DESC" );		 
-				//$data["manager"]["jobs"] = $Paginator->getData( $limit, $page );
-				if(!is_numeric($lin1)){
- 					header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"."/0");
-				}else if((is_numeric($lin1)) && (!is_numeric($lin2))){
-					$query = "SELECT * FROM submitted_work WHERE accepted='0' ORDER BY created DESC";//get all specialities of employee language pair
-					$rez= mysql_query($query);
-					$jobs = getSqlRows($rez);
-					if(!empty($jobs)){
-						foreach($jobs as $key=>$value){
-							if(!empty($value["user_id"])){
-								get_user("S", array("active"=>"1", "admin"=>"0", "id"=>$value["user_id"]), $customer);
-								if(!empty($customer)){
-									$jobs[$key]["customer"] = $customer;
-								}else{
-									one_back();
-								}
-							}
-						}
-						$data["manager"]["jobs"] = array();
-						$data["manager"]["jobs"] = $jobs;
-					}
-				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (!is_numeric($lin3))){
-					$query = "SELECT * FROM submitted_work WHERE (accepted='0') AND (id='$lin1') ORDER BY created DESC";//get all specialities of employee language pair
-					$rez= mysql_query($query);
-					$jobs = getSqlRows($rez);
-					if(!empty($jobs)){
-						$data["manager"]["jobs"] = array();
-						$data["manager"]["jobs"] = $jobs;
-					}
-					get_user("S", array("active"=>"1", "admin"=>"0", "id"=>$jobs[0]["user_id"]), $customer);
-					if(!empty($customer)){
-						$data["manager"]["jobs"]["customer"] = $customer;
-					}else{
-						one_back();
-					}
-				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (is_numeric($lin3))){
-					if($lin2 == 0){
-						get_user("S", array("active"=>"1", "admin"=>"0", "id"=>$lin1), $employee);
-						if(!empty($employee)){
-							
-						}else{
-							one_back();
-						}						
-					}else if($lin2 == 1){
-						$data["manager"]["translators"] = "NEW";
-						$data["manager"]["curr_page"] = 1;
-					}
-				}
+				$links      = ( isset( $_GET['links'] ) ) ? $_GET['links'] : 7;
 				
 				break;
 

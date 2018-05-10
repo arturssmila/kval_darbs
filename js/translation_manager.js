@@ -171,7 +171,7 @@ $(document).ready(function(){
 			}
 		});
 		if(validated == 1){
-			/*$.ajax({
+			$.ajax({
 				url: '/res/translations_manager.php',  //server script to process data
 				type: 'POST',
 				data: {form_data: JSON.stringify(form_data), action: "create_request"},
@@ -215,7 +215,7 @@ $(document).ready(function(){
 					alert("Something went wrong!");  
 					console.log(data);
 				}
-			});*/
+			});
 		}else{
 			console.log("user error");
 		}
