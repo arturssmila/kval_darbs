@@ -60,6 +60,8 @@ CREATE TABLE vacancy_languages (
 	FOREIGN KEY (vacancy_id) REFERENCES vacancy_requests(id)
 );
 
+ALTER TABLE `vacancy_languages` CHANGE `rate` `rate` DECIMAL(10,3) NULL DEFAULT NULL;
+
 CREATE TABLE vacancy_questions (
 	id INT(11) AUTO_INCREMENT NOT NULL,
 	vacancy_id INT(11) NOT NULL,
@@ -85,6 +87,8 @@ ALTER TABLE `employee_language_pairs` ADD `rate` DECIMAL(10,2) NULL DEFAULT NULL
 
 ALTER TABLE `employee_language_pairs` ADD `currency` VARCHAR(3) CHARACTER SET utf32 COLLATE utf32_general_ci NULL AFTER `rate`;
 
+ALTER TABLE `employee_language_pairs` CHANGE `rate` `rate` DECIMAL(10,3) NULL DEFAULT NULL;
+
 
 CREATE TABLE language_pair_specialities (
 	id INT(11) AUTO_INCREMENT NOT NULL,
@@ -94,6 +98,7 @@ CREATE TABLE language_pair_specialities (
 	FOREIGN KEY (pair_id) REFERENCES employee_language_pairs(id)
 );
 ALTER TABLE `language_pair_specialities` ADD `rate` DECIMAL(10,2) NULL DEFAULT NULL AFTER `speciality_id`;
+ALTER TABLE `language_pair_specialities` CHANGE `rate` `rate` DECIMAL(10,3) NULL DEFAULT NULL;
 
 CREATE TABLE language_pair_prices(
 	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -103,6 +108,8 @@ CREATE TABLE language_pair_prices(
 	speciality varchar(11) NOT NULL
 );
 
+ALTER TABLE `language_pair_prices` CHANGE `rate` `rate` DECIMAL(10,3) NULL DEFAULT NULL;
+
 CREATE TABLE submitted_work(
 	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -111,34 +118,58 @@ CREATE TABLE submitted_work(
 	time_due time,
 	time_zone varchar(80),
 	comment_text varchar(5000),
-	FOREIGN KEY user_id REFERENCES users(id)
-);
+	word_count INT(11) NULL,
+	accepted ENUM('0', '1', '2', '3', '4', '-1') default '0' NOT NULL,
+	INDEX us_id (user_id),
+   	FOREIGN KEY (user_id) REFERENCES users(id)
+)
+ENGINE=InnoDB;
+
+//for submitted_work table above - accepted 1 = work manager has stated the price and sent for customer to confirm
+//accepted 2 = customer has confirmed the price
+//accepted 3 = some files are done
+//accepted 4 = work is done and sent back to customer
+//accepted -1 = customer or work manager has denied because of price etc.
 
 CREATE TABLE submitted_pairs(
 	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	work_id INT(11) NOT NULL,
-	lang_from varchar(5),
-	lang_to varchar(600),
-	FOREIGN KEY work_id REFERENCES submitted_work(id)
-);
+	lang_from varchar(80),
+	lang_to varchar(80),
+	INDEX wor_id (work_id),
+	FOREIGN KEY (work_id) REFERENCES submitted_work(id)
+)
+ENGINE=InnoDB;
 
 CREATE TABLE submitted_files(
 	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	work_id INT(11) NOT NULL,
 	pair_id INT(11) NOT NULL,
 	file_path varchar(80) NOT NULL,
-	FOREIGN KEY work_id REFERENCES submitted_work(id),
-	FOREIGN KEY pair_id REFERENCES submitted_pairs(id)
-);
+	word_count INT(11) NULL,
+	speciality_id INT(11) NULL,
+	price decimal(10,2),
+	INDEX wor_id (work_id),
+	INDEX pai_id (pair_id),
+	FOREIGN KEY (work_id) REFERENCES submitted_work(id),
+	FOREIGN KEY (pair_id) REFERENCES submitted_pairs(id)
+)
+ENGINE=InnoDB;
+
+ALTER TABLE `submitted_files` ADD `file_name` VARCHAR(256) NOT NULL AFTER `file_path`;
 
 CREATE TABLE tasks(
 	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	file_id INT(11) NOT NULL,
 	work_id INT(11) NOT NULL,
+	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	multiple_employees boolean NOT NULL default 0,
-	FOREIGN KEY file_id REFERENCES submitted_files(id),
-	FOREIGN KEY work_id REFERENCES submitted_work(id)
-);
+	INDEX fil_id (file_id),
+	INDEX wor_id (work_id),
+	FOREIGN KEY (file_id) REFERENCES submitted_files(id),
+	FOREIGN KEY (work_id) REFERENCES submitted_work(id)
+)
+ENGINE=InnoDB;
 
 CREATE TABLE appointed_employees(
 	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -152,10 +183,13 @@ CREATE TABLE appointed_employees(
 	page_from INT(11) NULL,
 	page_to INT(11) NULL,
 	completed boolean NOT NULL default 0,
+	completed_time datetime NULL,
+	let_customer_see boolean NOT NULL default 0,
 	file_path varchar(80) NULL,
+	word_count INT(11) NOT NULL,
 	comment_text varchar(5000),
-	FOREIGN KEY assigner_id REFERENCES users(id),
-	FOREIGN KEY employee_id REFERENCES users(id),
-	FOREIGN KEY task_id REFERENCES tasks(id)
-);
+	INDEX tas_id (task_id),
+	FOREIGN KEY (task_id) REFERENCES tasks(id)
+)
+ENGINE=InnoDB;
 

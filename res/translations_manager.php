@@ -12,7 +12,10 @@
 					$rs= mysql_query($query);
 					$employee_pear = getSqlRows($rs);//yes, pears
 					if(!empty($employee_pear)){
-						if(!checkPermission(2, $employee_pear[0]["employee_id"])){
+						if(checkPermission(2, $employee_pear[0]["employee_id"]) == "logged_out"){
+							echo(json_encode("logged_out"));
+							exit();
+						}else if(!checkPermission(2, $employee_pear[0]["employee_id"])){
 							//echo __LINE__;
 							echo(json_encode("error"));
 							exit();
@@ -374,8 +377,8 @@
 					if(!empty($form_data->comment)){
 						$comment_name = ", comment_text";
 						$comment = ", '" . htmlspecialchars($form_data->comment, ENT_QUOTES, "UTF-8", true) . "'";
-					}/*
-					$query = "INSERT INTO submitted_work (user_id" . $time_names . $comment_name . ")
+					}
+					/*$query = "INSERT INTO submitted_work (user_id" . $time_names . $comment_name . ")
 						VALUES ('".$_SESSION["user"]["id"]."'" . $time_string . $comment . ")";
 					$submitted_work_info = mysql_query($query);
 					$submitted_id = mysql_insert_id();*/
@@ -393,8 +396,13 @@
 							$to_cou++;
 						}
 					}
-					$file_cou = count($form_data->faili);
-					if((($from_cou > 0) && ($to_cou > 0)) && ($from_cou == $to_cou)){
+					$file_cou = 0;
+					foreach($form_data->faili as $key=>$value){
+						if(!empty($value)){
+							$file_cou++;
+						}
+					}
+					if((($from_cou > 0) && ($to_cou > 0)) && ($from_cou == $to_cou) && ($from_cou == $file_cou)){
 						//var_dump("from: $from_cou, to: $to_cou.");
 						for($i = 0; $i < $from_cou; $i++){
 							if((!empty($form_data->to_langs[$i])) && (!empty($form_data->from_langs[$i]))){
@@ -403,13 +411,22 @@
 								if(!empty($form_data->from_langs[$i])){
 									$from_langs = $form_data->from_langs[$i];
 								}
-								/*$query = "INSERT INTO request_languages (lang_from, lang_to, request_id)
-						VALUES ('" . $from_langs . "', '" . $to_langs . "', '" . $request_id . "')";
-								mysql_query($query);
-								$langs_id = mysql_insert_id();
-								if(!empty($form_data->faili[$key])){
-									prepareFiles($form_data, $key, $langs_id, $request_id);
-								}*/
+								if(empty($to_langs) && empty($from_langs)){
+									continue;//if the user added a language pair but then deleted it, the array index might still be there
+								}
+								$to_langs = explode(",", $to_langs);
+								var_dump($to_langs);
+								foreach($to_langs as $key=>$value){
+									/*$query = "INSERT INTO submitted_pairs (work_id, lang_from, lang_to)
+									VALUES ('" . $from_langs . "', '" . $to_langs . "', '" . $submitted_id . "')";
+									mysql_query($query);
+									$langs_id = mysql_insert_id();
+									if(!empty($form_data->faili[$key])){
+										prepareFiles($form_data, $key, $langs_id, $request_id);
+									}else{
+										
+									}*/
+								}
 							}
 						}
 					}else{
@@ -638,5 +655,35 @@
 	}else{
 		echo(json_encode("empty"));
 		exit();
+	}
+	
+	function prepareFilesForSubmit($form_data, $key, $langs_id, $submit_id){//puts files to upload folder and creates sql entries with languages id if has one
+		if(!empty($langs_id)){
+			$langs_ids = " languages_id,";
+			$langs_id = "', '" . $langs_id;
+		}else{
+			return "error";
+		}
+		if(!empty($form_data->faili[$key]) && isset($form_data->faili[$key])){
+			foreach ($form_data->faili[$key] as $keyy=>$valuee){
+				if(!empty($form_data->file_names[$key][$keyy])){
+					$file_name = $form_data->file_names[$key][$keyy];
+					$file_name_name = ", file_name";
+				}else{
+					$file_name = "";
+					$file_name_name = "";
+				}
+				$path = $valuee;
+				if($path != "big" && $path != "error" && $path != "format"){
+					$res = moveUploaded($path, "completed_jobs");
+					//var_dump($res);
+					if($res != false){
+						$query = "INSERT INTO request_files (file_path," . $langs_ids . " request_id" . $file_name_name . ")
+						VALUES ('" . $res . $langs_id . "', '" . $request_id . "', '" . $file_name . "')";
+						mysql_query($query);
+					}
+				}
+			}
+		}
 	}
 ?>

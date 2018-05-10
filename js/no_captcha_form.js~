@@ -1,7 +1,10 @@
-var isAdvancedUpload = function() {//make sure if broswer supports drag and drop upload
-    var div = document.createElement('div');
-    return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
-}();
+
+$(document).ready(function() {
+	$('input#modal_file_input:file').unbind();
+	$('input#modal_file_input:file').on("change", function(){
+		checkFilesAdmin(this.files, curr_rel, "submit_work", form_data);
+	});
+});
 
 function dragenter_logged(e, id){
     e.preventDefault();
@@ -29,18 +32,15 @@ function drop_logged(e, id){
             $("#" + id + " .box.file_upload").addClass('is_success').removeClass('is_error');
             e.preventDefault();
 
-            if(id == "vacancies_modal"){
-                checkFiles(droppedFiles, curr_rel, "apply_vacancy", form_cv_data);
-            }else{
-                checkFiles(droppedFiles, curr_rel, "quote_block", form_data);
-            }
+
+		checkFilesAdmin(droppedFiles, curr_rel, "submit_work", form_data);
         }
     }
 }
 
 function make_droppable_logged(id){
     if (isAdvancedUpload && !is_safari){
-        var my_modal = document.getElementById(id);
+    	var my_modal = document.getElementById(id);
         my_modal.addEventListener("dragenter", function(){
             dragenter_logged(event, id);
         }, false);
@@ -122,21 +122,17 @@ function language_select_nocapt(thiss, id, form_data, form_id){//open language s
 }
 
 
-function uploadFile(formD, form_id, form_data){//upload files to tmp dir
+function uploadFileLogged(formD, form_id, form_data){//upload files to tmp dir
     extension_list = js_extensions.split(",");
-    var path_to_php = "";
-    if(form_id == "apply_vacancy"){
-        path_to_php = "cv_requests";
-    }else if(form_id == "quote_block"){
-        path_to_php = "requests";
-    }
+    //console.log(formD);
         $.ajax({
-            url: '/res/'+path_to_php+'.php',
+            url: '/res/translations_manager.php',
             type: 'POST',
             data: formD,
             cache: false,
-            contentType: false,
             processData: false,
+            contentType: false,
+            dataType: "json",
             async: true,
             xhr: function() {
                 //var xhr = new window.XMLHttpRequest();
@@ -163,13 +159,12 @@ function uploadFile(formD, form_id, form_data){//upload files to tmp dir
             success: function(data) {
                 //data = JSON.stringify(data);
                 //data = data.replace(/['"]+/g, '');
-                //console.log(data);
-                console.log(data)
+               // console.log(data)
                 if(data == "big"){
                     alert(lg["bad_file_size"]);
-                }else if(data == "captcha"){
-                    alert(lg["captcha"]);
-                }else{
+                }else if(data == "empty"){
+                    alert(lg["empty"]);
+		}else{
                     var new_id = guid();
                     for(i = 0; i < data.length; i++){
                         $(".file_label_content").append("<p id='" + new_id + "'>" + lg["file"] + " " + data[i]["name"] + " " + lg["successful_upload"] + "</p>");
@@ -186,13 +181,8 @@ function uploadFile(formD, form_id, form_data){//upload files to tmp dir
                             form_data.file_sizes[curr_rel].push(data[i]["size"]);
                         }
                     }
-                    if(form_id == "quote_block"){
-                        updateDropdownFileList(curr_rel, "quote_block", form_data);
-                        getModalFileList(curr_rel, "quote", form_data);
-                    }else if(form_id == "apply_vacancy"){
-                        updateCvFileList();
-                        getModalFileList(curr_rel, "vacancy", form_cv_data);
-                    }
+				updateDropdownFileList(curr_rel, "sumbit_work", form_data);
+				getModalFileList(curr_rel, "quote", form_data);
                 }
             },
             error: function(data) {
@@ -201,7 +191,6 @@ function uploadFile(formD, form_id, form_data){//upload files to tmp dir
                 //alert(JSON.stringify(data));
             }
         });
-        grecaptcha.reset();
     //}
 }
 
@@ -223,7 +212,7 @@ function callFileUploadModalAdmin(thiss, id, mode) {//open file upload modal
 	$(".box__error").hide();
 	$(".box__uploading").hide();
 	$(".box__success").hide();
-    	make_droppable("file_upload_modal");
+    	make_droppable_logged("file_upload_modal_logged");
 	getModalFileList(curr_rel, "quote", form_data);
 }
 
@@ -246,11 +235,8 @@ function checkFilesAdmin(filesList, curr_rel, form_id, form_data){//prepare file
             last_size = filesList[i].size;
         }
     }
-    /*if(!(extension_list.includes(file.type))) {
-        alert(lg["acceptable_formats"] + " " + accepted_formats);
-        filePath = "error";
-    }*/
     var path;
+   // console.log(path);
     if(allow == 1){
         if(complete_size > 31457280){
             complete_size -= curr_size;
@@ -264,14 +250,12 @@ function checkFilesAdmin(filesList, curr_rel, form_id, form_data){//prepare file
             }
             //$(".file_label_content").html("");
             var formData = new FormData();
-            captcha = grecaptcha.getResponse();
             files = [];
             for(i = 0; i < filesList.length; i++){
                 formData.append("file"+i, filesList[i]);
             }
             formData.append("action", "upload"); 
-            formData.append("captcha", captcha);
-            uploadFile(formData, form_id, form_data);
+            uploadFileLogged(formData, form_id, form_data);
         }
     }else{
     }

@@ -245,9 +245,10 @@ function changeSpecialities(pair_id, table_id){
                     console.log("ree"); 
                 }else if(response == "ok"){
                     $(".to_toggle[toggle_id='"+pair_id+"'] .button.bloated.primary").addClass("hide");
-                    $(".to_toggle[toggle_id='"+pair_id+"'] .done_text").removeClass("hide").delay(3000).queue(function(next){
+                    $(".to_toggle[toggle_id='"+pair_id+"'] .done_text").removeClass("hide").delay(1500).queue(function(next){
                         $(this).addClass("hide");
                         $(".to_toggle[toggle_id='"+pair_id+"'] .button.bloated.primary.submit").removeClass("hide");
+                        location.reload();
                         next();
                     });
                 }           
@@ -279,6 +280,49 @@ function changeCellValue(clicked, main_id, field, file, action){
                 url: file,
                 data: {
                     main_id: main_id,
+                    field: field,
+                    action: action,
+                    value: value
+                },
+                async: true,
+                dataType: 'json',
+                cache: false,
+                success: function(response)
+                {
+                    console.log(response);
+                    if(response == "ok"){
+                        $parent.prev(".original").find(".cell_content").text(value);
+                        $parent.prev(".original").removeClass("hide");
+                        $parent.addClass("hide");
+                    }else{
+                        alert("could not update!");
+                    }     
+                },
+                error: function(response)
+                {
+                    console.log(response);
+                    alert("could not update!");
+                }
+            });
+        }
+    }
+}
+
+function changeCellValue_2ids(clicked, main_id, second_id, field, file, action){
+    $parent = $(clicked).parent().parent();
+    var original_val = $parent.prev(".original").find(".cell_content").text();
+    var value = $(clicked).parent().prev("input").val();
+    if(value == original_val){
+        $parent.prev(".original").removeClass("hide");
+        $parent.addClass("hide");
+    }else{
+        if (value !== null){
+            $.ajax({
+                type: "POST",
+                url: file,
+                data: {
+                    main_id: main_id,
+                    second_id: second_id,
                     field: field,
                     action: action,
                     value: value

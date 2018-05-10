@@ -294,6 +294,9 @@ function changeCellValue(clicked, main_id, field, file, action){
                         $parent.prev(".original").find(".cell_content").text(value);
                         $parent.prev(".original").removeClass("hide");
                         $parent.addClass("hide");
+                    }else if(response == "logged_out"){
+                        alert(lg.session_ended_logged_out);
+                        location.reload();
                     }else{
                         alert("could not update!");
                     }     
@@ -337,6 +340,9 @@ function changeCellValue_2ids(clicked, main_id, second_id, field, file, action){
                         $parent.prev(".original").find(".cell_content").text(value);
                         $parent.prev(".original").removeClass("hide");
                         $parent.addClass("hide");
+                    }else if(response == "logged_out"){
+                        alert(lg.session_ended_logged_out);
+                        location.reload();
                     }else{
                         alert("could not update!");
                     }     
@@ -380,11 +386,14 @@ function tableAction(table_id, file, action){
             cache: false,
             success: function(response)
             {
-                if(response == "ok"){
-                    if(action == "removeEmployeePairs"){
-                        location.reload();
-                    }
-                }
+               	 if(response == "ok"){
+				if(action == "removeEmployeePairs"){
+					location.reload();
+				}
+               	 }else if(response == "logged_out"){
+				alert(lg.session_ended_logged_out);
+				location.reload();
+			 }
                 //if(is_numeric(response) && action == "removeEmployeePairs")         
             },
             error: function(response)

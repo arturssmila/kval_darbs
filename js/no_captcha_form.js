@@ -154,7 +154,6 @@ function uploadFileLogged(formD, form_id, form_data){//upload files to tmp dir
                 if(($("#file_upload_modal .box__input .loading").hasClass("show"))){
                     $("#file_upload_modal .box__input .loading").removeClass("show")
                 }
-                enableBtn();
             },
             success: function(data) {
                 //data = JSON.stringify(data);
@@ -181,7 +180,7 @@ function uploadFileLogged(formD, form_id, form_data){//upload files to tmp dir
                             form_data.file_sizes[curr_rel].push(data[i]["size"]);
                         }
                     }
-				updateDropdownFileList(curr_rel, "sumbit_work", form_data);
+				updateDropdownFileList(curr_rel, "submit_work", form_data);
 				getModalFileList(curr_rel, "quote", form_data);
                 }
             },

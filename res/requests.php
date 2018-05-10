@@ -400,20 +400,7 @@
 
 	
 
-	function deleteOldFiles($path){
-		if ($handle = opendir($path)) {
-		    while (false !== ($file = readdir($handle))) {
-		    	if($file !== (".htaccess") && $file !== (".") && $file !== ("..")){
-			    	$diff = time()-filemtime($path . "/" . $file);
-			    	$hours = $diff / 3600;
-			    	if($hours >= 72){
-			    		unlink($path . "/" . $file);
-			    	}
-		    	}
-		    }
-		    closedir($handle);
-		}
-	}
+	
 
 
 	function prepareLangs($form_data, $request_id, $direction){//puts languages in database and uses database entry ids to upload files

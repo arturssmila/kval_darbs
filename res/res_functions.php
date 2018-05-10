@@ -41,34 +41,38 @@
 	}
 
 	function checkPermission($level, $affected_id){
-		switch ($level) {
-			case 1:
-				if(($_SESSION["user"]["admin"] == 1) || ($_SESSION["user"]["admin"] == 2)){
-					return true;
-				}else if($_SESSION["user"]["admin"] == 2){
-					if(!empty($_SESSION["user"]["manager"])){
+		if(isset($_SESSION["user"]["admin"])){
+			switch ($level) {
+				case 1:
+					if(($_SESSION["user"]["admin"] == 1) || ($_SESSION["user"]["admin"] == 2)){
+						return true;
+					}else if($_SESSION["user"]["admin"] == 2){
+						if(!empty($_SESSION["user"]["manager"])){
+							return true;
+						}else{
+							return false;
+						}
+					}else{
+						return false;
+					}
+					break;
+				
+				case 2:
+					if(($_SESSION["user"]["admin"] == 1) || ($_SESSION["user"]["admin"] == 2)){
+						return true;
+					}else if($_SESSION["user"]["id"] == $affected_id){
 						return true;
 					}else{
 						return false;
 					}
-				}else{
-					return false;
-				}
-				break;
-			
-			case 2:
-				if(($_SESSION["user"]["admin"] == 1) || ($_SESSION["user"]["admin"] == 2)){
-					return true;
-				}else if($_SESSION["user"]["id"] == $affected_id){
-					return true;
-				}else{
-					return false;
-				}
-				break;
-
-			default:
-				# code...
-				break;
+					break;
+	
+				default:
+					# code...
+					break;
+			}
+		}else{
+			return "logged_out";
 		}
 	}
 
@@ -170,6 +174,21 @@
 		}
 	}
 	
+	function deleteOldFiles($path){
+		if ($handle = opendir($path)) {
+		    while (false !== ($file = readdir($handle))) {
+		    	if($file !== (".htaccess") && $file !== (".") && $file !== ("..")){
+			    	$diff = time()-filemtime($path . "/" . $file);
+			    	$hours = $diff / 3600;
+			    	if($hours >= 72){
+			    		unlink($path . "/" . $file);
+			    	}
+		    	}
+		    }
+		    closedir($handle);
+		}
+	}
+	
 	function moveUploaded($path, $target){
 		$new_path = str_replace("/tmp/", "/".$target."/", $path);
 		$code = copy($path, $new_path);
@@ -178,4 +197,6 @@
 		}
 		return $new_path;
 	}
+	
+	
 ?>
