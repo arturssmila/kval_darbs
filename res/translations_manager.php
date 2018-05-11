@@ -12,11 +12,13 @@
 					$rs= mysql_query($query);
 					$employee_pear = getSqlRows($rs);//yes, pears
 					if(!empty($employee_pear)){
-						if(checkPermission(2, $employee_pear[0]["employee_id"]) == "logged_out"){
-							echo(json_encode("logged_out"));
+						if($_SESSION["user"]["soc"] != "00"){
+							echo(json_encode("error"));
+							exit();
+						}else if(!isset($_SESSION["user"]["admin"])){
+							echo(json_encode("error"));
 							exit();
 						}else if(!checkPermission(2, $employee_pear[0]["employee_id"])){
-							//echo __LINE__;
 							echo(json_encode("error"));
 							exit();
 						}
@@ -79,7 +81,13 @@
 				}
 				break;
 			case "changePairSpecialityRate":
-				if(!checkPermission(1, 0)){
+				if($_SESSION["user"]["soc"] != "00"){
+					echo(json_encode("error"));
+					exit();
+				}else if(!isset($_SESSION["user"]["admin"])){
+					echo(json_encode("error"));
+					exit();
+				}else if(!checkPermission(1, 0)){
 					//echo __LINE__;
 					echo(json_encode("error"));
 					exit();
@@ -130,7 +138,13 @@
 					$query = "SELECT * FROM employee_language_pairs WHERE id=\"" . $_POST["main_id"] . "\"";//get all language pairs of employee
 					$rs= mysql_query($query);
 					$some_result = getSqlRows($rs);
-					if(!checkPermission(2, $some_result[0]["employee_id"])){
+					if($_SESSION["user"]["soc"] != "00"){
+						echo(json_encode("error"));
+						exit();
+					}else if(!isset($_SESSION["user"]["admin"])){
+						echo(json_encode("error"));
+						exit();
+					}else if(!checkPermission(2, $some_result[0]["employee_id"])){
 						echo(json_encode("error"));
 						exit();
 					}
@@ -170,7 +184,13 @@
 				exit();
 				break;
 			case "changePairRate":
-				if(!checkPermission(1, 0)){
+				if($_SESSION["user"]["soc"] != "00"){
+					echo(json_encode("error"));
+					exit();
+				}else if(!isset($_SESSION["user"]["admin"])){
+					echo(json_encode("error"));
+					exit();
+				}else if(!checkPermission(1, 0)){
 					//echo __LINE__;
 					echo(json_encode("error"));
 					exit();
@@ -240,11 +260,27 @@
 				break;
 			case "removeEmployeePairs":
 				if(!empty($_POST["data"])){
+					if($_SESSION["user"]["soc"] != "00"){
+						echo(json_encode("error"));
+						exit();
+					}else if(!isset($_SESSION["user"]["admin"])){
+						echo(json_encode("error"));
+						exit();
+					}else if(!checkPermission(2, $_POST["data"][0])){
+						echo(json_encode("error"));
+						exit();
+					}
 					foreach ($_POST["data"] as $key => $value) {
 						$query = "SELECT employee_id FROM employee_language_pairs WHERE id=\"" . $value . "\"";//get all language pairs of employee
 						$rs= mysql_query($query);
 						$some_result = getSqlRows($rs);
-						if(checkPermission(2, $some_result[0]["employee_id"])){
+						if($_SESSION["user"]["soc"] != "00"){
+							echo(json_encode("error"));
+							exit();
+						}else if(!isset($_SESSION["user"]["admin"])){
+							echo(json_encode("error"));
+							exit();
+						}else if(checkPermission(2, $some_result[0]["employee_id"])){
 							$query = "DELETE FROM language_pair_specialities WHERE pair_id=\"" . $value . "\"";//delete all employee pair specialities
 							$rs= mysql_query($query);
 							$query = "DELETE FROM employee_language_pairs WHERE id=\"" . $value . "\"";//delete all employee pair specialities
@@ -263,6 +299,16 @@
 				break;
 			case "add_employee_pair":
 				if(!empty($_POST["data"]) && !empty($_POST["employee_id"])){
+					if($_SESSION["user"]["soc"] != "00"){
+						echo(json_encode("error"));
+						exit();
+					}else if(!isset($_SESSION["user"]["admin"])){
+						echo(json_encode("error"));
+						exit();
+					}else if(!checkPermission(2, $_POST["employee_id"])){
+						echo(json_encode("error"));
+						exit();
+					}
 					$return_ids = array();
 					foreach ($_POST["data"] as $key => $value) {
 						if(!empty($value["amount"])){
@@ -304,6 +350,16 @@
 				break;
 			case "get_employee_pairs":
 				if(!empty($_POST["employee_id"])){
+					if($_SESSION["user"]["soc"] != "00"){
+						echo(json_encode("error"));
+						exit();
+					}else if(!isset($_SESSION["user"]["admin"])){
+						echo(json_encode("error"));
+						exit();
+					}else if(!checkPermission(2, $_POST["employee_id"])){
+						echo(json_encode("error"));
+						exit();
+					}
 					$query = "SELECT * FROM employee_language_pairs WHERE employee_id=\"" . $_POST["employee_id"] . "\"";//get all language pairs of employee
 					$rs= mysql_query($query);
 					$employee_pears = getSqlRows($rs);//yes, pears
@@ -332,56 +388,6 @@
 			case "create_request":
 				$form_data = json_decode($_POST["form_data"]);
 				//var_dump($form_data);
-					if(!empty($form_data->faili)){
-						$complete_size = 0;
-						foreach ($form_data->faili as $key=>$value){
-							if(!empty($form_data->faili[$key])){
-								foreach ($form_data->faili[$key] as $keyy=>$valuee){
-									if(!empty($form_data->faili[$key][$keyy])){
-										$complete_size += filesize($valuee);
-										//var_dump($valuee);
-									}
-								}
-							}
-						}
-						if($complete_size > 31457280){
-							echo "big";
-							exit();
-						}
-					}else{
-						echo __LINE__;
-						echo "empty";
-						exit();
-					}
-					
-					$time_string = "";
-					$time_names = "";
-					if(!empty($form_data->date)){
-						$time_string = ", '" . $form_data->date . "'";
-						$time_names = ", date_due";
-						if(!empty($form_data->time)){
-							$time_string .= ", '" . $form_data->time . "'";
-							$time_names .= ", time_due";
-							if(!empty($form_data->time_zone)){
-								$time_string .= ", '" . $form_data->time_zone . "'";
-								$time_names .= ", time_zone";
-							}
-						}
-					}else{
-						echo __LINE__;
-						echo "empty";
-						exit();
-					}
-					$comment_name = "";
-					$comment = "";
-					if(!empty($form_data->comment)){
-						$comment_name = ", comment_text";
-						$comment = ", '" . htmlspecialchars($form_data->comment, ENT_QUOTES, "UTF-8", true) . "'";
-					}
-					$query = "INSERT INTO submitted_work (user_id" . $time_names . $comment_name . ")
-						VALUES ('".$_SESSION["user"]["id"]."'" . $time_string . $comment . ")";
-					$submitted_work_info = mysql_query($query);
-					$submitted_id = mysql_insert_id();
 					//out($form_data);
 
 					$from_cou = 0;
@@ -403,6 +409,56 @@
 						}
 					}
 					if((($from_cou > 0) && ($to_cou > 0)) && ($from_cou == $to_cou) && ($from_cou == $file_cou)){
+						if(!empty($form_data->faili)){
+							$complete_size = 0;
+							foreach ($form_data->faili as $key=>$value){
+								if(!empty($form_data->faili[$key])){
+									foreach ($form_data->faili[$key] as $keyy=>$valuee){
+										if(!empty($form_data->faili[$key][$keyy])){
+											$complete_size += filesize($valuee);
+											//var_dump($valuee);
+										}
+									}
+								}
+							}
+							if($complete_size > 31457280){
+								echo "big";
+								exit();
+							}
+						}else{
+							echo __LINE__;
+							echo "empty";
+							exit();
+						}
+						
+						$time_string = "";
+						$time_names = "";
+						if(!empty($form_data->date)){
+							$time_string = ", '" . $form_data->date . "'";
+							$time_names = ", date_due";
+							if(!empty($form_data->time)){
+								$time_string .= ", '" . $form_data->time . "'";
+								$time_names .= ", time_due";
+								if(!empty($form_data->time_zone)){
+									$time_string .= ", '" . $form_data->time_zone . "'";
+									$time_names .= ", time_zone";
+								}
+							}
+						}else{
+							echo __LINE__;
+							echo "empty";
+							exit();
+						}
+						$comment_name = "";
+						$comment = "";
+						if(!empty($form_data->comment)){
+							$comment_name = ", comment_text";
+							$comment = ", '" . htmlspecialchars($form_data->comment, ENT_QUOTES, "UTF-8", true) . "'";
+						}
+						$query = "INSERT INTO submitted_work (user_id" . $time_names . $comment_name . ")
+							VALUES ('".$_SESSION["user"]["id"]."'" . $time_string . $comment . ")";
+						$submitted_work_info = mysql_query($query);
+						$submitted_id = mysql_insert_id();
 						//var_dump("from: $from_cou, to: $to_cou, files: $file_cou.");
 						for($i = 0; $i < $from_cou; $i++){
 							if((!empty($form_data->to_langs[$i])) && (!empty($form_data->from_langs[$i]))){

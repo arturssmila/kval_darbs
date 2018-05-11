@@ -41,38 +41,34 @@
 	}
 
 	function checkPermission($level, $affected_id){
-		if(isset($_SESSION["user"]["admin"])){
-			switch ($level) {
-				case 1:
-					if(($_SESSION["user"]["admin"] == 1) || ($_SESSION["user"]["admin"] == 2)){
-						return true;
-					}else if($_SESSION["user"]["admin"] == 2){
-						if(!empty($_SESSION["user"]["manager"])){
-							return true;
-						}else{
-							return false;
-						}
-					}else{
-						return false;
-					}
-					break;
-				
-				case 2:
-					if(($_SESSION["user"]["admin"] == 1) || ($_SESSION["user"]["admin"] == 2)){
-						return true;
-					}else if($_SESSION["user"]["id"] == $affected_id){
+		switch ($level) {
+			case 1:
+				if(($_SESSION["user"]["admin"] == 1) || ($_SESSION["user"]["admin"] == 2)){
+					return true;
+				}else if($_SESSION["user"]["admin"] == 2){
+					if(!empty($_SESSION["user"]["manager"])){
 						return true;
 					}else{
 						return false;
 					}
-					break;
-	
-				default:
-					# code...
-					break;
-			}
-		}else{
-			return "logged_out";
+				}else{
+					return false;
+				}
+				break;
+			
+			case 2:
+				if(($_SESSION["user"]["admin"] == 1) || ($_SESSION["user"]["admin"] == 2)){
+					return true;
+				}else if($_SESSION["user"]["id"] == $affected_id){
+					return true;
+				}else{
+					return false;
+				}
+				break;
+
+			default:
+				# code...
+				break;
 		}
 	}
 

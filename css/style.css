@@ -46,6 +46,10 @@ body {
   display: table;
   clear: both; }
 
+ pre{
+ 	 background-color: white;
+ }
+  
 .clickable 
 {
 	cursor: pointer;
@@ -3324,7 +3328,18 @@ display: none; }
     #manager .hidden_rows .to_toggle td > table {
     	width: 100%;
     }
-
+#manager .percent_5{
+	width: 5%;
+}
+#manager .percent_15{
+	width: 15%;
+}
+#manager .percent_20{
+	width: 20%;
+}
+#manager .percent_30{
+	width: 30%;
+}
 #manager .toggle_specialities{
     cursor: pointer;
 }

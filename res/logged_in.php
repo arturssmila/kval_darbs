@@ -181,14 +181,23 @@
 												/********************getting original language pair id**************************/
 												meta("S", array("template"=>"language_pair", "parent_id"=>$pair_value["lang_from"]), $language_pairs_with_this_source);
 												if(!empty($language_pairs_with_this_source)){
+													//echo "work_id:".$pair_value["work_id"]. ". ";
+														//echo "<br>";
 													foreach ($language_pairs_with_this_source as $keyy => $valuee) {
+														//echo $valuee["language_to_id"];
+														//echo " - ";
+														//echo $pair_value["lang_to"];
 														if($valuee["language_to_id"] == $pair_value["lang_to"]){
 															$pairs[$pair_key]["language_pair_original"] = $valuee;
+															//echo "BIJA";
+															//out($pairs[$pair_key]["language_pair_original"]);
 															break;
 														}
+														//echo "<br>";
 													}
 												}
 												/***************************************************************************************/
+													//out($pairs[$pair_key]["language_pair_original"]);
 												
 												/***********************getting language pair names*****************************/
 												meta("S", array("template"=>"language", "id"=>$pair_value["lang_from"]), $language_from);
@@ -214,6 +223,7 @@
 													$total_file_count += count($pair_files);
 												}
 												/******************************************************************************************/
+												//out($pairs[$pair_key]["language_pair_original"]);
 												
 												/****getting language pair speciality prices if such a pair even exists****/
 												if(!empty($pairs[$pair_key]["language_pair_original"])){
@@ -234,11 +244,13 @@
 															 }
 															 $pairs[$pair_key]["specialities"] = $specialities;
 														 }
+														 //out($pairs[$pair_key]["specialities"]);
 													}
 												}
 												/******************************************************************************************/
 											}
 										}
+										//out($pairs);
 										$jobs[$key]["pairs"] = $pairs;
 										$jobs[$key]["file_count"] = $total_file_count;
 									}
