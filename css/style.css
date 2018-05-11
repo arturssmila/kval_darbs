@@ -3312,6 +3312,19 @@ display: none; }
 #manager .to_toggle tr:nth-child(odd){
     background-color: #f6f7f7;
 }
+
+#manager .hidden_rows .to_toggle .hidden_rows .to_toggle table thead tr:nth-child(odd) {
+    background-color: #f6f7f7; }
+
+#manager .hidden_rows .to_toggle .hidden_rows .to_toggle table tr:nth-child(odd) {
+    background-color: #fff; }
+    
+#manager .hidden_rows .to_toggle .hidden_rows .to_toggle table tr:nth-child(even) {
+    background-color: #f6f7f7; }
+    #manager .hidden_rows .to_toggle td > table {
+    	width: 100%;
+    }
+
 #manager .toggle_specialities{
     cursor: pointer;
 }

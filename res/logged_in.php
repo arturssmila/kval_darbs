@@ -189,9 +189,29 @@
 												$res = mysql_query($query);
 												$pair_files = getSqlRows($res);
 												if(!empty($pair_files)){
+													foreach($pair_files as $file_key=>$file_value){
+														$pair_files[$file_key]["file_path"] = getFileLink("images", $pair_files[$file_key]["file_path"]);
+													}
 													$pairs[$pair_key]["files"] = $pair_files;
 													$pairs[$pair_key]["file_count"] = count($pair_files);
 													$total_file_count += count($pair_files);
+												}
+												$query = "SELECT * FROM language_pair_prices WHERE pair_id='".$pair_value["id"]."'";//get all specialities of employee language pair
+												$rez= mysql_query($query);
+												$specialities = getSqlRows($rez);
+												if(!empty($specialities)){
+													 meta("S", array("template"=>"expertise_item"), $all_specialities);//get all specialities
+													 if(!empty($all_specialities)){
+														 foreach($specialities as $spec_key=>$spec_val){
+															 foreach($all_specialities as $all_spec_key=>$all_spec_val){
+															 	if($spec_val["speciality"] == "regular"){
+															 		$spec_val["name"] = $lg["regular"];
+															 	}else if($spec_val["speciality"] == $all_spec_val["id"]){
+															 		$spec_val["name"] = $all_spec_val["name"];
+															 	}
+															 }
+														 }
+													 }
 												}
 											}
 										}

@@ -12,6 +12,7 @@
 					<th>{$lg.time_zone}</th>
 					<th>{$lg.number_of_tasks}</th>
 					<th>{$lg.submitted}</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -65,13 +66,13 @@
 									</label>
 								</div>*}
 							</td>
-							<td class="toggle_specialities noselect" onClick="hiddenRow({$job.id}, 'submitted_jobs')">{$lg.show_pairs}</td>
+							<td class="toggle_specialities noselect" onClick="hiddenRow('{$job.id}_job', 'submitted_jobs', 'to_toggle')"><button class="small">{$lg.show_pairs}</button></td>
 						</tr>
 						{if !empty($job.pairs)}
-							<tr class="hide to_toggle" toggle_id="{$job.id}">
-								<td class="job_language_pairs" colspan="5">
-									<table class="job_language_pairs_table">
-										<thead><tr><th>{$lg.source_language}</th><th>{$lg.target_language}</th><th>{$lg.number_of_tasks}</th></tr></thead>
+							<tr class="hide to_toggle" toggle_id="{$job.id}_job">
+								<td class="job_language_pairs" colspan="9">
+									<table id="lang_pairs_{$job.id}" class="job_language_pairs_table hidden_rows">
+										<thead><tr><th>{$lg.source_language}</th><th>{$lg.target_language}</th><th>{$lg.number_of_tasks}</th><th></th></tr></thead>
 										{foreach from=$job.pairs key=pair_key item=pair}
 											<tr class="job_language_pairs_row">
 												<td class="job_language_pairs_cell">
@@ -95,7 +96,82 @@
 														-
 													{/if}
 												</td>
+												<td class="toggle_specialities noselect" onClick="hiddenRow_toggleSingle('{$pair.id}_pair', 'lang_pairs_{$job.id}', 'to_toggle_sub')">
+													<button class="small">
+														{$lg.show_files}
+													</button>
+												</td>
 											</tr>
+											{if !empty($pair.files)}
+												<tr class="to_toggle_sub" toggle_id="{$pair.id}_pair">
+													<td class="job_language_pair_files" colspan="5">
+														<table class="job_language_pair_files_table" class="hidden_rows">
+															<thead><tr><th>ID</th><th>{$lg.name}</th><th>{$lg.file}</th><th>{$lg.word_count}</th><th>{$lg.speciality}</th></tr></thead>
+															{foreach from=$pair.files key=file_key item=file}
+																<tr class="job_language_pair_files_row">
+																	<td class="job_language_pair_files_cell">
+																			{$file.id}
+																	</td>
+																	<td class="job_language_pair_files_cell">
+																		{if !empty($file.file_name)}
+																			{$file.file_name}
+																		{else}
+																			-
+																		{/if}
+																	</td>
+																	<td class="job_language_pair_files_cell">
+																		{if !empty($file.file_path)}
+																			<a target="_blank" href="{$file.file_path}">{$file.file_name}</a>
+																		{else}
+																			-
+																		{/if}
+																	</td>
+																	<td class="job_language_pair_files_cell">
+																		<div class="original"><span class="cell_content">{if empty($file.word_count)}-{else}{$file.word_count}{/if}</span>
+																			<span class="in_text_element">
+																				<button class="button" onClick="openChangeInput(this)">...</button>
+																			</span>
+																		</div>
+																		<div class="changable hide">
+																			<input type="text" class="short" value="{$file.word_count}">
+																			<span class="in_text_element">
+																				<button class="button primary" onClick="changeCellValue_2ids(this, '{$file.id}', '{$pair.id}', 'word_count', '/res/manager_admin.php', 'changeFileWordCount')">{$lg.done}
+																				</button>
+																				<button class="button primary" onClick="cancelUpdate(this)">
+																					✖
+																				</button>
+																			</span>
+																		</div>
+																	</td>
+																	<td class="job_language_pair_files_cell">
+																		<div class="original"><span class="cell_content">{if empty($file.speciality)}{$lg.regular}{else}{$file.speciality}{/if}</span>
+																			<div class="dropdown">
+																				<div class="select language_from">
+																					<span class="text">
+																						{$lg.source_language}
+																					</span>
+																					<input type="hidden" name="language_from">
+																					{include file="./css/svg/down.svg"}
+																				</div>
+																				<div class="items">
+																					<div class="contents scrollable">
+																						{foreach from=$lang_gr item=g}
+																							{foreach from=$lang_items item=i}
+																								{if $i.parent_id == $g.id}
+																									<span class="item" val="{$i.id}" onclick="resetInput(this)">{$i.name}</span>
+																								{/if}
+																							{/foreach}
+																						{/foreach}
+																					</div>
+																				</div>
+																			</div>
+																	</td>
+																</tr>
+															{/foreach}
+														</table>
+													</td>
+												</tr>
+											{/if}
 										{/foreach}
 									</table>
 								</td>

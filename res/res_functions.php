@@ -198,5 +198,20 @@
 		return $new_path;
 	}
 	
+	function getFileLink($looking_for,$file_path){//looking_for is the name of the directory from which starts the usable file_path
+		$exploded = explode("/", $file_path);
+		foreach ($exploded as $keyyy => $valueee) {
+			if($valueee != $looking_for){
+				unset($exploded[$keyyy]);
+			}else{
+				break;
+			}
+		}
+		$imploded = array_values($exploded);
+		$label = implode("/", $imploded);
+		$label = 'http://'.$_SERVER['HTTP_HOST'] . "/" . $label;
+		return $label;
+	}
+	
 	
 ?>

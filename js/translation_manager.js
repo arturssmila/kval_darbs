@@ -224,13 +224,26 @@ $(document).ready(function(){
     equalheight("#manager .row_table .visible_row .cell");
 });
 
-function hiddenRow(clicked, table_id){
-    if($("#"+table_id+" .to_toggle[toggle_id='"+clicked+"']").hasClass("hide")){
-        $("#"+table_id+" .to_toggle").addClass("hide");
-        $("#"+table_id+" .to_toggle[toggle_id='"+clicked+"']").removeClass("hide");
-    }else{
-        $("#"+table_id+" .to_toggle").addClass("hide");
-    }
+function hiddenRow(clicked, table_id, togglable_class){
+	var search_string = "#"+table_id+" ."+togglable_class;
+	if($(search_string+"[toggle_id='"+clicked+"']").hasClass("hide")){
+		$(search_string).addClass("hide");
+		$(search_string+"[toggle_id='"+clicked+"']").removeClass("hide");
+	}else{
+		$(search_string).addClass("hide");
+	}
+}
+
+function hiddenRow_toggleSingle(clicked, table_id, togglable_class){
+	if($("#"+table_id+" ."+togglable_class+"[toggle_id='"+clicked+"']").is(":hidden")){
+		if($("#"+table_id+" ."+togglable_class+"[toggle_id='"+clicked+"']").hasClass("hide")){
+			$("#"+table_id+" ."+togglable_class+"[toggle_id='"+clicked+"']").removeClass("hide");
+		}else{
+			$("#"+table_id+" ."+togglable_class+"[toggle_id='"+clicked+"']").toggle();
+		}
+	}else{
+		$("#"+table_id+" ."+togglable_class+"[toggle_id='"+clicked+"']").toggle();
+	}
 }
 
 function changeSpecialities(pair_id, table_id){
@@ -329,6 +342,52 @@ function changeCellValue(clicked, main_id, field, file, action){
 }
 
 function changeCellValue_2ids(clicked, main_id, second_id, field, file, action){
+    $parent = $(clicked).parent().parent();
+    var original_val = $parent.prev(".original").find(".cell_content").text();
+    var value = $(clicked).parent().prev("input").val();
+    if(value == original_val){
+        $parent.prev(".original").removeClass("hide");
+        $parent.addClass("hide");
+    }else{
+        if (value !== null){
+            $.ajax({
+                type: "POST",
+                url: file,
+                data: {
+                    main_id: main_id,
+                    second_id: second_id,
+                    field: field,
+                    action: action,
+                    value: value
+                },
+                async: true,
+                dataType: 'json',
+                cache: false,
+                success: function(response)
+                {
+                    console.log(response);
+                    if(response == "ok"){
+                        $parent.prev(".original").find(".cell_content").text(value);
+                        $parent.prev(".original").removeClass("hide");
+                        $parent.addClass("hide");
+                    }else if(response == "logged_out"){
+                        alert(lg.session_ended_logged_out);
+                        location.reload();
+                    }else{
+                        alert("could not update!");
+                    }     
+                },
+                error: function(response)
+                {
+                    console.log(response);
+                    alert("could not update!");
+                }
+            });
+        }
+    }
+}
+
+function getJobPrice(clicked, main_id, second_id, field, file, action){
     $parent = $(clicked).parent().parent();
     var original_val = $parent.prev(".original").find(".cell_content").text();
     var value = $(clicked).parent().prev("input").val();

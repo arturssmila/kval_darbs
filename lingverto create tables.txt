@@ -160,23 +160,11 @@ ENGINE=InnoDB;
 
 ALTER TABLE `submitted_files` ADD `file_name` VARCHAR(256) NOT NULL AFTER `file_path`;
 
-CREATE TABLE tasks(
-	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	file_id INT(11) NOT NULL,
-	work_id INT(11) NOT NULL,
-	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	multiple_employees boolean NOT NULL default 0,
-	INDEX fil_id (file_id),
-	INDEX wor_id (work_id),
-	FOREIGN KEY (file_id) REFERENCES submitted_files(id),
-	FOREIGN KEY (work_id) REFERENCES submitted_work(id)
-)
-ENGINE=InnoDB;
-
 CREATE TABLE appointed_employees(
 	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	assigner_id INT(11) NOT NULL,
-	task_id INT(11) NOT NULL,
+	file_id INT(11) NOT NULL,
+	work_id INT(11) NOT NULL,
 	employee_id INT(11) NOT NULL,
 	offered timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	accepted ENUM('0', '1', '-1') default '0',
@@ -190,8 +178,10 @@ CREATE TABLE appointed_employees(
 	file_path varchar(80) NULL,
 	word_count INT(11) NOT NULL,
 	comment_text varchar(5000),
-	INDEX tas_id (task_id),
-	FOREIGN KEY (task_id) REFERENCES tasks(id)
+	INDEX fil_id (file_id),
+	INDEX wor_id (work_id),
+	FOREIGN KEY (file_id) REFERENCES submitted_files(id),
+	FOREIGN KEY (work_id) REFERENCES submitted_work(id)
 )
 ENGINE=InnoDB;
 
