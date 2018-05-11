@@ -106,7 +106,7 @@
 												<tr class="to_toggle_sub" toggle_id="{$pair.id}_pair">
 													<td class="job_language_pair_files" colspan="5">
 														<table class="job_language_pair_files_table" class="hidden_rows">
-															<thead><tr><th>ID</th><th>{$lg.name}</th><th>{$lg.file}</th><th>{$lg.word_count}</th><th>{$lg.speciality}</th></tr></thead>
+															<thead><tr><th>ID</th><th>{$lg.name}</th><th>{$lg.file}</th><th>{$lg.word_count}</th><th>{$lg.speciality_price}</th></tr></thead>
 															{foreach from=$pair.files key=file_key item=file}
 																<tr class="job_language_pair_files_row">
 																	<td class="job_language_pair_files_cell">
@@ -144,27 +144,29 @@
 																		</div>
 																	</td>
 																	<td class="job_language_pair_files_cell">
-																		<div class="original"><span class="cell_content">{if empty($file.speciality)}{$lg.regular}{else}{$file.speciality}{/if}</span>
-																			<div class="dropdown">
-																				<div class="select language_from">
-																					<span class="text">
-																						{$lg.source_language}
-																					</span>
-																					<input type="hidden" name="language_from">
-																					{include file="./css/svg/down.svg"}
-																				</div>
-																				<div class="items">
-																					<div class="contents scrollable">
-																						{foreach from=$lang_gr item=g}
-																							{foreach from=$lang_items item=i}
-																								{if $i.parent_id == $g.id}
-																									<span class="item" val="{$i.id}" onclick="resetInput(this)">{$i.name}</span>
-																								{/if}
+																		{if !empty($file.specialities)}
+																			<div class="original">
+																				<span class="cell_content">{if empty($file.specialities)}{$lg.regular}{else}{$file.specialities}{/if}</span>
+																				<div class="dropdown">
+																					<div class="select language_from">
+																						<span class="text">
+																							{$lg.source_language}
+																						</span>
+																						<input type="hidden" name="language_from">
+																						{include file="./css/svg/down.svg"}
+																					</div>
+																					<div class="items">
+																						<div class="contents scrollable">
+																							{foreach from=$pair.specialities item=g}
+																								<span class="item" val="{$g.id}" onclick="resetInput(this)">{$g.name}</span>
 																							{/foreach}
-																						{/foreach}
+																						</div>
 																					</div>
 																				</div>
 																			</div>
+																		{else}
+																			<span class="warning">{$lg.pair_not_exists}</span>
+																		{/if}
 																	</td>
 																</tr>
 															{/foreach}

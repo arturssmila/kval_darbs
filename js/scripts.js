@@ -569,8 +569,8 @@ $(document).ready(function() {
     var menu_size = $("#header .menu").children().length;
 
 
-
-    $(".quote_block .more").on("click touchend", function() {
+    $(".quote_block .more").unbind('click');
+    $(".quote_block .more").on("click", function() {
         var number = $('.quote_block .language_dropdown_group').length;
         if(number > 4){
             console.log("nebūs");

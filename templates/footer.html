@@ -163,7 +163,9 @@
 	<script type="text/javascript" src="/js/common.js?{$js_date}"></script>
 	<script type="text/javascript" src="/js/scripts.js?{$js_date}"></script>
 	{if (($cat.0.template == "vacancies") || (!empty($vacancies)))}
-		<script type="text/javascript" src="/js/vacancy.js?{$js_date}"></script>
+		{if $cat.0.template != "logged_in"}
+			<script type="text/javascript" src="/js/vacancy.js?{$js_date}"></script>
+		{/if}
 	{/if}
 	{if $cat.0.template == "register"}
 		<script type="text/javascript" src="/js/register.js?{$js_date}"></script>

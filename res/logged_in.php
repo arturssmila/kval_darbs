@@ -133,7 +133,17 @@
 
 	if (!empty($data["manager"]["route"]["name"])){
 		switch ($data["manager"]["route"]["name"]) {
-			case "notices":
+			case "submit_work":
+				/*meta("S", array("template"=>"language_pair", "parent_id"=>$data["cat"]["0"]["id"]), $data["language_pairs"]);
+				$count = 0;
+				foreach ($data["language_pairs"] as $key => $value) {
+					foreach($data["lang_items"] as $keyy=>$valuee){
+					}
+					if($value["language_to_id"] == $data["cat"][0]["id"]){
+						$data["pair_array"][$count] = $value;
+						$count++;
+					}
+				}*/
 				break;
 
 			case "contact_manager": 
@@ -168,6 +178,7 @@
 										$total_file_count = 0;
 										foreach($pairs as $pair_key=>$pair_value){
 											if(is_numeric($pair_value["lang_from"]) && is_numeric($pair_value["lang_to"])){
+												/********************getting original language pair id**************************/
 												meta("S", array("template"=>"language_pair", "parent_id"=>$pair_value["lang_from"]), $language_pairs_with_this_source);
 												if(!empty($language_pairs_with_this_source)){
 													foreach ($language_pairs_with_this_source as $keyy => $valuee) {
@@ -177,6 +188,9 @@
 														}
 													}
 												}
+												/***************************************************************************************/
+												
+												/***********************getting language pair names*****************************/
 												meta("S", array("template"=>"language", "id"=>$pair_value["lang_from"]), $language_from);
 												if(!empty($language_from)){
 													$pairs[$pair_key]["lang_from_name"] = $language_from[0]["name"];
@@ -185,6 +199,9 @@
 												if(!empty($language_to)){
 													$pairs[$pair_key]["lang_to_name"] = $language_to[0]["name"];
 												}
+												/**************************************************************************************/
+												
+												/***********************getting language pair files*****************************/
 												$query = "SELECT * FROM submitted_files WHERE (pair_id = '" . $pair_value["id"] . "') AND (work_id = '" . $value["id"] . "')";
 												$res = mysql_query($query);
 												$pair_files = getSqlRows($res);
@@ -196,23 +213,30 @@
 													$pairs[$pair_key]["file_count"] = count($pair_files);
 													$total_file_count += count($pair_files);
 												}
-												$query = "SELECT * FROM language_pair_prices WHERE pair_id='".$pair_value["id"]."'";//get all specialities of employee language pair
-												$rez= mysql_query($query);
-												$specialities = getSqlRows($rez);
-												if(!empty($specialities)){
-													 meta("S", array("template"=>"expertise_item"), $all_specialities);//get all specialities
-													 if(!empty($all_specialities)){
-														 foreach($specialities as $spec_key=>$spec_val){
-															 foreach($all_specialities as $all_spec_key=>$all_spec_val){
-															 	if($spec_val["speciality"] == "regular"){
-															 		$spec_val["name"] = $lg["regular"];
-															 	}else if($spec_val["speciality"] == $all_spec_val["id"]){
-															 		$spec_val["name"] = $all_spec_val["name"];
-															 	}
+												/******************************************************************************************/
+												
+												/****getting language pair speciality prices if such a pair even exists****/
+												if(!empty($pairs[$pair_key]["language_pair_original"])){
+													$query = "SELECT * FROM language_pair_prices WHERE pair_id='".$pairs[$pair_key]["language_pair_original"]["id"]."'";//get all specialities of employee language pair
+													$rez= mysql_query($query);
+													$specialities = getSqlRows($rez);
+													if(!empty($specialities)){
+														 meta("S", array("template"=>"expertise_item"), $all_specialities);//get all specialities
+														 if(!empty($all_specialities)){
+															 foreach($specialities as $spec_key=>$spec_val){
+																 foreach($all_specialities as $all_spec_key=>$all_spec_val){
+																	if($spec_val["speciality"] == "regular"){
+																		$specialities[$spec_key]["name"] = $data["lg"]["regular"];
+																	}else if($spec_val["speciality"] == $all_spec_val["id"]){
+																		$specialities[$spec_key]["name"] = $all_spec_val["name"];
+																	}
+																 }
 															 }
+															 $pairs[$pair_key]["specialities"] = $specialities;
 														 }
-													 }
+													}
 												}
+												/******************************************************************************************/
 											}
 										}
 										$jobs[$key]["pairs"] = $pairs;

@@ -507,14 +507,25 @@
 								<ul>
 									<li class="select_item other">
 										<input value="other" class="multi_select_languages other" type="checkbox" onclick="multi_select_langs($(this), 'vacancies_modal');"><span><input id="other_language" class="" tips="other" placeholder="{$lg.other_lang}"></span></li>
-									{foreach from=$lang_gr item=g}
-										{foreach from=$lang_items item=i name=lieta}
-											{if $i.parent_id == $g.id}
-												<li class="select_item">
-												<input value="{$i.id}" class="multi_select_languages" type="checkbox"><span>{$i.name}</span></li>
-											{/if}
-										{/foreach}
-									{/foreach}
+										{if $cat.0.template != "logged_in"}
+											{foreach from=$lang_gr item=g}
+												{foreach from=$lang_items item=i name=lieta}
+													{if $i.parent_id == $g.id}
+														<li class="select_item">
+														<input value="{$i.id}" class="multi_select_languages" type="checkbox"><span>{$i.name}</span></li>
+													{/if}
+												{/foreach}
+											{/foreach}
+										{else}
+											{foreach from=$lang_gr item=g}
+												{foreach from=$lang_items item=i name=lieta}
+													{if $i.parent_id == $g.id}
+														<li class="select_item">
+														<input value="{$i.id}" class="multi_select_languages" type="checkbox"><span>{$i.name}</span></li>
+													{/if}
+												{/foreach}
+											{/foreach}
+										{/if}
 								</ul>
 							</div>
 						</div>

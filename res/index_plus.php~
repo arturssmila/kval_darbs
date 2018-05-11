@@ -144,8 +144,6 @@
 				}
 			}
 			break;
-		case "logged_in":	
-			break;
 	}
 
 	function getExpertises(){

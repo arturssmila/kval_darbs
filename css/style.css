@@ -3328,6 +3328,11 @@ display: none; }
 #manager .toggle_specialities{
     cursor: pointer;
 }
+
+#manager .warning{
+	background-color: #f46161;
+	color: #fff;
+}
 .in_text_element{
     padding-left: 10px;
 }

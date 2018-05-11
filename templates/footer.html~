@@ -131,7 +131,15 @@
 
 	{$settings.anal_code}
 	<script type="text/javascript" src="/cms/js/jquery.js"></script>	
-	<script type="text/javascript" src="/cms/js/jquery_transform.js"></script>	
+	<script type="text/javascript" src="/cms/js/jquery_transform.js"></script>
+	<script type="text/javascript">
+	{if $cat.0.template == "logged_in"}
+	var logged_in = true;
+	{else}
+	var logged_in = false;
+	{/if}
+	{*used to determine which parts to be disabled in scripts.js*}
+	</script>	
 	<script type="text/javascript" src="/cms/js/scripts.js?{$cms_js_date}"></script>	
 	<script type="text/javascript" src="/js/libs/modal.js"></script>
 	<script type="text/javascript" src="/js/libs/lunr.min.js"></script>

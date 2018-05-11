@@ -1095,8 +1095,14 @@ function updateDropdownFileList(curr_rel, form_id, form_data){// update file lis
     if(!(curr_rel in form_data.file_names)){
         $("#"+form_id+" .language_dropdown_group[rel=\"" + curr_rel + "\"] .dropdowns >.close").after("<div class=\"language_file_item\" rel=\"" + curr_rel + "\" rel_1=\"-1\"></div>");
     }else{
+    	var were_some = false;
         for(i = 0; i < form_data.file_names[curr_rel].length; i++){
         	$("#"+form_id+" .language_dropdown_group[rel=\"" + curr_rel + "\"] .dropdowns >.close").after("<div class=\"language_file_item\" rel=\"" + curr_rel + "\" rel_1=\"" + i + "\"><span class=\"close\" onClick=\"removeFileLine($(this), '"+curr_mode+"', form_data, '"+form_id+"')\">✖</span>" + form_data.file_names[curr_rel][i] + " " + ((form_data.file_sizes[curr_rel][i])/1024/1024).toFixed(2)  + " MB</div>");
+        	were_some = true;
+        }
+        if(were_some){
+		$("#"+form_id+" .language_dropdown_group[rel=\"" + curr_rel + "\"] .error.file_sec").remove();
+		$("#"+form_id+" .language_dropdown_group[rel=\"" + curr_rel + "\"] .file_sector label").removeClass("redborder");
         }
     }
     return;
