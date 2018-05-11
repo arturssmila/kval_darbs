@@ -459,7 +459,7 @@
 			</form>
 		</div>
 	</div>
-	<div class="modal" id="file_upload_modal">
+	<div class="modal" id="{if $cat.0.template != "logged_in"}file_upload_modal{else}file_upload_modal_logged{/if}">
 		<div class="modal_cell">
 			<div class="modal_center_block">
 				<div class="modal_center">

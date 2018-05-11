@@ -1,244 +1,111 @@
 <h1>New Projects</h1>
 <div class="contents">
-	{*<div class="controls top">
-		<div class="item{if $manager.curr_page == 0} active{/if}">
-			<a {if $manager.curr_page != 0}href="{$manager.route.url}/0"{/if}>
-				LIST
-			</a>
-		</div>
-		<div class="item{if $manager.curr_page == 1} active{/if}">
-			<a {if $manager.curr_page != 1}href="{$manager.route.url}/1"{/if}>
-				CREATE NEW
-			</a>
-		</div>
-	</div>*}
-	{assign var="count" value=0}
 	{if !empty($manager.jobs)}
-		<table class="ui sortable">
+		<table id="submitted_jobs" class="hidden_rows">
 			<thead>
 				<tr>
-					<th style="width: 20px">{$lg.name}</th>
+					<th style="width: 20px">ID</th>
 					<th>{$lg.first_name}</th>
 					<th>{$lg.last_name}</th>
 					<th>{$lg.company}</th>
-					<th>{$lg.due_date}</th>
+					<th>{$lg.date_due}</th>
 					<th>{$lg.time_zone}</th>
-					<th>{$lg.number_of_files}</th>
+					<th>{$lg.number_of_tasks}</th>
 					<th>{$lg.submitted}</th>
 				</tr>
 			</thead>
 			<tbody>
-				<?php if(!empty($requests)):?>
-					<?php foreach ($requests->data as $i): ?>
-						<?php
-							$langs = array();
-							$query = "SELECT * FROM request_languages WHERE request_id = '" . $i["id"] . "'";
-							$res = mysql_query($query);
-							if(mysql_num_rows($res) > 0)
-							{
-								while($row = mysql_fetch_assoc($res))
-								{
-									$langs[] = $row;
-								}
-							}
-	
-							$no_lang_files = array();
-							$lang_files = array();
-							$query = "SELECT * FROM request_files WHERE request_id = '" . $i["id"] . "'";
-							$res = mysql_query($query);
-							if(mysql_num_rows($res) > 0)
-							{
-								while($row = mysql_fetch_assoc($res))
-								{	
-									if(empty($row["languages_id"])){
-										$no_lang_files[] = $row;
-									}else{
-										$lang_files[] = $row;
-									}
-								}
-								//out($no_lang_files);
-								//var_dump($lang_files);
-							}
-							?>
-	
-						<tr class="ui hover" <?php /*onClick="window.location.href = '<?= url($i["id"]) ?>';" */?> data="<?= $i["id"] ?>">
+				{if (!empty($manager.jobs))}
+					{foreach from=$manager.jobs key=key item=job}
+					{*<pre>{$job.customer|print_r}</pre>*}
+					<tr class="ui hover" data="{$job.id}">
 							<td>
-								<?= $i["id"] ?>
+								{$job.id}
 							</td>
 							<td>	
-								<?= $i["first_name"] ?>
+								{$job.customer.0.name}
 							</td>
 							<td>	
-								<?= $i["last_name"] ?>
+								{$job.customer.0.surname}
 							</td>
 							<td>	
-								<?= $i["email"] ?>
+								{if !empty($job.customer.0.company)}
+									{$job.customer.0.company}
+								{else}
+									-
+								{/if}
 							</td>
 							<td>	
-								<?php if(!empty($i["phone"]) && !empty($i["phone"])){
-									echo $i["phone"];
-								}else{
+								{if (!empty($job.date_due) && !empty($job.time_due))}
+									{$job.date_due} {$job.time_due}
+								{elseif (!empty($i["date_due"]))}
+									{$job.date_due}
+								{else}
 									echo "-";
-								} ?>
+								{/if}
 							</td>
 							<td>	
-								<?php if(!empty($i["date_due"]) && !empty($i["time_due"])){
-									echo $i["date_due"] . " " . $i["time_due"];
-								}else if(!empty($i["date_due"])){
-									echo $i["date_due"];
-								}else{
+								{if !empty($job.time_zone)}
+									{$job.time_zone}
+								{else}
 									echo "-";
-								} ?>
+								{/if}
+							</td>
+							<td>	
+							{*<pre>{$job.pairs|print_r}</pre>*}
+								{$job.file_count}
 							</td>
 							<td>
-								<?= mysql_num_rows($res) ?>
-							</td>
-								<?php if($i["resolved"] == 0){
-									echo "<td style=\"background-color: rgb(239,95,81)\">";
-										echo al("nope");
-									echo "</td>";
-								}else{
-									echo "<td style=\"background-color: rgb(66,206,80)\">";
-										echo al("yes");
-									echo "</td>";
-								} ?>
-							<td>
-								<?= $i["created"] ?>
+								{$job.created}
 	
-								<div class="ui pull_right">
+								{*<div class="ui pull_right">
 									<label class="ui checkbox">
 										<input type="checkbox" name="id_<?= $i["id"] ?>" value="<?= $i["id"] ?>">
 										<span></span> 
 									</label>
-								</div>
+								</div>*}
 							</td>
+							<td class="toggle_specialities noselect" onClick="hiddenRow({$job.id}, 'submitted_jobs')">{$lg.show_pairs}</td>
 						</tr>
-						<tr class="hidden hidden_tables" id="<?= $i["id"] ?>">
-						<?php if ((!empty($langs)) || (!empty($lang_files)) || (!empty($no_lang_files)) || (!empty($i["comment_text"]))): ?>
-							<td colspan="9" class="ui no_padding">
-								<?php if(!empty($i["comment_text"])): ?>
-									<table style="width: 100%">
-										<thead>
-											<th> <?= al("comment") ?></th>
-										</thead>
-										<tbody>
-											<tr>
-												<td colspan="8" class="ui">
-													<?= $i["comment_text"] ?>
+						{if !empty($job.pairs)}
+							<tr class="hide to_toggle" toggle_id="{$job.id}">
+								<td class="job_language_pairs" colspan="5">
+									<table class="job_language_pairs_table">
+										<thead><tr><th>{$lg.source_language}</th><th>{$lg.target_language}</th><th>{$lg.number_of_tasks}</th></tr></thead>
+										{foreach from=$job.pairs key=pair_key item=pair}
+											<tr class="job_language_pairs_row">
+												<td class="job_language_pairs_cell">
+													{if !empty($pair.lang_from_name)}
+														{$pair.lang_from_name}
+													{else}
+														{$pair.lang_from}
+													{/if}
+												</td>
+												<td class="job_language_pairs_cell">
+													{if !empty($pair.lang_to_name)}
+														{$pair.lang_to_name}
+													{else}
+														{$pair.lang_to}
+													{/if}
+												</td>
+												<td class="job_language_pairs_cell">
+													{if !empty($pair.file_count)}
+														{$pair.file_count}
+													{else}
+														-
+													{/if}
 												</td>
 											</tr>
-										</tbody>
+										{/foreach}
 									</table>
-								<?php endif; ?>
-								<?php if(!empty($langs)): ?>
-								<table class="ui">
-									<thead>
-										<tr class="avoid-sort">	
-											<th><?= al("language_from") ?></th>
-											<th><?= al("language_to") ?></th>
-											<th><?= al("files") ?></th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php foreach ($langs as $key => $lang_item): ?>
-											<tr class="avoid-sort">
-												<td>
-													<?php if(!empty($lang_item["lang_from"])){
-														$language_from = "";
-														meta("S", array("template"=>"language", "id"=>$lang_item["lang_from"]), $language_from);
-														if(!empty($language_from[0])){
-															echo $language_from[0]["name"];
-														}else{
-															echo "-";
-														}
-													}else{
-														echo "-";
-													} ?>
-												</td>
-												<td>
-													<?php if(!empty($lang_item["lang_to"])){
-														$exploded_langs = explode(",",$lang_item["lang_to"]);
-														for( $n = 0; $n < count($exploded_langs); $n++){
-															meta("S", array("template"=>"language", "id"=>$exploded_langs[$n]), $data["lang_to"]);
-															echo $data["lang_to"][0]["name"];
-															if($n != (count($exploded_langs) - 1)){
-																echo ", ";
-															}
-														}
-														
-													}else{
-														echo "-";
-													} ?>
-												</td>
-												<td>
-													<?php if(!empty($label)){
-														unset($label);
-													} ?>
-													<?php
-														foreach ($lang_files as $ii){
-															if($ii["languages_id"] == $lang_item["id"]){
-																$exploded = explode("/", $ii["file_path"]);
-																foreach ($exploded as $keyyy => $valueee) {
-																	if($valueee != "images"){
-																		unset($exploded[$keyyy]);
-																	}else{
-																		break;
-																	}
-																}
-																$imploded = array_values($exploded);
-																$label = implode("/", $imploded);
-																$label = 'http://'.$_SERVER['HTTP_HOST'] . "/" . $label;
-																echo("<a target=\"_blank\" style=\"display: block\" href=\"$label\">" . $ii["file_name"] . "</a>");
-																echo " ";
-															}
-														}
-													?>
-												</td>
-											</tr>
-										<?php endforeach; ?>
-									</tbody>
-								</table>
-								<?php endif; ?>
-								<?php if(!empty($no_lang_files)): ?>
-									<table style="width: 100%">
-										<thead>
-											<tr class="avoid-sort">	
-												<th colspan="8">files without language pairs</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr class="avoid-sort">
-												<td>
-													<?php foreach ($no_lang_files as $key => $file_item): ?>
-														<?php if(!empty($label)){
-															unset($label);
-														} ?>
-														<?php
-															$exploded = explode("/", $file_item["file_path"]);
-															foreach ($exploded as $keyyy => $valueee) {
-																if($valueee != "images"){
-																	unset($exploded[$keyyy]);
-																}else{
-																	break;
-																}
-															}
-															$imploded = array_values($exploded);
-															$label = implode("/", $imploded);
-															$label = 'http://'.$_SERVER['HTTP_HOST'] . "/" . $label;
-															echo("<a target=\"_blank\" style=\"display: block\" href=\"$label\">" . $file_item["file_name"] . "</a>");
-															echo " ";
-														?>
-													<?php endforeach; ?>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								<?php endif; ?>
-							</td>
-						<?php endif; ?>
+								</td>
+							</tr>
+						{/if}
 					</tr>
-					<?php endforeach;?>
-				<?php endif;?>
+					{/foreach}
+				{else}
+					NO JOBS FOR YOU
+				{/if}
 			</tbody>	
 		</table>
 	{else}

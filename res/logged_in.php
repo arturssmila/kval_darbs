@@ -123,11 +123,6 @@
 	$data["manager"]["user"] = $curr_user[0];
 	//out($data["manager"]);
 
-	/* ==================================================== */
-
-
-	/* ==================================================== */
-
 
 	/* ==================================================== */
 
@@ -161,9 +156,48 @@
 					if(!empty($jobs)){
 						foreach($jobs as $key=>$value){
 							if(!empty($value["user_id"])){
-								get_user("S", array("active"=>"1", "admin"=>"0", "id"=>$value["user_id"]), $customer);
+								$customer = array();
+								get_user("S", array("admin"=>"0", "id"=>$value["user_id"]), $customer);
 								if(!empty($customer)){
 									$jobs[$key]["customer"] = $customer;
+									$query = "SELECT * FROM submitted_pairs WHERE work_id = '" . $value["id"] . "'";
+									$res = mysql_query($query);
+									$pairs = getSqlRows($res);
+		
+									if(!empty($pairs)){
+										$total_file_count = 0;
+										foreach($pairs as $pair_key=>$pair_value){
+											if(is_numeric($pair_value["lang_from"]) && is_numeric($pair_value["lang_to"])){
+												meta("S", array("template"=>"language_pair", "parent_id"=>$pair_value["lang_from"]), $language_pairs_with_this_source);
+												if(!empty($language_pairs_with_this_source)){
+													foreach ($language_pairs_with_this_source as $keyy => $valuee) {
+														if($valuee["language_to_id"] == $pair_value["lang_to"]){
+															$pairs[$pair_key]["language_pair_original"] = $valuee;
+															break;
+														}
+													}
+												}
+												meta("S", array("template"=>"language", "id"=>$pair_value["lang_from"]), $language_from);
+												if(!empty($language_from)){
+													$pairs[$pair_key]["lang_from_name"] = $language_from[0]["name"];
+												}
+												meta("S", array("template"=>"language", "id"=>$pair_value["lang_to"]), $language_to);
+												if(!empty($language_to)){
+													$pairs[$pair_key]["lang_to_name"] = $language_to[0]["name"];
+												}
+												$query = "SELECT * FROM submitted_files WHERE (pair_id = '" . $pair_value["id"] . "') AND (work_id = '" . $value["id"] . "')";
+												$res = mysql_query($query);
+												$pair_files = getSqlRows($res);
+												if(!empty($pair_files)){
+													$pairs[$pair_key]["files"] = $pair_files;
+													$pairs[$pair_key]["file_count"] = count($pair_files);
+													$total_file_count += count($pair_files);
+												}
+											}
+										}
+										$jobs[$key]["pairs"] = $pairs;
+										$jobs[$key]["file_count"] = $total_file_count;
+									}
 								}else{
 									one_back();
 								}
