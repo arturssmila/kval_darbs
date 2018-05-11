@@ -124,14 +124,16 @@ CREATE TABLE submitted_work(
    	FOREIGN KEY (user_id) REFERENCES users(id)
 )
 ENGINE=InnoDB;
-ALTER TABLE `submitted_work` CHANGE `accepted` `accepted` ENUM('0','1','2','3','4','-1','-2') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0';
+ALTER TABLE `submitted_work` CHANGE `accepted` `accepted` ENUM('0','1','2','3','4','5','6','-1','-2') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0';
 
 //for submitted_work table above - accepted 1 = work manager has stated the price and sent for customer to confirm
-//accepted 2 = customer has confirmed the price
-//accepted 3 = some files are done
-//accepted 4 = work is done and sent back to customer
-//accepted -1 = customer has denied because of price etc.
-//accepted -2 = work manager has denied because of something.
+//accepted 2 = customer has confirmed the price - not paid
+//accepted 3 = some files are done but user cant access any - not paid
+//accepted 4 = some files are done and user can access those that are done - paid
+//accepted 5 = all files done but user cant any - not paid
+//accepted 6 = all files done and user can access all files - paid
+//accepted -1 = customer has denied because of price etc. - not paid
+//accepted -2 = work manager has denied because of something. - not paid
 
 CREATE TABLE submitted_pairs(
 	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
