@@ -57,60 +57,13 @@
 				$return = resetRegistrationNotifications();
 				echo $return;
 				exit();
-			}else if($_POST["action"] == "employee_data"){
-				$new_data = [];
-				foreach ($_POST["data"] as $key => $value) {
-					if($value["key"] == "position_id"){
-						switch ($value["value"]) {
-							case 0://translator/editor
-								$curr["key"] = "translator";
-								$curr["required"] = "required";
-								$curr["data"] = "user_data";
-								$curr["value"] = 1;
-								$new_data[] = $curr;
-
-								$curr["key"] = "editor";
-								$curr["required"] = "required";
-								$curr["data"] = "user_data";
-								$curr["value"] = 1;
-								$new_data[] = $curr;
-								break;
-
-							case 1://translator
-								$curr["key"] = "translator";
-								$curr["required"] = "required";
-								$curr["data"] = "user_data";
-								$curr["value"] = 1;
-								$new_data[] = $curr;
-								break;
-
-							case 2://editor
-								$curr["key"] = "editor";
-								$curr["required"] = "required";
-								$curr["data"] = "user_data";
-								$curr["value"] = 1;
-								$new_data[] = $curr;
-								break;
-
-							case 3://project manager
-								$curr["key"] = "project_manager";
-								$curr["required"] = "required";
-								$curr["data"] = "user_data";
-								$curr["value"] = 1;
-								$new_data[] = $curr;
-								break;
-						}
-					}else{
-						$new_data[] = $value;
-					}
-				}
-				$new_data["register"] = true;
-				echo(json_encode($new_data));
-				exit();
 			}
 			echo("error");
 			exit();
 		}
+	}else{
+			echo("error");
+			exit();
 	}
 	
 ?>

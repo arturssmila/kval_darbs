@@ -370,6 +370,9 @@ function changeCellValue_2ids(clicked, main_id, second_id, field, file, action){
                         $parent.prev(".original").find(".cell_content").text(value);
                         $parent.prev(".original").removeClass("hide");
                         $parent.addClass("hide");
+                        if(action == "changeFileWordCount"){
+                        	$("tr[file_id='"+main_id+"'] td.price").text("-");
+                        }
                     }else if(response == "logged_out"){
                         alert(lg.session_ended_logged_out);
                         location.reload();
@@ -385,6 +388,45 @@ function changeCellValue_2ids(clicked, main_id, second_id, field, file, action){
             });
         }
     }
+}
+
+function getFilePrice(main_id, second_id, field){
+	var speciality = $(".select.speciality[data_id='"+main_id+"'] input[name='speciality']").val();
+	//console.log(speciality);
+	$.ajax({
+		type: "POST",
+		url: '/res/translations_manager.php',
+		data: {
+			main_id: main_id,
+			second_id: second_id,
+			field: field,
+			speciality_price_id: speciality,
+			action: "getFilePrices"
+		},
+		async: true,
+		cache: false,
+		success: function(response)
+		{	
+			//console.log(response);
+			response = JSON.parse(response);
+			//console.log(response);
+			if(response["status"] == "OK"){
+				$("tr[file_id='"+main_id+"'] td.price").text(response["price"]);
+			}else if(response == "error"){
+				alert(lg.error);
+			}else if(response == "logged_out"){
+				alert(lg.session_ended_logged_out);
+				location.reload();
+			}else{
+				alert("could not update!");
+			}     
+		},
+		error: function(response)
+		{
+			console.log(response);
+			alert("could not update!");
+		}
+	});
 }
 
 function getJobPrice(clicked, main_id, second_id, field, file, action){

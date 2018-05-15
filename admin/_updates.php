@@ -1,127 +1,34 @@
 <?php
-$ftp_user = 'introskip_admin';
-$ftp_pasw = 'introskip_admin';
-
-$remove_dirs = array(
-			"/cms/libs/tcpdf/examples/",
-			"/cms/libs/PHPWord",
-		);
-$remove_files = array(
-			"/leo_clear.php",
-		);
-$update_dirs = array(
-			"admin",
-			"cms",
-		);
-$update_files = array(
-			".htaccess",
-			"config.php",
-			"index.php",
-			"logout.php",
-			"leo_clear.php",
-			"adm_lang.xml",
-			"help.xml",
-		);
-//Deleting unnecessary folders and files
-function deleteFolderFiles($dir)
-{
-	$ffs = scandir($dir);	
-	foreach($ffs as $ff)
+	if(file_exists("updates_config.inc"))
 	{
-		if($ff != '.' && $ff != '..')
-		{
-			if(is_dir($dir.'/'.$ff))
-			{
-				deleteFolderFiles($dir.'/'.$ff);
-			}
-			else
-			{
-				unlink($dir.'/'.$ff);
-			}
-		}
-	}
-	if(is_dir($dir))
-	{
-		rmdir($dir);
-	}
-}
-
-function check_if_has_updates($php=0)
-{
-	global $response;
-	global $updates_count;
-	$av_updates = false;
-	$new_version = '';
-	$xml = @simplexml_load_file("../update.xml");
-	if($xml!==FALSE)
-	{
-		foreach($xml->version as $n_version)
-		{
-			$new_version = $n_version->__toString();
-		}
-		foreach($xml->file as $file)
-		{
-			$new_date = intval($file->date);
-			$old_date = intval(file_date(dirname(dirname(__FILE__)).'/'.$file->url));
-			
-			$new_size = intval(!empty($file->size) ? $file->size : 0);
-			$old_size = function_exists("file_size") ? intval(file_size(dirname(dirname(__FILE__)).'/'.$file->url)) : 0;
-			if(
-				($new_date > $old_date)
-				||
-				(
-					($file->url != "/.htaccess") && ($new_size != $old_size)
-				)
-				||
-				(
-					($file->url == "/.htaccess") && ($new_size > ($old_size+11))
-				)
-			)
-			{
-				$updates_count++;
-				$av_updates = true;
-				if($php==1)
-				{
-					echo 	'<tr class="update_file_tr">'.
-							'<td>'.$file->url.'</td>'. 
-							'<td>
-								<a class="red file_url" rel="'.$file->url.'" onclick="update_file('."'".$file->url."',$(this).parent('td')".');">'.al("atjaunot").'</a>
-								<div class="updating"></div>
-								<div class="success" style="margin:0px;padding-top:0px;padding-bottom:0px;">'.al('atjaunots').'</div>
-								<div class="error"></div>
-							</td>'. 
-							/*
-							'<td>old_date: '.$old_date.'</td>'.
-							'<td>new_date: '.$new_date.'</td>'.
-							'<td>old_size: '.$old_size.'</td>'.
-							'<td>new_size: '.$new_size.'</td>'.
-							*/
-						'</tr>';
-				}
-			}
-		}
-	}
-	if($php)
-	{
-		if($php==2)
-		{
-			return $updates_count;
-		}
-		else
-		{
-			echo $av_updates ? "<script>has_updates = true;</script>" : ('<tr><td class="green">'.al("tev_ir_jaunaka_versija").'</td></tr>');
-		}
+		require('updates_config.inc');
 	}
 	else
 	{
-		if(empty($av_updates) && !empty($new_version))
-		{
-			mysql_query("DELETE FROM `".PREFIX."modes_attributes` WHERE `mode` = 'version'");
-			mysql_query("INSERT INTO `".PREFIX."modes_attributes` SET `mode` = 'version', `attr` = '$new_version'");
-			$response["new_version"] = $new_version;
-			register_domain();
-		}
+		die("Missing /admin/updates_config.inc");
 	}
+
+if(!empty($_REQUEST["update_by_ftp"]))
+{
+	require('../config.php');
+	include("../db_update.inc");
+	$url = $_REQUEST["update_by_ftp"];
+	switch($url)
+	{
+		case "/adm_lang.xml":
+			update_adm_lang($url);
+			echo "OK";
+			break;
+		case "check_version":
+			$response = array();
+			check_if_has_updates();
+			if(!empty($response["new_version"]))
+			{
+				echo '#new_version:'.$response["new_version"];
+			}
+			break;
+	}			
+	exit();
 }
 /********************************************************************************************/
 if(!empty($_POST))
@@ -204,6 +111,7 @@ if(!empty($_POST))
 							elseif(
 								(
 									//(strpos($ff,'.inc') !== false) ||
+									(strpos($ff,'.ico') !== false) ||
 									(strpos($ff,'.php') !== false)
 								)
 								&&
@@ -331,51 +239,6 @@ if(!empty($_POST))
 					$xml = new SimpleXMLElement('<update/>');
 					$xml->addChild('version', $version);
 					
-					function listFolderFiles($dir)
-					{
-						global $xml;
-						$ffs = scandir($dir);
-						foreach($ffs as $ff)
-						{
-							if($ff != '.' && $ff != '..')
-							{
-								if(is_dir($dir.'/'.$ff))
-								{
-									listFolderFiles($dir.'/'.$ff);
-								}
-								else
-								{
-									if(
-										(strpos($ff,'~') !== false)
-										||
-										(strpos($ff,'#') !== false)
-										||
-										(strpos($ff,'.bak') !== false)
-										||
-										(strpos($ff,'Thumbs.db') !== false)
-									)
-									{
-										if(file_exists($dir.'/'.$ff)) 
-										{
-											unlink($dir.'/'.$ff);
-										}
-									}
-									elseif(
-										(strpos($ff,'register_domain.php') === false)
-										&&
-										(strpos($ff,'_admin_domains.php') === false)
-									)
-									{
-										$file = $xml->addChild('file');
-										$file->addChild('url', str_replace(ROOT, '', $dir.'/'.$ff));
-										$file->addChild('date', file_date($dir.'/'.$ff));
-										$file->addChild('size', file_size($dir.'/'.$ff));
-									}
-									
-								}
-							}
-						}
-					}
 					foreach($update_dirs as $val)
 					{
 						listFolderFiles(dirname(dirname(__FILE__)).'/'.$val);
@@ -399,42 +262,35 @@ if(!empty($_POST))
 				}
 				else //UPDATING ONE FILE
 				{
-					$conn_id = ftp_connect($update_host) or die(al("nesanaca_pieslegties_ftp_serverim")); 
-					if(@ftp_login($conn_id, $ftp_user, $ftp_pasw))
+					$conn_id = @ftp_connect($update_host);
+					if($conn_id)
 					{
-						$dirs = explode("/", $url);
-						array_pop($dirs);
-						$path = implode("/", $dirs);
-						array_shift($dirs);
-						$path = "../";
-						foreach($dirs as $val)
+						if(@ftp_login($conn_id, $ftp_user, $ftp_pasw))
 						{
-							if(!file_exists($path.$val))
+							$dirs = explode("/", $url);
+							array_pop($dirs);
+							$path = implode("/", $dirs);
+							array_shift($dirs);
+							$path = "../";
+							foreach($dirs as $val)
 							{
-								mkdir($path.$val, 0755);
+								if(!file_exists($path.$val))
+								{
+									mkdir($path.$val, 0755);
+								}
+								$path .= $val.'/';
 							}
-							$path .= $val.'/';
-						}
-						
-						$save_url = "..$url";
-						
-						if($url == "/.htaccess")
-						{
-							$save_url = "../htaccess.inc";
-						}		
-						
-						//FTP faila lejuplāde
-						$ftp_file_moved = false;
-						@ftp_pasv($conn_id, true);
-						if(@ftp_get($conn_id, $save_url, $url, FTP_BINARY))
-						{
-							$ftp_file_moved = true;			
-						}
-						else
-						{
-							$response["error"] = error_get_last();
-							//FTP faila lejuplāde neizdevās, mēģinam vēlreiz pēc 1 sek.
-							sleep(3);
+							
+							$save_url = "..$url";
+							
+							if($url == "/.htaccess")
+							{
+								$save_url = "../htaccess.inc";
+							}		
+							
+							//FTP faila lejuplāde
+							$ftp_file_moved = false;
+							@ftp_pasv($conn_id, true);
 							if(@ftp_get($conn_id, $save_url, $url, FTP_BINARY))
 							{
 								$ftp_file_moved = true;			
@@ -442,88 +298,51 @@ if(!empty($_POST))
 							else
 							{
 								$response["error"] = error_get_last();
-							}
-						}
-						if($ftp_file_moved)
-						{
-							if($url == "/.htaccess")
-							{
-								if(file_exists("..$url"))
+								//FTP faila lejuplāde neizdevās, mēģinam vēlreiz pēc 1 sek.
+								sleep(3);
+								if(@ftp_get($conn_id, $save_url, $url, FTP_BINARY))
 								{
-									$old_htaccess = file_get_contents("..$url");
-									$old_htaccess = explode('#NEW',$old_htaccess);
-									$old_htaccess = implode('#--DONT EDIT UNDER THIS LINE--',$old_htaccess);
-									$old_htaccess = explode('#--DONT EDIT UNDER THIS LINE--',$old_htaccess);
-									$old_htaccess = $old_htaccess[0];
-									$old_htaccess = str_replace("RewriteRule ^admin$ admin/ [L]", "", $old_htaccess);
-									$old_htaccess = str_replace("RewriteRule ^admin/?([^/\.]+)?/?([^/\.]+)?/?([^/\.]+)?/?([^/\.]+)?/?([^\.])?$ admin/index.php?mode=$1&cat1=$2&cat2=$3&cat3=$4&cat4=$5 [L]", "", $old_htaccess);
-									unlink("..$url");
+									$ftp_file_moved = true;			
 								}
-								
-								if(file_exists($save_url))
+								else
 								{
-									$new_htaccess = file_get_contents($save_url);
-									$new_htaccess = explode('#NEW',$new_htaccess);
-									$new_htaccess = implode('#--DONT EDIT UNDER THIS LINE--',$new_htaccess);
-									$new_htaccess = explode('#--DONT EDIT UNDER THIS LINE--',$new_htaccess);
-									
-									
-									$htaccess[] = !empty($old_htaccess) ? $old_htaccess : (!empty($new_htaccess[0]) ? $new_htaccess[0] : '');
-									$htaccess[] = !empty($new_htaccess[1]) ? $new_htaccess[1] : '';
-									$htaccess = implode('#--DONT EDIT UNDER THIS LINE--',$htaccess);
-									
-									unlink($save_url);
-									
+									$response["error"] = error_get_last();
+								}
+							}
+							if($ftp_file_moved)
+							{
+								if($url == "/.htaccess")
+								{
+									$htaccess = updateHtaccessFile("..$url",$save_url);
+									if(file_exists("..$url"))
+									{
+										unlink("..$url");
+									}
+									if(file_exists($save_url))
+									{
+										unlink($save_url);
+									}
 									$f = fopen(dirname(dirname(__FILE__)).$url, "w");
 									fwrite($f, $htaccess);
 									fclose($f);
 								}
-							}
-							if($url == "/adm_lang.xml")
-							{
-								$adm_lang = @simplexml_load_file("..$url");
-								if($adm_lang!==FALSE)
+								if($url == "/adm_lang.xml")
 								{
-									foreach ($adm_lang->item as $item)
-									{
-										$lang_name = $item->name;
-										$query = "SELECT "."* "."FROM ".PREFIX."adm_lang WHERE name = '$lang_name'";
-										$res = mysql_query($query) or die(mysql_error().$query);
-										if(mysql_num_rows($res) > 0)
-										{
-											//echo $lang_name.'EXISTS<br />';
-											$row = mysql_fetch_assoc($res);
-											$last_id = $row["id"];
-											mysql_query("DELETE from ".PREFIX."adm_lang_data WHERE val_id = '$last_id'");
-										}
-										else {
-											$query = "INSERT INTO ".PREFIX."adm_lang SET name = '$lang_name'";
-											mysql_query($query);
-											$last_id = mysql_insert_id();
-											
-										}
-										foreach($item->translation as $translation)
-										{
-											if(array_key_exists("{$translation->iso}", $languages_isoes))
-											{
-												$query = "INSERT INTO ".PREFIX."adm_lang_data SET 
-														val_id = '$last_id',
-														lang_id = '".langid_from_iso("{$translation->iso}")."',
-														value = '".$translation->name."'";
-												mysql_query($query);
-											}
-										}
-									}
+									update_adm_lang($url);
 								}
 							}
+							else
+							{
+								//print_r(error_get_last());
+								$response["error"] = al("nevareja_atvert_vai_saglabat_failu");
+							}
+						} else {
+						    $response["error"] = al("nesanaca_autorizeties_ftp_serveri");
 						}
-						else
-						{
-							//print_r(error_get_last());
-							$response["error"] = al("nevareja_atvert_vai_saglabat_failu");
-						}
-					} else {
-					    $response["error"] = al("nesanaca_pieslegties_ftp_serverim");
+					}
+					else
+					{
+						$response["error"] = al("nesanaca_pieslegties_ftp_serverim");
 					}
 					ftp_close($conn_id);
 					/**********************/

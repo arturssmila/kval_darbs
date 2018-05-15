@@ -151,7 +151,7 @@ CREATE TABLE submitted_files(
 	pair_id INT(11) NOT NULL,
 	file_path varchar(80) NOT NULL,
 	word_count INT(11) NULL,
-	speciality_id INT(11) NULL,
+	speciality_id INT(11) NULL,//norada uz ierakstu tabulâ "language_pair_prices"
 	price decimal(10,2),
 	INDEX wor_id (work_id),
 	INDEX pai_id (pair_id),

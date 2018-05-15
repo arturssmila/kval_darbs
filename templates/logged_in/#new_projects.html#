@@ -116,6 +116,11 @@
 														-
 													{/if}
 												</td>
+												<td class="noselect">
+													<button class="small">
+														{$lg.show_files}
+													</button>
+												</td>
 												<td class="toggle_specialities noselect" onClick="hiddenRow_toggleSingle('{$pair.id}_pair', 'lang_pairs_{$job.id}', 'to_toggle_sub')">
 													<button class="small">
 														{$lg.show_files}

@@ -61,24 +61,24 @@ mysql_query("INSERT INTO ".PREFIX."user_types (id, type)
 	) LIMIT 1;");
 
 //2016.05.23
-$query_ins = "INSERT INTO ".PREFIX."templates SET t_id = '0',t_p_id = '0',template = 'text',template_name = '-- Default page --'";
+$q_ins = "`".PREFIX."templates` SET `t_id` = '0', `t_p_id` = '0', `template` = 'text', `template_name` = '-- Default page --'";
 $query_up = "SELECT * FROM ".PREFIX."templates WHERE template = 'text'";
 $res_up = mysql_query($query_up);
 if(mysql_num_rows($res_up) > 0)
 {
-	if(mysql_num_rows($res_up)>1)
+	if(mysql_num_rows($res_up) > 1)
 	{
-		mysql_query("DELETE FROM ".PREFIX."templates WHERE template = 'text'");
-		mysql_query($query_ins);
+		mysql_query("DELETE FROM `".PREFIX."templates` WHERE `template` = 'text'");
+		mysql_query("INSERT INTO $q_ins");
 	}
 	else
 	{
-		mysql_query("UPDATE `".PREFIX."templates` SET t_id = '0' WHERE template = 'text'");
+		mysql_query("UPDATE $q_ins WHERE `template` = 'text'");
 	}
 }
 else
 {
-	mysql_query($query_ins);
+	mysql_query("INSERT INTO $q_ins");
 }
 
 //2016.04.26
@@ -265,5 +265,11 @@ mysql_query("ALTER TABLE `".PREFIX."fields` ADD `placeholder` TEXT NULL DEFAULT 
 
 //2018.04.06
 mysql_query("ALTER TABLE `".PREFIX."fields` ADD `ordered` INT NOT NULL DEFAULT '0' AFTER `field_id`;");
+
+//2018.05.07
+mysql_query("ALTER TABLE `".PREFIX."meta` CHANGE `ordered` `ordered` INT(5) NOT NULL DEFAULT '0';");
+mysql_query("ALTER TABLE `".PREFIX."meta` CHANGE `opened` `opened` INT(7) NOT NULL DEFAULT '0';");
+mysql_query("ALTER TABLE `".PREFIX."meta` CHANGE `template_id` `template_id` INT(4) NOT NULL DEFAULT '0';");
+mysql_query("ALTER TABLE `".PREFIX."meta` CHANGE `creator_id` `creator_id` INT(7) NULL DEFAULT NULL;");
 
 ?>

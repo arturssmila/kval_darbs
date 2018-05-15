@@ -59,6 +59,18 @@
 				</div>
 
 				<div class="attributes right">
+					<span class="item tablet_company points">
+					 	{include file="./css/images/small_menu.svg"}        
+					</span>
+					<div class="menu_dropdown simple">
+						<div class="contents">
+							{foreach from=$menu item=i}
+								{if !empty($i.shown_in_dropdown) && !empty($i.in_company_dropdown)}
+									<a href="{$slang}{$i.long_link}" class="item">{$i.name}</a>
+								{/if}
+							{/foreach}
+						</div>
+					</div>
 					<span class="item is_dropdown first">
 							<a>{$lg.company}
 						 	{include file="./css/svg/down.svg"} </a>
@@ -135,27 +147,35 @@
 							</div>
 						</div>
 					{/if}
-					<span class="item tablet_company">
-					 	{include file="./css/images/small_menu.svg"}        
-					</span>
-					<div class="menu_dropdown simple">
-						<div class="contents">
-							{foreach from=$menu item=i}
-								{if !empty($i.shown_in_dropdown) && !empty($i.in_company_dropdown)}
-									<a href="{$slang}{$i.long_link}" class="item">{$i.name}</a>
-								{/if}
-							{/foreach}
-						</div>
-					</div>
-					<div class="item logging simple">
 						{if !empty($session.user)}
-							<a href="/logout.php" class="item icon primary logout button">
-								{*<a href="/logout.php">*}
-								{include file="./css/svg/lock.svg"}{$lg.logout}{*</a>*}
-							</a>
+							{if $session.user.soc == "00"}
+								<div class="item is_dropdown logging simple with_menu">
+									<a class="with_menu">{$lg.profile}
+									{include file="./css/svg/down.svg"}     </a>
+								<div class="menu_dropdown simple">
+									<div class="contents">
+										{if !empty($profile)}
+											<a href="{$slang}{$profile.0.long_link}" class="item">{$lg.translations_manager}</a>
+										{/if}
+										<a href="/logout.php" class="item logout">
+											{$lg.logout}
+										</a>
+									</div>
+								</div>
+								</div>
+							{else}
+								<div class="item is_dropdown logging simple with_menu">
+										<a href="/logout.php" class="item logout primary button icon">
+											{$lg.logout}{include file="./css/svg/lock.svg"}
+										</a>
+								</div>
+							{/if}
 						{else}
-							{$lg.login}
-							{include file="./css/svg/lock.svg"}
+							<div class="item logging simple">
+								<a href="javascript:void(0)" class="item icon primary logout button">
+									{include file="./css/svg/lock.svg"}{$lg.login}
+								</a>
+							</div>
 						{/if}
 					</div>
 					{if empty($session.user)}

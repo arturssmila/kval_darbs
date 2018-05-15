@@ -148,6 +148,9 @@ $elements = array(
 		'system(\'unzip'	=> array(
 						
 						),
+		'ALREADY_RUN'	=> array(
+						
+						),
 		'zip_open'	=> array(
 						
 						),

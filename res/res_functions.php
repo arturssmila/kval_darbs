@@ -43,7 +43,7 @@
 	function checkPermission($level, $affected_id){
 		switch ($level) {
 			case 1:
-				if(($_SESSION["user"]["admin"] == 1) || ($_SESSION["user"]["admin"] == 2)){
+				if($_SESSION["user"]["admin"] == 1){
 					return true;
 				}else if($_SESSION["user"]["admin"] == 2){
 					if(!empty($_SESSION["user"]["manager"])){
@@ -57,6 +57,14 @@
 				break;
 			
 			case 2:
+				if(($_SESSION["user"]["admin"] == 0) && ($_SESSION["user"]["project_manager"] == 1)){
+					return true;
+				}else{
+					return false;
+				}
+				break;
+			
+			case 3:
 				if(($_SESSION["user"]["admin"] == 1) || ($_SESSION["user"]["admin"] == 2)){
 					return true;
 				}else if($_SESSION["user"]["id"] == $affected_id){

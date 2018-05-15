@@ -233,12 +233,14 @@ if( (parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST).$port === $_SERVER['HTTP_
 						<tr>
 							<td><?php echo al("vecaks"); ?></td>
 							<td>
-								<?php if(is_admin()) { ?>
+								<input type="text" name="parent_id" <?php if(!empty($this_page_opened)) echo 'disabled'; ?> value="<?php echo $data["parent_id"]; ?>" />
+								<!-- Uzlikts, lai jebkurš var mainīt vecāku -->
+								<?php /*if(is_admin()) { ?>
 									<input type="text" name="parent_id" <?php if(!empty($this_page_opened)) echo 'disabled'; ?> value="<?php echo $data["parent_id"]; ?>" />
 								<?php } else { ?>
 									<?php echo $data["parent_id"]; ?>
 									<input type="hidden" name="parent_id" value="<?php echo $data["parent_id"]; ?>" />
-								<?php } ?>
+								<?php }*/ ?>
 							</td>
 						</tr>
 						<tr>

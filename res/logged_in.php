@@ -1,9 +1,12 @@
 <?php 
 	$hom = "http://$_SERVER[HTTP_HOST]";
+	//var_dump($_SESSION["user"]);
+	//exit();
 	if (empty($_SESSION["user"])){//redirect to home if not logged in
 		header("Location: $hom");
 	}
 	$data["manager"] = array();
+	
 
 	get_user("S", array("id"=>$_SESSION["user"]["id"]), $curr_user);
 	$original_link = str_replace("/", "", $data["cat"][0]["long_link"]);
@@ -63,46 +66,96 @@
 				"url" => url($original_link, "8")
 			),
 			"9" => array(
-				"name" => "translators",
-				"lg" => $data["lg"]["translators"],
+				"name" => "employees",
+				"lg" => $data["lg"]["employees"],
 				"url" => url($original_link, "9") ,
-				"hidden" => true
-			),
-			"10" => array(
-				"name" => "project_manager",
-				"lg" => $data["lg"]["project_manager"],
-				"url" => url($original_link, "10") ,
 				"hidden" => true
 			),/*"http://$_SERVER[HTTP_HOST]" . $data['cat'][0]['long_link'] . "/6"*/
 		);
 		$data["routes"][8]["pending"] = resetRegistrationNotifications();
 	}else{
-		$data["routes"] = array(//array of manager page menu items
-			"0" => array(
-				"name" => "submit_work",
-				"lg" => $data["lg"]["submit_work"],
-				"url" => url($original_link, "0")
-			),
-			"1" => array(
-				"name" => "submitted_projects",
-				"lg" => $data["lg"]["submitted_projects"],
-				"url" => url($original_link, "1")
-			),
-			"2" => array(
-				"name" => "work_not_accepted",
-				"lg" => $data["lg"]["work_not_accepted"],
-				"url" => url($original_link, "2")
-			),
-			"3" => array(
-				"name" => "accepted_jobs",
-				"lg" => $data["lg"]["accepted_jobs"],
-				"url" => url($original_link, "3")
-			)
-		);
+		if(!empty($curr_user[0]["project_manager"])){
+			$data["routes"] = array(//array of manager page menu items
+				"0" => array(
+					"name" => "new_projects",
+					"lg" => $data["lg"]["new_projects"],
+					"url" => url($original_link, "0")
+				),
+				"1" => array(
+					"name" => "waiting_approval",
+					"lg" => $data["lg"]["waiting_approval"],
+					"url" => url($original_link, "1")
+				),
+				"2" => array(
+					"name" => "work_not_accepted",
+					"lg" => $data["lg"]["work_not_accepted"],
+					"url" => url($original_link, "2")
+				),
+				"3" => array(
+					"name" => "accepted_jobs",
+					"lg" => $data["lg"]["accepted_jobs"],
+					"url" => url($original_link, "3")
+				)
+			);
+		}elseif(!empty($curr_user[0]["translator"]) || !empty($curr_user[0]["editor"])){
+			$data["routes"] = array(//array of manager page menu items
+				"0" => array(
+					"name" => "submit_work",
+					"lg" => $data["lg"]["submit_work"],
+					"url" => url($original_link, "0")
+				),
+				"1" => array(
+					"name" => "submitted_projects",
+					"lg" => $data["lg"]["submitted_projects"],
+					"url" => url($original_link, "1")
+				),
+				"2" => array(
+					"name" => "work_not_accepted",
+					"lg" => $data["lg"]["work_not_accepted"],
+					"url" => url($original_link, "2")
+				),
+				"3" => array(
+					"name" => "accepted_jobs",
+					"lg" => $data["lg"]["accepted_jobs"],
+					"url" => url($original_link, "3")
+				)
+			);
+		}elseif(!empty($curr_user[0]["client"])){
+			$data["routes"] = array(//array of manager page menu items
+				"0" => array(
+					"name" => "submit_work",
+					"lg" => $data["lg"]["submit_work"],
+					"url" => url($original_link, "0")
+				),
+				"1" => array(
+					"name" => "submitted_projects",
+					"lg" => $data["lg"]["submitted_projects"],
+					"url" => url($original_link, "1")
+				),
+				"2" => array(
+					"name" => "work_not_accepted",
+					"lg" => $data["lg"]["work_not_accepted"],
+					"url" => url($original_link, "2")
+				),
+				"3" => array(
+					"name" => "accepted_jobs",
+					"lg" => $data["lg"]["accepted_jobs"],
+					"url" => url($original_link, "3")
+				)
+			);
+		}
 	}
-	$lin1 = get_arg(1);//last part of link
-	$lin2 = get_arg(2);//2nd part from the end of link
-	$lin3 = get_arg(3);//3rd part from the end of link
+	$link_post = false;
+	if(!empty($_POST)){
+		if( parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST) === $_SERVER['HTTP_HOST'] ){
+			if(!empty($_POST["link"])){
+				$link_post = $_POST["link"];
+			}
+		}
+	}
+	$lin1 = get_arg(1, $link_post);//last part of link
+	$lin2 = get_arg(2, $link_post);//2nd part from the end of link
+	$lin3 = get_arg(3, $link_post);//3rd part from the end of link
 	$curr_arr = array_keys($data["routes"]);
 	if($lin1 == $original_link){//if no route given, then we redirect to fyrstr route
 		$page = $curr_arr[0];
@@ -322,15 +375,108 @@
 				}
 				break;
 
-			case "translators":
+			case "employees":
+				if(empty($_POST["tr"]) && empty($_POST["ed"]) && empty($_POST["pr"])){
+					$_POST["get_all_employees"] = true;
+				}else{
+					$_POST["get_all_employees"] = false;
+					if(empty($_POST["tr"])){
+						$_POST["tr"] = false;
+					}
+					if(empty($_POST["ed"])){
+						$_POST["ed"] = false;
+					}
+					if(empty($_POST["pr"])){
+						$_POST["pr"] = false;
+					}
+				}
 				if((is_numeric($lin1)) && (!is_numeric($lin2))){
  					header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"."/0");
 				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (!is_numeric($lin3))){
 					if($lin1 == 0){
-						$data["manager"]["translators"] = get_translators_editors();
-						$data["manager"]["curr_page"] = 0;
+						if($_POST["get_all_employees"]){
+							$data["manager"]["translators"] = get_employees(false,false,false,true);
+							$data["manager"]["all_selected"] = true;
+							$data["manager"]["curr_page"] = 0;
+						}else{
+							$data["manager"]["translators"] = get_employees($_POST["tr"],$_POST["ed"],$_POST["pr"],false);
+							$data["manager"]["tr"] = $_POST["tr"];
+							$data["manager"]["ed"] = $_POST["ed"];
+							$data["manager"]["pr"] = $_POST["pr"];
+							$data["manager"]["curr_page"] = 0;
+						}
 					}else if($lin1 == 1){
 						$data["manager"]["translators"] = "NEW";
+						$data["manager"]["curr_page"] = 1;
+					}
+				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (is_numeric($lin3))){
+					if($lin2 == 0){
+						get_user("S", array("active"=>"1", "admin"=>"0", "id"=>$lin1), $employee);
+						if(!empty($employee)){
+							if((!empty($employee[0]["translator"])) || (!empty($employee[0]["editor"])) || (!empty($employee[0]["project_manager"]))){
+
+								$data["manager"]["employee"] = $employee[0];//get employee data
+								$query = "SELECT * FROM employee_language_pairs WHERE employee_id=\"" . $data["manager"]["employee"]["id"] . "\"";//get all language pairs of employee
+							    $rs= mysql_query($query);
+							    $employee_pears = getSqlRows($rs);//yes, pears
+
+
+							    meta("S", array("template"=>"expertise_item"), $data["manager"]["expertise_items"]);//get all specialities
+							    foreach ($employee_pears as $key => $value) {
+							    	$query = "SELECT * FROM language_pair_specialities WHERE pair_id=\"" . $value["id"] . "\"";//get all specialities of employee language pair
+								    $rez= mysql_query($query);
+								    $specialities = getSqlRows($rez);//yes, pears
+								    if(!empty($specialities)){
+								    	$employee_pears[$key]["specialities"] = array();
+								    	$employee_pears[$key]["specialities"] = $specialities;
+								    }
+							    }
+
+								meta("S", array("template"=>"language_pair"), $data["manager"]["language_pairs"]);//get all language pairs
+								if(!empty($employee_pears) && !empty($data["manager"]["language_pairs"])){
+									foreach ($employee_pears as $key => $value) {
+										foreach ($data["manager"]["language_pairs"] as $keyy => $valuee) {
+											if($valuee["id"] == $value["pair_id"]){
+												unset($data["manager"]["language_pairs"][$keyy]);//remove language pairs from complete list if the employee possesses them
+												$valuee["when_learned"] = $value["when_learned"];
+												$valuee["rate"] = $value["rate"];
+												$valuee["currency"] = $value["currency"];
+												$valuee["employee_pair_id"] = $value["id"];
+												if(!empty($value["specialities"])){
+													$valuee["pair_specialities"] = $value["specialities"];
+												}
+												$data["manager"]["employee"]["language_pairs"][] = $valuee;//add language pair to employee laguage pair array which he possesses
+												break;
+											}
+										}
+									}
+								}
+								$data["manager"]["translators"] = "PROFILE";
+								$data["manager"]["curr_page"] = 2;
+							}else{
+								one_back();//if we should not reach this user through this page then we are set back one page
+							}
+							$data["currencies"] = getCurrencies($settings["vacancy_form_currencies"]);
+						}else{
+							one_back();
+						}						
+					}else if($lin2 == 1){
+						$data["manager"]["translators"] = "NEW";
+						$data["manager"]["curr_page"] = 1;
+					}
+				}
+				$_POST = array();
+				break;
+				
+			case "project_manager":
+				if((is_numeric($lin1)) && (!is_numeric($lin2))){
+ 					header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"."/0");
+				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (!is_numeric($lin3))){
+					if($lin1 == 0){
+						$data["manager"]["project_managers"] = get_project_managers();
+						$data["manager"]["curr_page"] = 0;
+					}else if($lin1 == 1){
+						$data["manager"]["project_managers"] = "NEW";
 						$data["manager"]["curr_page"] = 1;
 					}
 				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (is_numeric($lin3))){
@@ -450,20 +596,12 @@
 	function get_user_id() {
 		return $_SESSION["user"]["id"];
 	}
-
-	function get_est_id() {
-		return get_arg(3);
-	}
-
-	function get_apt_id() {
-		return get_arg(2);
-	}
 	function get_page() {
 		return get_arg(1);//get id for the notices page 
 	}
-	function get_arg($i) {
-		if(!empty($_GET["variables"])){
-			$expl = explode("/", $_GET["variables"]);//gets all user information
+	function get_arg($i, $link) {
+		if(!empty($link)){
+			$expl = explode("/", $link);//gets all user information
 			//out($expl);
 			//out(sizeof($expl));
 			if((!empty($expl[sizeof($expl) - $i])) || (isset($expl[sizeof($expl) - $i]))){
@@ -472,7 +610,18 @@
 				return false;
 			}
 		}else{
-			return false;
+			if(!empty($_GET["variables"])){
+				$expl = explode("/", $_GET["variables"]);//gets all user information
+				//out($expl);
+				//out(sizeof($expl));
+				if((!empty($expl[sizeof($expl) - $i])) || (isset($expl[sizeof($expl) - $i]))){
+					return $expl[sizeof($expl) - $i];//takes needed info from user infromation
+				}else{
+					return false;
+				}
+			}else{
+				return false;
+			}
 		}
 	}
 	function one_back(){
@@ -480,6 +629,63 @@
 		array_pop ( $new_link );
 		$new_link = implode("/", $new_link);
 		header("Location: $new_link");
+	}
+	function get_employees($tr,$ed,$pr,$all){
+		get_user("S", array("active"=>"1", "admin"=>"0"), $employees);
+		$employees_arr = array();
+		//$to_get = 0;       for AND logic when selecting employees  
+		//if($tr)$to_get++;
+		//if($ed)$to_get++;
+		//if($pr)$to_get++;
+		foreach ($employees as $key => $value) {
+			$curr_cou = 0;
+			if($all == true){
+				if(!empty($value["translator"])){
+					if($value["translator"]=="1"){
+						$employees_arr[] = $value;
+					}
+				}elseif(!empty($value["editor"])){
+					if($value["editor"]=="1"){
+						$employees_arr[] = $value;
+					}
+				}elseif(!empty($value["project_manager"])){
+					if($value["project_manager"]=="1"){
+						$employees_arr[] = $value;
+					}
+				}
+			}else{
+				if($tr == true){
+					if(isset($value["translator"])){
+						if($value["translator"]=="1"){
+							$employees_arr[] = $value;
+							continue;
+							//$curr_cou++;
+						}
+					}
+				}
+				if($ed == true){
+					if(isset($value["editor"])){
+						if($value["editor"]=="1"){
+							$employees_arr[] = $value;
+							continue;
+							//$curr_cou++;
+						}
+					}
+				}
+				if($pr == true){
+					if(isset($value["project_manager"])){
+						if($value["project_manager"]=="1"){
+							$employees_arr[] = $value;
+							//$curr_cou++;
+						}
+					}
+				}
+				/*if($curr_cou == $to_get){//for AND logic
+					$employees_arr[] = $value;
+				}*/
+			}
+		}
+		return $employees_arr;
 	}
 	function get_translators_editors(){
 		get_user("S", array("active"=>"1", "admin"=>"0"), $translators);
@@ -500,6 +706,18 @@
 			}
 		}
 		return $translators_arr;
+	}
+	function get_project_managers(){
+		get_user("S", array("active"=>"1", "admin"=>"0"), $project_managers);
+		$managers_arr = array();
+		foreach ($project_managers as $key => $value) {
+			if(isset($value["project_manager"])){
+				if($value["project_manager"] == "1"){
+					$managers_arr[] = $value;
+				}
+			}
+		}
+		return $managers_arr;
 	}
 	function url($original_link, $pag_substr) {//gets url for the menu items
 		$url = rtrim("http://$_SERVER[HTTP_HOST]/$original_link", "/");

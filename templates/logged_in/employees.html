@@ -1,4 +1,4 @@
-<h1>{$lg.translators}</h1>
+<h1>{$lg.employees}</h1>
 <div class="contents">
 	<div class="controls top">
 		<div class="item{if $manager.curr_page == 0} active{/if}">
@@ -21,12 +21,14 @@
 			<div>{$lg.phone}: {if !empty($manager.employee.phone)}{$manager.employee.phone}{else}-{/if}</div>
 			
 			<div>
-				{if ((!empty($manager.employee.translator)) && (!empty($manager.employee.editor)))}
-					{$lg.translator_editor}
-				{elseif (!empty($manager.employee.translator))}
-					{$lg.translator}
-				{elseif (!empty($manager.employee.editor))}
-					{$lg.editor}
+				{if (!empty($manager.employee.translator))}
+					{$lg.translator}{if (!empty($manager.employee.editor)) || (!empty($manager.employee.project_manager))},{/if}
+				{/if}
+				{if (!empty($manager.employee.editor))}
+					{$lg.editor}{if !empty($manager.employee.project_manager)},{/if}
+				{/if}
+				{if (!empty($manager.employee.project_manager))}
+					{$lg.project_manager}
 				{/if}
 			</div>
 				{if !empty($manager.employee.language_pairs)}
@@ -100,7 +102,7 @@
 										</span>
 									</div>
 								</td>
-								<td class="toggle_specialities noselect" onClick="hiddenRow({$i.employee_pair_id}, 'translator_pairs')">{$lg.show_specialities}</td>
+								<td class="toggle_specialities noselect" onClick="hiddenRow({$i.employee_pair_id}, 'translator_pairs', 'to_toggle')">{$lg.show_specialities}</td>
 							</tr>
 							{if !empty($manager.expertise_items)}
 								<tr class="hide to_toggle" toggle_id="{$i.employee_pair_id}">
@@ -265,8 +267,11 @@
 				<span class="title">
 					{$lg.choose_vacancy}:
 				</span>
-				<div class="dropdown">
-					<div class="select">
+				<div class="dropdown text_left">
+					<span class="item"><input class="inline_checkbox" type="checkbox" name="translator" check_type="position" info_type="user_data" value="1">{$lg.translator}</span>
+					<span class="item"><input class="inline_checkbox" type="checkbox" name="editor" check_type="position" info_type="user_data" value="1">{$lg.editor}</span>
+					<span class="item"><input class="inline_checkbox" type="checkbox" name="project_manager" check_type="position" info_type="user_data" value="1">{$lg.project_manager}</span>
+					{*<div class="select">
 						<span class="text">
 							{$lg.translator_editor}
 						</span>
@@ -280,7 +285,7 @@
 							<span class="item" onclick="set_position(this);" position="2">{$lg.editor}</span>
 							<span class="item" onclick="set_position(this);" position="3">{$lg.project_manager}</span>
 						</div>
-					</div>
+					</div>*}
 				</div>
 			</div>
 			<div class="segment passwords" mode="b">
@@ -294,7 +299,7 @@
 				<input class="required" name="password2" type="password" info_type="user">
 			</div>
 			<div class="controls center">
-				<span class="bloated primary submit button" id="create_employee">
+				<span onClick="createEmployee();" class="bloated primary submit button" id="create_employee">
 					{$lg.send_application}
 				</span>
 				<img class="loading hide" src="/css/images/loading.gif" >
@@ -302,14 +307,43 @@
 			</div>
 		</div>
 		{elseif $manager.translators|is_array}
-			{foreach from=$manager.translators key=key item=i}
-				<div><a href="{$smarty.server.REQUEST_URI}/{$i.id}">{$i.name} {$i.surname}</a></div>
-				{assign var="count" value=$count+1}
-			{/foreach}
+			<div>
+			<div class="controls">
+				<form action="" method="post">
+					<label class="inline">{$lg.translators}</label><input type="checkbox" name="tr" value="true" {if !empty($manager.all_selected) || !empty($manager.tr)}checked{/if}>
+					<label class="inline">{$lg.editors}</label><input type="checkbox" name="ed" value="true" {if !empty($manager.all_selected) || !empty($manager.ed)}checked{/if}>
+					<label class="inline">{$lg.project_managers}</label><input type="checkbox" name="pr" value="true" {if !empty($manager.all_selected) || !empty($manager.pr)}checked{/if}>
+					<input type="hidden" name="link" value="{$smarty.server.REQUEST_URI}">
+					<input type="submit">
+				</form>
+			</div>
+				{foreach from=$manager.translators key=key item=i}
+					<div><a href="{$smarty.server.REQUEST_URI}/{$i.id}">{$i.name} {$i.surname}</a></div>
+					{assign var="count" value=$count+1}
+				{/foreach}
+			</div>
 		{else}
+			<div class="controls">
+				<form action="" method="post">
+					<label class="inline">{$lg.translators}</label><input type="checkbox" name="tr" value="true" {if !empty($manager.all_selected) || !empty($manager.tr)}checked{/if}>
+					<label class="inline">{$lg.editors}</label><input type="checkbox" name="ed" value="true" {if !empty($manager.all_selected) || !empty($manager.ed)}checked{/if}>
+					<label class="inline">{$lg.project_managers}</label><input type="checkbox" name="pr" value="true" {if !empty($manager.all_selected) || !empty($manager.pr)}checked{/if}>
+					<input type="hidden" name="link" value="{$smarty.server.REQUEST_URI}">
+					<input type="submit">
+				</form>
+			</div>
 			<div class="empty centered_text show"><h1>{$lg.no_info}</h1></div>
 		{/if}
 	{else}
+			<div class="controls">
+				<form action="" method="post">
+					<label class="inline">{$lg.translators}</label><input type="checkbox" name="tr" value="true" {if !empty($manager.all_selected) || !empty($manager.tr)}checked{/if}>
+					<label class="inline">{$lg.editors}</label><input type="checkbox" name="ed" value="true" {if !empty($manager.all_selected) || !empty($manager.ed)}checked{/if}>
+					<label class="inline">{$lg.project_managers}</label><input type="checkbox" name="pr" value="true" {if !empty($manager.all_selected) || !empty($manager.pr)}checked{/if}>
+					<input type="hidden" name="link" value="{$smarty.server.REQUEST_URI}">
+					<input type="submit">
+				</form>
+			</div>
 		<div class="empty centered_text show"><h1>{$lg.no_info}</h1></div>
 	{/if}
 {*$manager.pending_users|print_r*}</div>

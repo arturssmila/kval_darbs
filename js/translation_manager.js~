@@ -507,3 +507,8 @@ function getEmployeePairs(employee_id){
         }
     });
 }
+
+function resetSelectInput(elem){
+    $(elem).parent().parent().parent().find("input[name='speciality']").val($(elem).attr("val"));
+    $(elem).parent().parent().parent().find(".select.speciality > .text").text($(elem).text());
+}

@@ -1182,6 +1182,8 @@ function register_domain()
 	$post_parameters["last_update_time"] = file_date(ROOT.'/update.xml');
 	$post_parameters["version"] = get_version();
 	
+	$url = 'http://'.$update_host.'/admin/register_domain.php';
+	
 	$http_array = array( 'http' => array(
 				'method'  => 'POST',
 				'timeout'=> 3,
@@ -1189,7 +1191,20 @@ function register_domain()
 				'content' => http_build_query($post_parameters),
 				)
 			);
-	$result = @file_get_contents('http://'.$update_host.'/admin/register_domain.php', false, stream_context_create($http_array));
+	$result = @file_get_contents($url, false, stream_context_create($http_array));
+	if(!$result)
+	{
+		$ch = @curl_init();
+		if($ch)
+		{
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_parameters));
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);			
+			$result = @curl_exec($ch);			
+			curl_close($ch);
+		}
+	}
 }
 /***************************************************************************************************************/
 function send_email($sender_email = '',$reciever_email = '',$data)

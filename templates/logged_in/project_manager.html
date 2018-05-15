@@ -1,4 +1,4 @@
-<h1>{$lg.translators}</h1>
+<h1>{$lg.project_manager}</h1>
 <div class="contents">
 	<div class="controls top">
 		<div class="item{if $manager.curr_page == 0} active{/if}">
@@ -12,4 +12,76 @@
 			</a>
 		</div>
 	</div>
-</div>
+	{assign var="count" value=0}
+	{if !empty($manager.project_managers)}
+		{if $manager.project_managers=="PROFILE"}
+			<div>{$lg.first_name}: {$manager.employee.name}</div>
+			<div>{$lg.last_name}: {$manager.employee.surname}</div>
+			<div>{$lg.email}: {$manager.employee.mail}</div>
+			<div>{$lg.phone}: {if !empty($manager.employee.phone)}{$manager.employee.phone}{else}-{/if}</div>
+			<div>
+				{$lg.project_manager}
+			</div>
+		{elseif $manager.project_managers=="NEW"}
+		<div id="create_employee_form" class="centered_form">
+			<h3 class="title">{$lg.add_employee}</h3>
+			<div class="segment names">
+				<div class="input_container">
+					<input class="required" info_type="user" name="name" type="text" placeholder="{$lg.first_name}*">
+				</div>
+				<div class="input_container">
+					<input class="required" info_type="user" name="surname" type="text" placeholder="{$lg.last_name}*">
+				</div>
+			</div>
+			<div class="segment email">
+				<input class="required" info_type="user" name="mail" type="email" placeholder="{$lg.email}*">
+			</div>
+			<div class="segment phone">
+				<span class="title">
+					{$lg.phone}*:
+				</span>
+				<input class="required" name="phone" type="phone" info_type="user_data">
+			</div>
+			<div class="segment prof">
+				<span class="title">
+					{$lg.choose_position}:
+				</span>
+				<div class="dropdown">
+					<div class="select">
+						<span class="text">
+							{$lg.project_manager}
+						</span>
+						<input class="required" name="position_id" id="position_id" type="hidden" info_type="user_data" disabled value="3">
+					</div>
+				</div>
+			</div>
+			<div class="segment passwords" mode="b">
+				<span class="title">
+					{$lg.password}*:
+				</span>
+				<input class="required" name="password" type="password" info_type="user">
+				<span class="title">
+					{$lg.password_again}*:
+				</span>
+				<input class="required" name="password2" type="password" info_type="user">
+			</div>
+			<div class="controls center">
+				<span class="bloated primary submit button" id="create_employee">
+					{$lg.send_application}
+				</span>
+				<img class="loading hide" src="/css/images/loading.gif" >
+				<span class="text hide" id="registration_done">{$lg.registration_done}</span>
+			</div>
+		</div>
+		{elseif $manager.translators|is_array}
+			{foreach from=$manager.translators key=key item=i}
+				<div><a href="{$smarty.server.REQUEST_URI}/{$i.id}">{$i.name} {$i.surname}</a></div>
+				{assign var="count" value=$count+1}
+			{/foreach}
+		{else}
+			<div class="empty centered_text show"><h1>{$lg.no_info}</h1></div>
+		{/if}
+	{else}
+		<div class="empty centered_text show"><h1>{$lg.no_info}</h1></div>
+	{/if}
+{*$manager.pending_users|print_r*}</div>

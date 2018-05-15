@@ -12,7 +12,7 @@
 	}
 	
 	$login = false;
-	if($admin)
+	if(!empty($admin))
 	{
 		unlock_pages($user[0]["id"]);
 		event("I",array("user_id"=>$user[0]["id"],"action"=>'Beidza darbu.'),$x);

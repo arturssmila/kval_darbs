@@ -533,7 +533,10 @@ $(document).ready(function() {
         } */
         if((!$(event.target).closest('.tablet_menu.show').length) && (!$(event.target).closest('.burger').length)) {
             $(".tablet_menu").removeClass("show");
-        }//close talbet menu if click out  
+        }//close talbet menu if click out 
+        if((!$(event.target).closest('.menu_dropdown.simple').length) && (!$(event.target).closest('.item.tablet_company.points').length)) {
+            $(".menu_dropdown.simple").removeAttr("style");
+        }
     });
 
     $(".menu_dropdown.languages .group .item.see_more, .tablet_menu .tablet_dropdown_contents.languages .group .item.see_more").click(function(){
