@@ -1,4 +1,4 @@
-<h1>New Projects</h1>
+<h1>{$lg.waiting_approval}</h1>
 <div class="contents">
 	{if !empty($manager.jobs)}
 		<table id="submitted_jobs" class="hidden_rows">
@@ -11,8 +11,6 @@
 					<th>{$lg.date_due}</th>
 					<th>{$lg.time_zone}</th>
 					<th>{$lg.number_of_tasks}</th>
-					<th>{$lg.word_count}</th>
-					<th>{$lg.price}</th>
 					<th>{$lg.submitted}</th>
 					<th></th>
 				</tr>
@@ -62,20 +60,6 @@
 									-
 								{/if}
 							</td>
-							<td>	
-								{if !empty($job.word_count)}
-									{$job.word_count}
-								{else}
-									-
-								{/if}
-							</td>
-							<td>	
-								{if !empty($job.price)}
-									{$job.price}
-								{else}
-									-
-								{/if}
-							</td>
 							<td>
 								{$job.created}
 	
@@ -90,7 +74,7 @@
 						</tr>
 						{if !empty($job.pairs)}
 							<tr class="hide to_toggle" toggle_id="{$job.id}_job">
-								<td class="job_language_pairs" colspan="11">
+								<td class="job_language_pairs" colspan="9">
 									<table id="lang_pairs_{$job.id}" class="job_language_pairs_table hidden_rows">
 										<thead><tr><th>{$lg.source_language}</th><th>{$lg.target_language}</th><th>{$lg.number_of_tasks}</th><th></th></tr></thead>
 										{foreach from=$job.pairs key=pair_key item=pair}
@@ -116,11 +100,6 @@
 														-
 													{/if}
 												</td>
-												<td class="noselect">
-													<button class="small">
-														{$lg.show_files}
-													</button>
-												</td>
 												<td class="toggle_specialities noselect" onClick="hiddenRow_toggleSingle('{$pair.id}_pair', 'lang_pairs_{$job.id}', 'to_toggle_sub')">
 													<button class="small">
 														{$lg.show_files}
@@ -131,19 +110,9 @@
 												<tr class="to_toggle_sub" toggle_id="{$pair.id}_pair">
 													<td class="job_language_pair_files" colspan="5">
 														<table class="job_language_pair_files_table" class="hidden_rows">
-															<thead>
-																<tr>
-																	<th class="percent_5">ID</th>
-																	<th class="percent_30">{$lg.name}</th>
-																	<th class="percent_20">{$lg.file}</th>
-																	<th class="percent_10">{$lg.word_count}</th>
-																	<th class="percent_15">{$lg.speciality_price}</th>
-																	<th class="percent_10">{$lg.price}</th>
-																	<th class="percent_10">{$lg.calculate_price}</th>
-																</tr>
-															</thead>
+															<thead><tr><th class="percent_5">ID</th><th class="percent_30">{$lg.name}</th><th class="percent_30">{$lg.file}</th><th class="percent_15">{$lg.word_count}</th><th class="percent_20">{$lg.speciality_price}</th></tr></thead>
 															{foreach from=$pair.files key=file_key item=file}
-																<tr class="job_language_pair_files_row" file_id="{$file.id}">
+																<tr class="job_language_pair_files_row">
 																	<td class="job_language_pair_files_cell percent_5">
 																			{$file.id}
 																	</td>
@@ -154,14 +123,14 @@
 																			-
 																		{/if}
 																	</td>
-																	<td class="job_language_pair_files_cell percent_20">
+																	<td class="job_language_pair_files_cell percent_30">
 																		{if !empty($file.file_path)}
 																			<a target="_blank" href="{$file.file_path}">{$file.file_name}</a>
 																		{else}
 																			-
 																		{/if}
 																	</td>
-																	<td class="job_language_pair_files_cell percent_10">
+																	<td class="job_language_pair_files_cell percent_15">
 																		<div class="original"><span class="cell_content">{if empty($file.word_count)}-{else}{$file.word_count}{/if}</span>
 																			<span class="in_text_element">
 																				<button class="button" onClick="openChangeInput(this)">...</button>
@@ -178,41 +147,19 @@
 																			</span>
 																		</div>
 																	</td>
-																	<td class="job_language_pair_files_cell percent_15">
+																	<td class="job_language_pair_files_cell percent_20">
 																		{if !empty($pair.specialities)}
-																		{*<pre>{$pair.specialities|print_r}</pre>*}
 																			<div class="original">
 																				<div class="dropdown">
-																					<div class="select speciality"  data_id="{$file.id}">
+																					<div class="select speciality">
 																						<span class="text">
-																						{if !empty($file.speciality_id)}
 																							{foreach from=$pair.specialities item=g}
-																								{if $g.id == $file.speciality_id}
+																								{if $g.speciality == "regular"}
 																									{$g.name} {$g.rate}
 																								{/if}
 																							{/foreach}
-																						{else}
-																							{foreach from=$pair.specialities item=g}
-																								{if $g.speciality == "regular"}
-																									{$lg.regular} {$g.rate}
-																								{/if}
-																							{/foreach}
-																						{/if}
 																						</span>
-																						<input type="hidden" name="speciality" 
-																						{if !empty($file.speciality_id)}
-																							{foreach from=$pair.specialities item=g}
-																								{if $g.id == $file.speciality_id}
-																									value="{$g.id}"
-																								{/if}
-																							{/foreach}
-																						{else}
-																							{foreach from=$pair.specialities item=g}
-																								{if $g.speciality == "regular"}
-																									value="{$g.id}"
-																								{/if}
-																							{/foreach}
-																						{/if}>
+																						<input type="hidden" name="speciality">
 																						{include file="./css/svg/down.svg"}
 																					</div>
 																					<div class="items">
@@ -227,22 +174,6 @@
 																		{else}
 																			<span class="warning">{$lg.pair_not_exists}</span>
 																		{/if}
-																	</td>
-																	<td class="job_language_pair_files_cell price percent_10">
-																		{if !empty($file.price)}
-																			{if $file.price == 0}
-																			-
-																			{else}
-																				{$file.price}
-																			{/if}
-																		{else}
-																			-
-																		{/if}
-																	</td>
-																	<td class="job_language_pair_files_cell percent_10">
-																		<button class="small" onClick="getFilePrice('{$file.id}', '{$pair.id}', 'price')">
-																			GO
-																		</button>
 																	</td>
 																</tr>
 															{/foreach}

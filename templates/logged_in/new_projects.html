@@ -9,11 +9,9 @@
 					<th>{$lg.last_name}</th>
 					<th>{$lg.company}</th>
 					<th>{$lg.date_due}</th>
-					<th>{$lg.time_zone}</th>
 					<th>{$lg.number_of_tasks}</th>
 					<th>{$lg.word_count}</th>
 					<th>{$lg.price}</th>
-					<th>{$lg.submitted}</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -21,7 +19,7 @@
 				{if (!empty($manager.jobs))}
 					{foreach from=$manager.jobs key=key item=job}
 					{*<pre>{$job.customer|print_r}</pre>*}
-					<tr class="ui hover" data="{$job.id}">
+					<tr class="ui hover" job_id="{$job.id}">
 							<td>
 								{$job.id}
 							</td>
@@ -44,14 +42,7 @@
 								{elseif (!empty($i["date_due"]))}
 									{$job.date_due}
 								{else}
-									echo "-";
-								{/if}
-							</td>
-							<td>	
-								{if !empty($job.time_zone)}
-									{$job.time_zone}
-								{else}
-									echo "-";
+									-
 								{/if}
 							</td>
 							<td>	
@@ -69,28 +60,65 @@
 									-
 								{/if}
 							</td>
-							<td>	
+							<td class="price">	
 								{if !empty($job.price)}
-									{$job.price}
+									{$job.price|string_format:"%.2f"} €
 								{else}
 									-
 								{/if}
 							</td>
-							<td>
-								{$job.created}
-	
-								{*<div class="ui pull_right">
-									<label class="ui checkbox">
-										<input type="checkbox" name="id_<?= $i["id"] ?>" value="<?= $i["id"] ?>">
-										<span></span> 
-									</label>
-								</div>*}
-							</td>
-							<td class="toggle_specialities noselect" onClick="hiddenRow('{$job.id}_job', 'submitted_jobs', 'to_toggle')"><button class="small">{$lg.show_pairs}</button></td>
+							<td class="toggle_specialities noselect" onClick="hiddenRow('{$job.id}_job', 'submitted_jobs', 'to_toggle')"><button class="small">{$lg.toggle_details}</button></td>
 						</tr>
 						{if !empty($job.pairs)}
 							<tr class="hide to_toggle" toggle_id="{$job.id}_job">
-								<td class="job_language_pairs" colspan="11">
+								<td class="job_language_pairs" colspan="9">
+									<table id="details_{$job.id}" class="">
+										<thead>
+											<tr>
+												<th>{$lg.time_zone}</th>
+												<th>{$lg.submitted}</th>
+												<th>{$lg.comments}</th>
+											</tr>
+										</thead>
+										<tr>
+											<td>	
+												{if !empty($job.time_zone)}
+													{$job.time_zone}
+												{else}
+													-
+												{/if}
+											</td>
+											<td>
+												{$job.created}
+											</td>
+											<td>	
+												{if !empty($job.comment)}
+													{$job.comment}
+												{else}
+													 -
+												{/if}
+											</td>
+										</tr>
+										<tr>
+											<td>	
+												<button onClick="getJobPrice({$job.id})">{$lg.get_price}</button>
+											</td>
+											<td>
+												<button onClick="offerToClient({$job.id})">{$lg.offer_client}</button>
+											</td>
+											<td>	
+												<button onClick="moveJobToTrash({$job.id})">{$lg.move_to_trash}</button>
+											</td>
+										</tr>
+										<tr>
+											<td>	
+											</td>
+											<td>
+											</td>
+											<td>	
+											</td>
+										</tr>
+									</table>
 									<table id="lang_pairs_{$job.id}" class="job_language_pairs_table hidden_rows">
 										<thead><tr><th>{$lg.source_language}</th><th>{$lg.target_language}</th><th>{$lg.number_of_tasks}</th><th></th></tr></thead>
 										{foreach from=$job.pairs key=pair_key item=pair}
@@ -178,18 +206,18 @@
 																		{*<pre>{$pair.specialities|print_r}</pre>*}
 																			<div class="original">
 																				<div class="dropdown">
-																					<div class="select speciality"  data_id="{$file.id}">
+																					<div class="select speciality"  data_id="{$file.id}" job_id="{$job.id}">
 																						<span class="text">
 																						{if !empty($file.speciality_id)}
 																							{foreach from=$pair.specialities item=g}
 																								{if $g.id == $file.speciality_id}
-																									{$g.name} {$g.rate}
+																									{$g.name} {$g.rate} €
 																								{/if}
 																							{/foreach}
 																						{else}
 																							{foreach from=$pair.specialities item=g}
 																								{if $g.speciality == "regular"}
-																									{$lg.regular} {$g.rate}
+																									{$lg.regular} {$g.rate} €
 																								{/if}
 																							{/foreach}
 																						{/if}
@@ -213,7 +241,7 @@
 																					<div class="items">
 																						<div class="contents scrollable">
 																							{foreach from=$pair.specialities item=g}
-																								<span class="item" val="{$g.id}" onclick="resetSelectInput(this)">{$g.name} {$g.rate}</span>
+																								<span class="item" val="{$g.id}" onclick="resetSelectInput(this)">{$g.name} {$g.rate} €</span>
 																							{/foreach}
 																						</div>
 																					</div>
@@ -228,7 +256,7 @@
 																			{if $file.price == 0}
 																			-
 																			{else}
-																				{$file.price}
+																				{$file.price} €
 																			{/if}
 																		{else}
 																			-

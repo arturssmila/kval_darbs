@@ -36,6 +36,10 @@
 								$numRows = mysql_affected_rows();
 								if(!empty($numRows)){
 									$work_id = $check_row[0]["work_id"];
+									$query = "UPDATE submitted_work
+											SET price='0'
+											WHERE id='".$work_id."'";
+									$result = mysql_query($query);
 									updateWorkWordCount($work_id);
 									echo(json_encode("ok"));
 									exit();
@@ -95,7 +99,7 @@
 											//var_dump($price);
 											//exit();
 											if($check_row[0]["price"] == $price){
-												$out_data["price"] = $price;
+												$out_data["price"] = $price." €";
 												$out_data["status"] = "OK";
 												echo(json_encode($out_data));
 												exit();
@@ -108,7 +112,7 @@
 												$result = mysql_query($query);
 												$numRows = mysql_affected_rows();
 												if(!empty($numRows)){
-													$out_data["price"] = $price;
+													$out_data["price"] = $price." €";
 													$out_data["status"] = "OK";
 													echo(json_encode($out_data));
 													exit();
@@ -166,80 +170,146 @@
 					echo(json_encode("error"));
 					exit();
 				}
-				if((!empty($_POST["main_id"])) && (!empty($_POST["second_id"])) && (!empty($_POST["field"]))){
-						$result = mysql_query("SHOW COLUMNS FROM `submitted_files` LIKE '".$_POST["field"]."'");
-						$check_field = getSqlRows($result);
-						if(!empty($check_field)) {
-							$result = mysql_query("SELECT * FROM `submitted_files` WHERE  (id='".$_POST["main_id"]."') AND (pair_id='".$_POST["second_id"]."')");
-							$check_row = getSqlRows($result);
-							if(!empty($check_row)){
-								//$work_id = $check_row[0]["work_id"];
-								if(!empty($check_row[0]["word_count"])){
-									if(!empty($_POST["speciality_price_id"])){
-										$result = mysql_query("SELECT * FROM `language_pair_prices` WHERE id='".$_POST["speciality_price_id"]."'");
-										$get_rates = getSqlRows($result);
-										if(!empty($get_rates)){
-											$page_percent = $check_row[0]["word_count"] / $settings["standard_page_word_count"];
-											$price = $page_percent * $get_rates[0]["rate"];
-											$price = round( $price, 2, PHP_ROUND_HALF_UP);
-											$price = to_number($price);
-											//var_dump($price);
-											//exit();
-											if($check_row[0]["price"] == $price){
-												$out_data["price"] = $price;
-												$out_data["status"] = "OK";
-												echo(json_encode($out_data));
-												exit();
-											}
-											//var_dump($price);
-											if(!empty($price)){
-												$query = "UPDATE submitted_files
-														SET price='$price', speciality_id='".$_POST["speciality_price_id"]."'
-														WHERE (id='".$_POST["main_id"]."') AND (pair_id='".$_POST["second_id"]."')";
-												$result = mysql_query($query);
-												$numRows = mysql_affected_rows();
-												if(!empty($numRows)){
-													$out_data["price"] = $price;
-													$out_data["status"] = "OK";
-													echo(json_encode($out_data));
-													exit();
-												}else{
-													//echo __LINE__;
-													$out_data["status"] = "error";
-													echo(json_encode($out_data));
-													exit();
-												}
-											}else{
-													//echo __LINE__;
-													$out_data["status"] = "error";
-													echo(json_encode($out_data));
-													exit();
-											}
-											exit();
-										}
-									}else{
-													//echo __LINE__;
-										$out_data["status"] = "error";
-										echo(json_encode($out_data));
-										exit();
-									}
+				if(!empty($_POST["main_id"])){
+					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
+					$selected_job = getSqlRows($result);
+					if(!empty($selected_job)){
+						//updateWorkWordCount($selected_job[0]["id"]);//recount words
+						$result = mysql_query("SELECT * FROM `submitted_files` WHERE  work_id='".$_POST["main_id"]."'");
+						$selected_files = getSqlRows($result);
+						$end_price = 0;
+						if(!empty($selected_files)){
+							foreach($selected_files as $file_key=>$file_val){
+								if(!empty($file_val["price"]) && $file_val["price"] != 0){
+									$end_price += $file_val["price"];
+								}else{
+									$out_data["status"] = "error";
+									echo(json_encode($out_data));
+									exit();
+								}
+							}
+							
+							if($end_price != 0){
+								$end_price = round( $end_price, 2, PHP_ROUND_HALF_UP);
+								$end_price = to_number($end_price);
+								$query = "UPDATE submitted_work
+										SET price='$end_price'
+										WHERE id='".$_POST["main_id"]."'";
+								$result = mysql_query($query);
+								$numRows = mysql_affected_rows();
+								if($numRows){
+									$out_data["status"] = "OK";
+									$out_data["price"] = $end_price." €";
+									echo(json_encode($out_data));
+									exit();
 								}else{
 									$out_data["status"] = "error";
 									echo(json_encode($out_data));
 									exit();
 								}
 							}else{
-						//echo __LINE__;
 								$out_data["status"] = "error";
 								echo(json_encode($out_data));
 								exit();
 							}
 						}else{
-						//echo __LINE__;
 							$out_data["status"] = "error";
 							echo(json_encode($out_data));
 							exit();
 						}
+					}else{
+				//echo __LINE__;
+						$out_data["status"] = "error";
+						echo(json_encode($out_data));
+						exit();
+					}
+				}
+				$out_data["status"] = "empty";
+				echo(json_encode($out_data));
+				exit();
+				break;
+			case "moveJobToTrash":
+				if($_SESSION["user"]["soc"] != "00"){
+					echo(json_encode("error"));
+					exit();
+				}else if(!isset($_SESSION["user"]["admin"])){
+					echo(json_encode("error"));
+					exit();
+				}else if(!checkPermission(2, 0)){
+					//echo __LINE__;
+					echo(json_encode("error"));
+					exit();
+				}
+				//var_dump($_POST);
+				//exit();
+				if(!empty($_POST["main_id"])){
+					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
+					$selected_job = getSqlRows($result);
+					if(!empty($selected_job)){
+						//updateWorkWordCount($selected_job[0]["id"]);//recount words
+						//$result = mysql_query("SELECT * FROM `submitted_files` WHERE  work_id='".$_POST["main_id"]."'");
+						//$selected_files = getSqlRows($result);
+						
+						$query = "UPDATE submitted_work
+								SET accepted='-2'
+								WHERE id='".$_POST["main_id"]."'";
+						$result = mysql_query($query);
+						$numRows = mysql_affected_rows();
+						if($numRows){
+							echo("ok");
+							exit();
+						}else{
+							echo("error");
+							exit();
+						}
+					}else{
+				//echo __LINE__;
+						$out_data["status"] = "error";
+						echo(json_encode($out_data));
+						exit();
+					}
+				}
+				$out_data["status"] = "empty";
+				echo(json_encode($out_data));
+				exit();
+				break;
+			case "offerToClient":
+				if($_SESSION["user"]["soc"] != "00"){
+					echo(json_encode("error"));
+					exit();
+				}else if(!isset($_SESSION["user"]["admin"])){
+					echo(json_encode("error"));
+					exit();
+				}else if(!checkPermission(2, 0)){
+					//echo __LINE__;
+					echo(json_encode("error"));
+					exit();
+				}
+				//var_dump($_POST);
+				//exit();
+				if(!empty($_POST["main_id"])){
+					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
+					$selected_job = getSqlRows($result);
+					if(!empty($selected_job)){
+						
+						$query = "UPDATE submitted_work
+								SET accepted='1'
+								WHERE id='".$_POST["main_id"]."'";
+						$result = mysql_query($query);
+						$numRows = mysql_affected_rows();
+						if($numRows){
+							echo("ok");
+							exit();
+						}else{
+							echo("error");
+							exit();
+						}
+					}else{
+				//echo __LINE__;
+						$out_data["status"] = "error";
+						echo(json_encode($out_data));
+						exit();
+					}
 				}
 				$out_data["status"] = "empty";
 				echo(json_encode($out_data));

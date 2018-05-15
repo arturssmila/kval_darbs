@@ -31,97 +31,7 @@ $(document).ready(function(){
         });
     });
 
-    $("#add_pairs").click(function(){
-        var pair_data = {};
-        var counting = 0;
-        var was_error = false;
-        $("#add_pairs_table span.error").remove();
-        $("#add_pairs_table .error").removeClass("error");
-        var curr_year = new Date().getFullYear();
-        $("#add_pairs_table tbody tr").each(function(){
-            $checkbox = $(this).find("input.checkbox");
-            if($checkbox.is(":checked")){
-                pair_data[counting] = {};
-                pair_data[counting]["id"] = $(this).find(".name").attr("value");
-                $date_field = $(this).find(".date_input");
-                var reg = /^[0-9]+$/;
-                var year = $date_field.val()
-                if ((year.match(reg)) && (year.length == 4) && (year <= curr_year) && (year > 1920)) {
-                    pair_data[counting]["date"] = $date_field.val();
-                }else{
-                    $date_field.before("<span class=\"error\">" + lg["field_required"] + "</span>");
-                    $date_field.addClass("error");
-                    was_error = true;
-                }
-                var money = 0;
-                var money = $(this).find("input.price").val();
-                var currency_v = 0;
-                var currency_v = $(this).find("input[name=\"currency\"]").val();
-                var currency_error = false;
-                if(money != "undefined" && money != null && money != 0){
-                    pair_data[counting]["amount"] = money;
-                }else{
-                    $(this).find("input.price").before("<span class=\"error\">" + lg["field_required"] + "</span>");
-                    $(this).find("input.price").addClass("error");
-                    was_error = true;
-                    currency_error = true;
-                }
-                if(currency_v != "undefined" && currency_v != null && currency_v != 0){
-                    pair_data[counting]["currency"] = currency_v;
-                }else{
-                    if(currency_error == false){
-                        $(this).find(".select.currency").before("<span class=\"error\">" + lg["field_required"] + "</span>");
-                        $(this).find("input[name=\"currency\"]").addClass("error");
-                    }else{
-                        $(this).find("input[name=\"currency\"]").addClass("error");
-                    }
-                    was_error = true;
-                }
-                counting++;
-            }
-        });
-        if(!was_error){
-            var employee_id = $("input#employee_id_input").val();
-            $.ajax({
-                type: "POST",
-                url: "/res/translations_manager.php",
-                data: {
-                    action: "add_employee_pair",
-                    data:pair_data,
-                    employee_id: employee_id
-                    },
-                async: true,
-                dataType: 'json',
-                cache: false,
-                success: function(response)
-                {
-                    if(response == "empty"){
-                        console.log("ree"); 
-                    }else if(response instanceof Array){
-                        for(x in response) {
-                            $target = $("span.name[value='"+response[x]+"']").parent().parent();
-                            $target.hide('slow', function(){
-                                $target.remove();
-                                if (!($("#add_pairs_table tbody tr")[0])){
-                                    $("#add_pairs_form").addClass("hide");  
-                                    $("#add_pairs_title").addClass("hide");    
-                                }
-                            });
-                        }
-                        //console.log(response); 
-                        //getEmployeePairs(employee_id);
-                        location.reload();
-                    }           
-                },
-                error: function(response)
-                {
-                    console.log(response);
-                }
-            });
-        }else{
-            console.log("not legit");
-        }
-    });
+
 
 	$("#submit_work_button").click(function(){
 		var validated = 1;
@@ -372,6 +282,8 @@ function changeCellValue_2ids(clicked, main_id, second_id, field, file, action){
                         $parent.addClass("hide");
                         if(action == "changeFileWordCount"){
                         	$("tr[file_id='"+main_id+"'] td.price").text("-");
+                        	var job_id = $(".select.speciality[data_id='"+main_id+"']").attr("job_id");
+                        	$("tr[job_id='"+job_id+"'] > td.price").text("-");
                         }
                     }else if(response == "logged_out"){
                         alert(lg.session_ended_logged_out);
@@ -390,90 +302,7 @@ function changeCellValue_2ids(clicked, main_id, second_id, field, file, action){
     }
 }
 
-function getFilePrice(main_id, second_id, field){
-	var speciality = $(".select.speciality[data_id='"+main_id+"'] input[name='speciality']").val();
-	//console.log(speciality);
-	$.ajax({
-		type: "POST",
-		url: '/res/translations_manager.php',
-		data: {
-			main_id: main_id,
-			second_id: second_id,
-			field: field,
-			speciality_price_id: speciality,
-			action: "getFilePrices"
-		},
-		async: true,
-		cache: false,
-		success: function(response)
-		{	
-			//console.log(response);
-			response = JSON.parse(response);
-			//console.log(response);
-			if(response["status"] == "OK"){
-				$("tr[file_id='"+main_id+"'] td.price").text(response["price"]);
-			}else if(response == "error"){
-				alert(lg.error);
-			}else if(response == "logged_out"){
-				alert(lg.session_ended_logged_out);
-				location.reload();
-			}else{
-				alert("could not update!");
-			}     
-		},
-		error: function(response)
-		{
-			console.log(response);
-			alert("could not update!");
-		}
-	});
-}
 
-function getJobPrice(clicked, main_id, second_id, field, file, action){
-    $parent = $(clicked).parent().parent();
-    var original_val = $parent.prev(".original").find(".cell_content").text();
-    var value = $(clicked).parent().prev("input").val();
-    if(value == original_val){
-        $parent.prev(".original").removeClass("hide");
-        $parent.addClass("hide");
-    }else{
-        if (value !== null){
-            $.ajax({
-                type: "POST",
-                url: file,
-                data: {
-                    main_id: main_id,
-                    second_id: second_id,
-                    field: field,
-                    action: action,
-                    value: value
-                },
-                async: true,
-                dataType: 'json',
-                cache: false,
-                success: function(response)
-                {
-                    console.log(response);
-                    if(response == "ok"){
-                        $parent.prev(".original").find(".cell_content").text(value);
-                        $parent.prev(".original").removeClass("hide");
-                        $parent.addClass("hide");
-                    }else if(response == "logged_out"){
-                        alert(lg.session_ended_logged_out);
-                        location.reload();
-                    }else{
-                        alert("could not update!");
-                    }     
-                },
-                error: function(response)
-                {
-                    console.log(response);
-                    alert("could not update!");
-                }
-            });
-        }
-    }
-}
 
 function cancelUpdate(clicked){
     $parent = $(clicked).parent().parent();
@@ -522,33 +351,6 @@ function tableAction(table_id, file, action){
     }
 }
 
-function getEmployeePairs(employee_id){
-    $.ajax({
-        type: "POST",
-        url: "/res/translations_manager.php",
-        data:
-        {
-            action:     "get_employee_pairs",
-            employee_id: employee_id
-        },
-        dataType: 'json',
-        cache: false,
-        async: true,
-        success: function(returned)
-        {
-            if(returned instanceof Array){
-                $("#translator_pairs tbody").html("");
-                for(x in returned) {
-                    $("#translator_pairs tbody").append("<tr><td><div>"+returned[x]["menu_name"]+"</div></td><td><div>"+returned[x]["when_learned"]+"</div></td><td>"+returned[x]["rate"]+" "+returned[x]["currency"]+"</td></tr>");
-                }
-            }  
-        },
-        error: function(response)
-        {
-            console.log(response);
-        }
-    });
-}
 
 function resetSelectInput(elem){
     $(elem).parent().parent().parent().find("input[name='speciality']").val($(elem).attr("val"));
