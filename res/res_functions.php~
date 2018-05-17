@@ -57,7 +57,7 @@
 				break;
 			
 			case 2:
-				if(($_SESSION["user"]["admin"] == 0) && ($_SESSION["user"]["admin"]["project_manager"] == 1)){
+				if(($_SESSION["user"]["admin"] == 0) && ($_SESSION["user"]["project_manager"] == 1)){
 					return true;
 				}else{
 					return false;

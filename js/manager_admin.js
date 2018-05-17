@@ -325,42 +325,6 @@ function getJobPrice(main_id){
 	});
 }
 
-function moveJobToTrash(job_id){
-	if (confirm(lg.move_to_trash+"?")) {
-		$.ajax({
-			type: "POST",
-			url: "/res/translations_manager.php",
-			data: {
-				main_id: job_id,
-				action: "moveJobToTrash"
-			},
-			async: true,
-			cache: false,
-			success: function(response)
-			{
-				//response = JSON.parse(response);
-				console.log(response);
-				if(response == "ok"){
-					$("tr[job_id='"+job_id+"']").remove();
-					$("tr.to_toggle[toggle_id='"+job_id+"_job']").remove();
-				}else if(response == "error"){
-					alert(lg.error);
-				}else if(response == "logged_out"){
-					alert(lg.session_ended_logged_out);
-					location.reload();
-				}else{
-					alert("could not remove!");
-				} 
-			},
-			error: function(response)
-			{
-				console.log(response);
-				alert("could not remove!");
-			}
-		});
-    	} else {
-	}
-}
 
 function offerToClient(job_id){
 	if (confirm(lg.offer_client+"?")) {

@@ -145,21 +145,57 @@
 	<script type="text/javascript" src="/js/libs/lunr.min.js"></script>
 	<script type="text/javascript" src="/js/libs/moment.js"></script>
 	<script type="text/javascript" src="/js/libs/pikaday/pikaday.js"></script>
-	<script>
-	    var picker = new Pikaday({ 
-	    	field: document.getElementById('date'), 
-	    	format: 'YYYY.MM.DD', 
-	    	showDaysInNextAndPreviousMonths: true,
-	    	minDate: new Date(),
-			i18n: {
-			    previousMonth: 'Previous Month',
-			    nextMonth: 'Next Month',
-			    months: [{for $i=1 to 12} '{$i|get_arh_name}', {/for}],
-			    weekdays: [{for $i=1 to 7} '{$i|get_week_days:"L"}', {/for}],
-			    weekdaysShort: [{for $i=1 to 7} '{$i|get_week_days:"S"}', {/for}]
-			}
-	    });
-	</script>
+	{if (!empty($manager.jobs))}
+		<script>
+				//var datepickers = document.querySelectorAll("td .dropdown.small.date");
+				var buttons = document.querySelectorAll(".dropdown.smal.date");
+				var inputs = document.querySelectorAll(".date_picker");
+				var picker = [];
+				for (var i = 0; i < inputs.length; i++) {
+				  var input = inputs[i];
+				
+				
+				  picker[i] = new Pikaday({
+					field: inputs[i],
+					format: 'YYYY-MM-DD', 
+					showDaysInNextAndPreviousMonths: true,
+					minDate: new Date(),
+					i18n: {
+						previousMonth: 'Previous Month',
+						nextMonth: 'Next Month',
+						months: [{for $i=1 to 12} '{$i|get_arh_name}', {/for}],
+						weekdays: [{for $i=1 to 7} '{$i|get_week_days:"L"}', {/for}],
+						weekdaysShort: [{for $i=1 to 7} '{$i|get_week_days:"S"}', {/for}]
+					}
+				  });
+				
+				}
+				
+				function showClander(obj) {
+				  for (var i = 0; i < buttons.length; i++) {
+					if (buttons[i] == obj) {
+					  picker[i].show()
+					}
+				  }
+				}
+		</script>
+	{else}
+		<script>
+			var picker = new Pikaday({ 
+				field: document.getElementById('date'), 
+				format: 'YYYY.MM.DD', 
+				showDaysInNextAndPreviousMonths: true,
+				minDate: new Date(),
+				i18n: {
+					previousMonth: 'Previous Month',
+					nextMonth: 'Next Month',
+					months: [{for $i=1 to 12} '{$i|get_arh_name}', {/for}],
+					weekdays: [{for $i=1 to 7} '{$i|get_week_days:"L"}', {/for}],
+					weekdaysShort: [{for $i=1 to 7} '{$i|get_week_days:"S"}', {/for}]
+				}
+			});
+		</script>
+	{/if}
 	<script type="text/javascript" src="/js/common.js?{$js_date}"></script>
 	<script type="text/javascript" src="/js/scripts.js?{$js_date}"></script>
 	{if (($cat.0.template == "vacancies") || (!empty($vacancies)))}

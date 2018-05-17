@@ -200,6 +200,117 @@ function changeSpecialities(pair_id, table_id){
         });
     }
 }
+function moveJobToTrash(job_id, action){
+	if (confirm(lg.move_to_trash+"?")) {
+		$.ajax({
+			type: "POST",
+			url: "/res/translations_manager.php",
+			data: {
+				main_id: job_id,
+				action: action
+			},
+			async: true,
+			cache: false,
+			success: function(response)
+			{
+				//response = JSON.parse(response);
+				console.log(response);
+				if(response == "ok"){
+					$("tr[job_id='"+job_id+"']").remove();
+					$("tr.to_toggle[toggle_id='"+job_id+"_job']").remove();
+				}else if(response == "error"){
+					alert(lg.error);
+				}else if(response == "logged_out"){
+					alert(lg.session_ended_logged_out);
+					location.reload();
+				}else{
+					alert("could not remove!");
+				} 
+			},
+			error: function(response)
+			{
+				console.log(response);
+				alert("could not remove!");
+			}
+		});
+    	} else {
+	}
+}
+
+function changeDateDue(clicked_obj, job_id, action){
+	var date_due = $(clicked_obj).parent().parent().find("input#date_"+job_id).val();
+	if (confirm("change due date?")) {
+		$.ajax({
+			type: "POST",
+			url: "/res/translations_manager.php",
+			data: {
+				main_id: job_id,
+				date_due: date_due,
+				action: action
+			},
+			async: true,
+			cache: false,
+			success: function(response)
+			{
+				//response = JSON.parse(response);
+				console.log(response);
+				if(response == "ok"){
+					alert("Date due changed!");
+				}else if(response == "error"){
+					alert(lg.error);
+				}else if(response == "logged_out"){
+					alert(lg.session_ended_logged_out);
+					location.reload();
+				}else{
+					alert("could not change!");
+				} 
+			},
+			error: function(response)
+			{
+				console.log(response);
+				alert("could not change!");
+			}
+		});
+    	} else {
+	}
+}
+
+function moveFromTrash(job_id, action){
+	if (confirm(lg.restore+"?")) {
+		$.ajax({
+			type: "POST",
+			url: "/res/translations_manager.php",
+			data: {
+				main_id: job_id,
+				action: action
+			},
+			async: true,
+			cache: false,
+			success: function(response)
+			{
+				//response = JSON.parse(response);
+				console.log(response);
+				if(response == "ok"){
+					$("tr[job_id='"+job_id+"']").remove();
+					$("tr.to_toggle[toggle_id='"+job_id+"_job']").remove();
+				}else if(response == "error"){
+					alert(lg.error);
+				}else if(response == "logged_out"){
+					alert(lg.session_ended_logged_out);
+					location.reload();
+				}else{
+					alert("could not remove!");
+				} 
+			},
+			error: function(response)
+			{
+				console.log(response);
+				alert("could not remove!");
+			}
+		});
+    	} else {
+	}
+}
 
 function openChangeInput(clicked){
     $(clicked).parent().parent().next(".changable").removeClass("hide");

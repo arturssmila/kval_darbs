@@ -1,4 +1,4 @@
-<h1>New Projects</h1>
+<h1>{$lg.trash}</h1>
 <div class="contents">
 	{if !empty($manager.jobs)}
 		<table id="submitted_jobs" class="hidden_rows">
@@ -107,7 +107,7 @@
 												<button onClick="offerToClient({$job.id})">{$lg.offer_client}</button>
 											</td>
 											<td>	
-												<button onClick="moveJobToTrash({$job.id}, 'moveJobToTrash')">{$lg.move_to_trash}</button>
+												<button onClick="moveJobToTrash({$job.id})">{$lg.move_to_trash}</button>
 											</td>
 										</tr>
 										<tr>

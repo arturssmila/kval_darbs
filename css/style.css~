@@ -183,6 +183,10 @@ legend {
   margin-bottom: .5rem;
   font-weight: 600; }
 
+.inline{
+	display: inline;
+}
+  
 fieldset {
   padding: 0;
   border-width: 0; }
@@ -3364,6 +3368,9 @@ display: none; }
 #manager .percent_5{
 	width: 5%;
 }
+#manager .percent_10{
+	width: 10%;
+}
 #manager .percent_15{
 	width: 15%;
 }
@@ -3375,6 +3382,25 @@ display: none; }
 }
 #manager .toggle_specialities{
     cursor: pointer;
+}
+
+#manager #submitted_jobs{
+	margin-bottom: 40px;
+}
+
+button.inline{
+	display: inline;
+}
+
+button.inline+button.inline{
+	margin-left: 10px;
+}
+
+button.small_choice{
+	box-sizing: border-box;
+	padding: 0 0;
+	width: 30px;
+	height: 30px;
 }
 
 #manager .warning{

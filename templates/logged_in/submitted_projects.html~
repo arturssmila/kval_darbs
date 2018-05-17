@@ -107,7 +107,7 @@
 												<button onClick="offerToClient({$job.id})">{$lg.offer_client}</button>
 											</td>
 											<td>	
-												<button onClick="moveJobToTrash({$job.id}, 'moveJobToTrash')">{$lg.move_to_trash}</button>
+												<button onClick="moveJobToTrash({$job.id}, 'clientMoveJobToTrash')">{$lg.move_to_trash}</button>
 											</td>
 										</tr>
 										<tr>
@@ -203,50 +203,19 @@
 																	</td>
 																	<td class="job_language_pair_files_cell percent_15">
 																		{if !empty($pair.specialities)}
-																		{*<pre>{$pair.specialities|print_r}</pre>*}
-																			<div class="original">
-																				<div class="dropdown">
-																					<div class="select speciality"  data_id="{$file.id}" job_id="{$job.id}">
-																						<span class="text">
-																						{if !empty($file.speciality_id)}
-																							{foreach from=$pair.specialities item=g}
-																								{if $g.id == $file.speciality_id}
-																									{$g.name} {$g.rate} €
-																								{/if}
-																							{/foreach}
-																						{else}
-																							{foreach from=$pair.specialities item=g}
-																								{if $g.speciality == "regular"}
-																									{$lg.regular} {$g.rate} €
-																								{/if}
-																							{/foreach}
-																						{/if}
-																						</span>
-																						<input type="hidden" name="speciality" 
-																						{if !empty($file.speciality_id)}
-																							{foreach from=$pair.specialities item=g}
-																								{if $g.id == $file.speciality_id}
-																									value="{$g.id}"
-																								{/if}
-																							{/foreach}
-																						{else}
-																							{foreach from=$pair.specialities item=g}
-																								{if $g.speciality == "regular"}
-																									value="{$g.id}"
-																								{/if}
-																							{/foreach}
-																						{/if}>
-																						{include file="./css/svg/down.svg"}
-																					</div>
-																					<div class="items">
-																						<div class="contents scrollable">
-																							{foreach from=$pair.specialities item=g}
-																								<span class="item" val="{$g.id}" onclick="resetSelectInput(this)">{$g.name} {$g.rate} €</span>
-																							{/foreach}
-																						</div>
-																					</div>
-																				</div>
-																			</div>
+																			{if !empty($file.speciality_id)}
+																				{foreach from=$pair.specialities item=g}
+																					{if $g.id == $file.speciality_id}
+																						{$g.name} {$g.rate} €
+																					{/if}
+																				{/foreach}
+																			{else}
+																				{foreach from=$pair.specialities item=g}
+																					{if $g.speciality == "regular"}
+																						{$lg.regular} {$g.rate} €
+																					{/if}
+																				{/foreach}
+																			{/if}
 																		{else}
 																			<span class="warning">{$lg.pair_not_exists}</span>
 																		{/if}

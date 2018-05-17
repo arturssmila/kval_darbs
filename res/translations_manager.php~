@@ -174,6 +174,11 @@
 					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
 					$selected_job = getSqlRows($result);
 					if(!empty($selected_job)){
+						
+						if($selected_job[0]["accepted"] == "-1"){
+							echo("error");
+							exit();
+						}
 						//updateWorkWordCount($selected_job[0]["id"]);//recount words
 						$result = mysql_query("SELECT * FROM `submitted_files` WHERE  work_id='".$_POST["main_id"]."'");
 						$selected_files = getSqlRows($result);
@@ -215,6 +220,182 @@
 						}else{
 							$out_data["status"] = "error";
 							echo(json_encode($out_data));
+							exit();
+						}
+					}else{
+				//echo __LINE__;
+						$out_data["status"] = "error";
+						echo(json_encode($out_data));
+						exit();
+					}
+				}
+				$out_data["status"] = "empty";
+				echo(json_encode($out_data));
+				exit();
+				break;
+			case "moveJobToTrash":
+				if($_SESSION["user"]["soc"] != "00"){
+							echo("error");
+							exit();
+				}else if(!isset($_SESSION["user"]["admin"])){
+							echo("error");
+							exit();
+				}else if(!checkPermission(2, 0)){
+					//echo __LINE__;
+							echo("error");
+							exit();
+				}
+				//var_dump($_POST);
+				//exit();
+				if(!empty($_POST["main_id"])){
+					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
+					$selected_job = getSqlRows($result);
+					if(!empty($selected_job)){
+						//updateWorkWordCount($selected_job[0]["id"]);//recount words
+						//$result = mysql_query("SELECT * FROM `submitted_files` WHERE  work_id='".$_POST["main_id"]."'");
+						//$selected_files = getSqlRows($result);
+						
+						$query = "UPDATE submitted_work
+								SET accepted='-2'
+								WHERE id='".$_POST["main_id"]."'";
+						$result = mysql_query($query);
+						$numRows = mysql_affected_rows();
+						if($numRows){
+							echo("ok");
+							exit();
+						}else{
+							echo("error");
+							exit();
+						}
+					}else{
+				//echo __LINE__;
+							echo("error");
+							exit();
+					}
+				}
+				echo("error");
+				exit();
+				break;
+			case "clientMoveJobToTrash":
+				if($_SESSION["user"]["soc"] != "00"){
+							echo("error");
+							exit();
+				}else if(!isset($_SESSION["user"]["admin"])){
+							echo("error");
+							exit();
+				}
+				//var_dump($_POST);
+				//exit();
+				if(!empty($_POST["main_id"])){
+					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
+					$selected_job = getSqlRows($result);
+					if(!empty($selected_job)){
+						if(!checkPermission(3, $selected_job[0]["user_id"])){
+							//echo __LINE__;
+							echo("error");
+							exit();
+						}
+						//updateWorkWordCount($selected_job[0]["id"]);//recount words
+						//$result = mysql_query("SELECT * FROM `submitted_files` WHERE  work_id='".$_POST["main_id"]."'");
+						//$selected_files = getSqlRows($result);
+						
+						$query = "UPDATE submitted_work
+								SET accepted='-1'
+								WHERE id='".$_POST["main_id"]."'";
+						$result = mysql_query($query);
+						$numRows = mysql_affected_rows();
+						if($numRows){
+							echo("ok");
+							exit();
+						}else{
+							echo("error");
+							exit();
+						}
+					}else{
+				//echo __LINE__;
+							echo("error");
+							exit();
+					}
+				}
+					echo("empty");
+					exit();
+				break;
+			case "offerToClient":
+				if($_SESSION["user"]["soc"] != "00"){
+					echo(json_encode("error"));
+					exit();
+				}else if(!isset($_SESSION["user"]["admin"])){
+					echo(json_encode("error"));
+					exit();
+				}else if(!checkPermission(2, 0)){
+					//echo __LINE__;
+					echo(json_encode("error"));
+					exit();
+				}
+				//var_dump($_POST);
+				//exit();
+				if(!empty($_POST["main_id"])){
+					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
+					$selected_job = getSqlRows($result);
+					if(!empty($selected_job)){
+						
+						if($selected_job[0]["accepted"] == "-1"){
+							echo("error");
+							exit();
+						}
+						
+						$query = "UPDATE submitted_work
+								SET accepted='1'
+								WHERE id='".$_POST["main_id"]."'";
+						$result = mysql_query($query);
+						$numRows = mysql_affected_rows();
+						if($numRows){
+							echo("ok");
+							exit();
+						}else{
+							echo("error");
+							exit();
+						}
+					}else{
+				//echo __LINE__;
+						$out_data["status"] = "error";
+						echo(json_encode($out_data));
+						exit();
+					}
+				}
+				$out_data["status"] = "empty";
+				echo(json_encode($out_data));
+				exit();
+				break;
+			case "approvePrice":
+				if($_SESSION["user"]["soc"] != "00"){
+					echo(json_encode("error"));
+					exit();
+				}else if(!isset($_SESSION["user"]["admin"])){
+					echo(json_encode("error"));
+					exit();
+				}
+				var_dump($_POST);
+				exit();
+				if(!empty($_POST["main_id"])){
+					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
+					$selected_job = getSqlRows($result);
+					if(!empty($selected_job)){
+						if(!checkPermission(3, $selected_job[0]["user_id"])){
+							//echo __LINE__;
+							echo("error");
+							exit();
+						}
+						$query = "UPDATE submitted_work
+								SET accepted='2'
+								WHERE id='".$_POST["main_id"]."'";
+						$result = mysql_query($query);
+						$numRows = mysql_affected_rows();
+						if($numRows){
+							echo("ok");
+							exit();
+						}else{
+							echo("error");
 							exit();
 						}
 					}else{

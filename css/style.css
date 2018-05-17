@@ -2851,6 +2851,19 @@ body.modal_active {
   cursor: pointer;
   width: 160px; }
 
+ .dropdown .date_picker {
+  position: absolute;
+  border: none;
+  background: 0 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  opacity: 0;
+  cursor: pointer;
+  width: 160px; }
+  
 .modal_file_item {
   position: relative; }
   .modal_file_item .close {
@@ -3382,6 +3395,25 @@ display: none; }
 }
 #manager .toggle_specialities{
     cursor: pointer;
+}
+
+#manager #submitted_jobs{
+	margin-bottom: 40px;
+}
+
+button.inline{
+	display: inline;
+}
+
+button.inline+button.inline{
+	margin-left: 10px;
+}
+
+button.small_choice{
+	box-sizing: border-box;
+	padding: 0 0;
+	width: 30px;
+	height: 30px;
 }
 
 #manager .warning{

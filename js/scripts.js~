@@ -568,10 +568,6 @@ $(document).ready(function() {
     $("#date").change(function() {
        $("#date").parent().find(".text").html($(this).val());
     });
-    
-     $(".date_picker").change(function() {
-       $(this).parent().find(".text").html($(this).val());
-    });
 
     var menu_size = $("#header .menu").children().length;
 

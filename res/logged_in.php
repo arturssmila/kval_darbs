@@ -75,30 +75,75 @@
 		$data["routes"][8]["pending"] = resetRegistrationNotifications();
 	}else{
 		if(!empty($curr_user[0]["project_manager"])){
-			$data["routes"] = array(//array of manager page menu items
-				"0" => array(
-					"name" => "new_projects",
-					"lg" => $data["lg"]["new_projects"],
-					"url" => url($original_link, "0")
-				),
-				"1" => array(
-					"name" => "waiting_approval",
-					"lg" => $data["lg"]["waiting_approval"],
-					"url" => url($original_link, "1")
-				),
-				"2" => array(
-					"name" => "trash",
-					"lg" => $data["lg"]["trash"],
-					"url" => url($original_link, "2")
-				),
-				"3" => array(
-					"name" => "accepted_jobs",
-					"lg" => $data["lg"]["accepted_jobs"],
-					"url" => url($original_link, "3")
-				)
-			);
+			if(!empty($curr_user[0]["translator"]) || !empty($curr_user[0]["editor"])){
+				$data["routes"] = array(//pages for project manager who is also translator/editor
+					"0" => array(
+						"name" => "new_projects",
+						"lg" => $data["lg"]["new_projects"],
+						"url" => url($original_link, "0")
+					),
+					"1" => array(
+						"name" => "waiting_approval",
+						"lg" => $data["lg"]["waiting_approval"],
+						"url" => url($original_link, "1")
+					),
+					"2" => array(
+						"name" => "trash",
+						"lg" => $data["lg"]["trash"],
+						"url" => url($original_link, "2")
+					),
+					"3" => array(
+						"name" => "accepted_jobs",
+						"lg" => $data["lg"]["accepted_jobs"],
+						"url" => url($original_link, "3")
+					),
+					"4" => array(
+						"name" => "client_declined",
+						"lg" => $data["lg"]["client_declined"],
+						"url" => url($original_link, "4")
+					),
+					"5" => array(
+						"name" => "employee_declined",
+						"lg" => $data["lg"]["employee_declined"],
+						"url" => url($original_link, "5")
+					),
+					"6" => array(
+						"name" => "project_in_progress",
+						"lg" => $data["lg"]["project_in_progress"],
+						"url" => url($original_link, "6")
+					)
+				);
+			}else{
+				$data["routes"] = array(//pages for project manager
+					"0" => array(
+						"name" => "new_jobs",
+						"lg" => $data["lg"]["new_jobs"],
+						"url" => url($original_link, "0")
+					),
+					"1" => array(
+						"name" => "work_in_progress",
+						"lg" => $data["lg"]["waiting_approval"],
+						"url" => url($original_link, "1")
+					),
+					"2" => array(
+						"name" => "declined",
+						"lg" => $data["lg"]["declined"],
+						"url" => url($original_link, "2")
+					),
+					"3" => array(
+						"name" => "submitted_for_checking",
+						"lg" => $data["lg"]["submitted_for_checking"],
+						"url" => url($original_link, "3")
+					),
+					"4" => array(
+						"name" => "completed",
+						"lg" => $data["lg"]["completed"],
+						"url" => url($original_link, "4")
+					)
+				);
+			}
 		}elseif(!empty($curr_user[0]["translator"]) || !empty($curr_user[0]["editor"])){
-			$data["routes"] = array(//array of manager page menu items
+			$data["routes"] = array(//pages for translators/editors
 				"0" => array(
 					"name" => "submit_work",
 					"lg" => $data["lg"]["submit_work"],
@@ -121,7 +166,7 @@
 				)
 			);
 		}elseif(!empty($curr_user[0]["client"])){
-			$data["routes"] = array(//array of manager page menu items
+			$data["routes"] = array(//pages for clients
 				"0" => array(
 					"name" => "submit_work",
 					"lg" => $data["lg"]["submit_work"],
@@ -133,14 +178,19 @@
 					"url" => url($original_link, "1")
 				),
 				"2" => array(
-					"name" => "work_not_accepted",
-					"lg" => $data["lg"]["work_not_accepted"],
+					"name" => "approve_price",
+					"lg" => $data["lg"]["approve_price"],
 					"url" => url($original_link, "2")
 				),
 				"3" => array(
 					"name" => "accepted_jobs",
 					"lg" => $data["lg"]["accepted_jobs"],
 					"url" => url($original_link, "3")
+				),
+				"4" => array(
+					"name" => "trash",
+					"lg" => $data["lg"]["trash"],
+					"url" => url($original_link, "4")
 				)
 			);
 		}
@@ -186,6 +236,30 @@
 
 	if (!empty($data["manager"]["route"]["name"])){
 		switch ($data["manager"]["route"]["name"]) {
+			case "submitted_projects":
+				if(!is_numeric($lin1)){
+ 					header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"."/0");
+				}else if((is_numeric($lin1)) && (!is_numeric($lin2))){
+					$data["manager"]["jobs"] = getJobs("0", $data["lg"], $_SESSION["user"]["id"]);
+				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (!is_numeric($lin3))){
+						one_back();
+				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (is_numeric($lin3))){
+						one_back();
+				}
+				break;
+			
+			case "approve_price":
+				if(!is_numeric($lin1)){
+ 					header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"."/0");
+				}else if((is_numeric($lin1)) && (!is_numeric($lin2))){
+					$data["manager"]["jobs"] = getJobs("1", $data["lg"], $_SESSION["user"]["id"]);
+				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (!is_numeric($lin3))){
+						one_back();
+				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (is_numeric($lin3))){
+						one_back();
+				}
+				break;
+			
 			case "submit_work":
 				/*meta("S", array("template"=>"language_pair", "parent_id"=>$data["cat"]["0"]["id"]), $data["language_pairs"]);
 				$count = 0;
@@ -199,7 +273,30 @@
 				}*/
 				break;
 
-			case "contact_manager": 
+			case "trash": 
+				if(!is_numeric($lin1)){
+ 					header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"."/0");
+				}else if((is_numeric($lin1)) && (!is_numeric($lin2))){
+					if(($_SESSION["user"]["admin"] == 1) || (($_SESSION["user"]["admin"] == 2) && ($_SESSION["user"]["manager"] == 1))){
+						$data["manager"]["jobs"] = getJobs("-2", $data["lg"], 0);
+					}elseif($_SESSION["user"]["admin"] == 0){
+						if(!empty($_SESSION["user"]["project_manager"])){
+							if($_SESSION["user"]["project_manager"] == "1"){
+								$data["manager"]["jobs"] = getJobs("-2", $data["lg"], 0);
+							}
+						}
+						if(!empty($_SESSION["user"]["client"])){
+							if($_SESSION["user"]["client"] == "1"){
+								$data["manager"]["jobs"] = getJobs("-1", $data["lg"], $_SESSION["user"]["id"]);
+							}
+						}
+					}
+				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (!is_numeric($lin3))){
+						one_back();
+				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (is_numeric($lin3))){
+						one_back();
+				}
+				break;
 			case "waiting_approval": 
 				if(!is_numeric($lin1)){
  					header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"."/0");

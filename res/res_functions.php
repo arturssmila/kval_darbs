@@ -57,7 +57,15 @@
 				break;
 			
 			case 2:
-				if(($_SESSION["user"]["admin"] == 0) && ($_SESSION["user"]["project_manager"] == 1)){
+				if($_SESSION["user"]["admin"] == 1){
+					return true;
+				}else if($_SESSION["user"]["admin"] == 2){
+					if(!empty($_SESSION["user"]["manager"])){
+						return true;
+					}else{
+						return false;
+					}
+				}else if(($_SESSION["user"]["admin"] == 0) && ($_SESSION["user"]["project_manager"] == 1)){
 					return true;
 				}else{
 					return false;
@@ -215,6 +223,12 @@
 		$label = implode("/", $imploded);
 		$label = 'http://'.$_SERVER['HTTP_HOST'] . "/" . $label;
 		return $label;
+	}
+	
+	function validateDate($date, $format = 'Y-m-d')
+	{
+		$d = DateTime::createFromFormat($format, $date);
+		return $d && $d->format($format) == $date;
 	}
 	
 	
