@@ -235,8 +235,20 @@
 	{/if}
 	{if isset($manager.user.admin)}
 		{if ($cat.0.template == "logged_in")}
-			{if ($manager.user.admin == "1") || ( ($manager.user.admin == "2") && ($manager.user.manager == "1") ) || ( ($manager.user.admin == "0") && ($manager.user.project_manager == "1") )}
-				<script type="text/javascript" src="/js/manager_admin.js?{$js_date}"></script>
+			{if $manager.user.admin == "1"}
+					<script type="text/javascript" src="/js/manager_admin.js?{$js_date}"></script>
+			{elseif $manager.user.admin == "2"}
+				{if !empty($manager.user.manager)}
+					{if $manager.user.manager == "1"}
+						<script type="text/javascript" src="/js/manager_admin.js?{$js_date}"></script>
+					{/if}
+				{/if}
+			{elseif $manager.user.admin == "0"}
+				{if !empty($manager.user.project_manager)}
+					{if $manager.user.project_manager == "1"}
+						<script type="text/javascript" src="/js/manager_admin.js?{$js_date}"></script>
+					{/if}
+				{/if}
 			{/if}
 		{/if}
 	{/if}

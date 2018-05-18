@@ -9,6 +9,7 @@
 					<th>{$lg.last_name}</th>
 					<th>{$lg.company}</th>
 					<th>{$lg.date_due}</th>
+					<th>time_due</th>
 					<th>{$lg.number_of_tasks}</th>
 					<th>{$lg.word_count}</th>
 					<th>{$lg.price}</th>
@@ -17,6 +18,7 @@
 			</thead>
 			<tbody>
 				{if (!empty($manager.jobs))}
+				{assign var=multiple_job_picker value=true}
 					{foreach from=$manager.jobs key=key item=job}
 					{*<pre>{$job.customer|print_r}</pre>*}
 					<tr class="ui hover" job_id="{$job.id}">
@@ -37,9 +39,38 @@
 								{/if}
 							</td>
 							<td>	
-								{if (!empty($job.date_due) && !empty($job.time_due))}
+								{if (!empty($job.date_due))}
+									<div class="dropdown small date" onclick="showClander(this)">
+										<input type="text" id="date_{$job.id}" class="date_picker" name="date" value="{$job.date_due}">
+										<div class="select">
+											<span class="text">
+												{$job.date_due}
+											</span>
+											{include file="./css/svg/down.svg"}
+										</div>
+									</div>
+									<span class="in_text_element">
+										<button class="button primary" onClick="changeDateDue(this, '{$job.id}', 'changeDateDue')">{$lg.change_date}
+										</button>
+									</span>
+								{else}
+									-
+								{/if}
+								
+							</td>
+							<td>	
+							{if (!empty($job.date_due) && !empty($job.time_due))}
 									{$job.date_due} {$job.time_due}
 								{elseif (!empty($i["date_due"]))}
+								<div class="dropdown small date">
+									<input type="text" id="date" name="date">
+									<div class="select">
+										<span class="text">
+											{$lg.date}
+										</span>
+										{include file="./css/svg/down.svg"}
+									</div>
+								</div>
 									{$job.date_due}
 								{else}
 									-
@@ -101,13 +132,12 @@
 										</tr>
 										<tr>
 											<td>	
-												<button onClick="getJobPrice({$job.id})">{$lg.get_price}</button>
 											</td>
 											<td>
-												<button onClick="offerToClient({$job.id})">{$lg.offer_client}</button>
+												
 											</td>
 											<td>	
-												<button onClick="moveJobToTrash({$job.id})">{$lg.move_to_trash}</button>
+												<button onClick="moveFromTrash({$job.id}, 'moveFromTrash')">{$lg.restore}</button>
 											</td>
 										</tr>
 										<tr>

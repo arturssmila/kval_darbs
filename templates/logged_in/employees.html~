@@ -1,4 +1,4 @@
-<h1>{$manager.route.lg}</h1>
+<h1>{$lg.employees}</h1>
 <div class="contents">
 	<div class="controls top">
 		<div class="item{if $manager.curr_page == 0} active{/if}">

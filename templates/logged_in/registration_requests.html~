@@ -1,4 +1,4 @@
-<h1>{$manager.route.lg}</h1>
+<h1>{$lg.registration_requests}</h1>
 <div class="contents">
 	<div class="table_header">
 		<div class="cell small_cell">{$lg.client_type}</div>
@@ -10,8 +10,8 @@
 		<div class="cell small_cell">{$lg.confirmation}</div>
 	</div>
 	{assign var="count" value=0}
-	{if !empty($manager.clients)}
-		{foreach from=$manager.clients key=key item=i}
+	{if !empty($manager.pending_users)}
+		{foreach from=$manager.pending_users key=key item=i}
 			<div class="row_table" person_id="{$i.id}">
 				<div class="visible_row">
 					<div class="cell small_cell">{if $i.user_type == "J"}{$lg.legal_person}{else}{$lg.individual}{/if}</div>
@@ -21,8 +21,8 @@
 					<div class="cell">{if !empty($i.company)}{$i.company}{else}-{/if}</div>
 					<div class="cell">{$i.phone}</div>
 					<div class="cell small_cell controls">
-						<button class="confirm" onClick="">{include file="./css/svg/check.svg"}</button>
-						<button class="confirm decline" onClick="">X</button>
+						<button class="confirm" onClick="changeRegistrationStatus('confirm', '{$i.id}')">{include file="./css/svg/check.svg"}</button>
+						<button class="confirm decline" onClick="changeRegistrationStatus('decline', '{$i.id}')">X</button>
 					</div>
 				</div>
 				<div class="row show_more noselect" rel="{$count}"><span class="more show"><span class="inline_svg">{$lg.see_more_info}</span>{include file="./css/svg/down.svg"}</span><span class="less"><span class="inline_svg">{$lg.hide_info}</span>{include file="./css/svg/up.svg"}</span></div>

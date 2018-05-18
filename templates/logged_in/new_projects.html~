@@ -107,7 +107,7 @@
 												<button onClick="offerToClient({$job.id})">{$lg.offer_client}</button>
 											</td>
 											<td>	
-												<button onClick="moveJobToTrash({$job.id})">{$lg.move_to_trash}</button>
+												<button onClick="moveJobToTrash({$job.id}, 'moveJobToTrash')">{$lg.move_to_trash}</button>
 											</td>
 										</tr>
 										<tr>

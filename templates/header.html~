@@ -564,29 +564,38 @@
 				<div class="modal_center_block">
 					<div class="modal_center">
 						<div class="close">✖</div>
-						<div id="employee_select_modal">
-							<div class="title">{$lg.assign_employees|upper}</div>
-							<div class="selected_employees">{$lg.file_mult_empl_add}: <input class="normal_height" id="select_multiple_employees" type="checkbox" onChange="toggleMultipleEmployee(this)"></div>
+						<div id="language_select_modal">
+							<div class="title">{$lg.select_languages|upper}</div>
+							<div class="selected_languages"></div>
 							<div class="contents">
-								<table>
-									<thead>
-										<tr class="thead_row">
-											<th>{$lg.first_name}</th>
-											<th>{$lg.last_name}</th>
-											<th>{$lg.known_since}</th>
-											<th>{$lg.vacancy_rate}</th>
-											<th>{$lg.word_count}</th>
-											<th class="pages hide">{$lg.page_from}</th>
-											<th class="pages hide">{$lg.page_to}</th>
-											<th class="last_th"></th>
-										</tr>
-									</thead>
-									<tbody>
-									</tbody>
-								</table>
+								<div class="columns">
+									<ul>
+										<li class="select_item other">
+											<input value="other" class="multi_select_languages other" type="checkbox" onclick="multi_select_langs($(this), 'vacancies_modal');"><span><input id="other_language" class="" tips="other" placeholder="{$lg.other_lang}"></span></li>
+											{if $cat.0.template != "logged_in"}
+												{foreach from=$lang_gr item=g}
+													{foreach from=$lang_items item=i name=lieta}
+														{if $i.parent_id == $g.id}
+															<li class="select_item">
+															<input value="{$i.id}" class="multi_select_languages" type="checkbox"><span>{$i.name}</span></li>
+														{/if}
+													{/foreach}
+												{/foreach}
+											{else}
+												{foreach from=$lang_gr item=g}
+													{foreach from=$lang_items item=i name=lieta}
+														{if $i.parent_id == $g.id}
+															<li class="select_item">
+															<input value="{$i.id}" class="multi_select_languages" type="checkbox"><span>{$i.name}</span></li>
+														{/if}
+													{/foreach}
+												{/foreach}
+											{/if}
+									</ul>
+								</div>
 							</div>
 							<div class="done_container">
-								<div class="bloated primary button" pair_id="" onClick="assignMultipleEmployees(this);">{$lg.assign_employees}</div>
+								<div class="close bloated primary button">{$lg.done}</div>
 							</div>
 						</div>
 					</div>

@@ -10,8 +10,7 @@
 					<th>{$lg.company}</th>
 					<th>{$lg.date_due}</th>
 					<th>{$lg.number_of_tasks}</th>
-					<th>{$lg.word_count}</th>
-					<th>{$lg.price}</th>
+					<th>{$lg.submitted}</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -54,15 +53,9 @@
 								{/if}
 							</td>
 							<td>	
-								{if !empty($job.word_count)}
-									{$job.word_count}
-								{else}
-									-
-								{/if}
-							</td>
-							<td class="price">	
-								{if !empty($job.price)}
-									{$job.price|string_format:"%.2f"} €
+							{*<pre>{$job.pairs|print_r}</pre>*}
+								{if !empty($job.created)}
+									{$job.created}
 								{else}
 									-
 								{/if}
@@ -101,10 +94,8 @@
 										</tr>
 										<tr>
 											<td>	
-												<button onClick="getJobPrice({$job.id})">{$lg.get_price}</button>
 											</td>
 											<td>
-												<button onClick="offerToClient({$job.id})">{$lg.offer_client}</button>
 											</td>
 											<td>	
 												<button onClick="moveJobToTrash({$job.id}, 'clientMoveJobToTrash')">{$lg.move_to_trash}</button>
@@ -159,10 +150,6 @@
 																	<th class="percent_5">ID</th>
 																	<th class="percent_30">{$lg.name}</th>
 																	<th class="percent_20">{$lg.file}</th>
-																	<th class="percent_10">{$lg.word_count}</th>
-																	<th class="percent_15">{$lg.speciality_price}</th>
-																	<th class="percent_10">{$lg.price}</th>
-																	<th class="percent_10">{$lg.calculate_price}</th>
 																</tr>
 															</thead>
 															{foreach from=$pair.files key=file_key item=file}
@@ -183,58 +170,6 @@
 																		{else}
 																			-
 																		{/if}
-																	</td>
-																	<td class="job_language_pair_files_cell percent_10">
-																		<div class="original"><span class="cell_content">{if empty($file.word_count)}-{else}{$file.word_count}{/if}</span>
-																			<span class="in_text_element">
-																				<button class="button" onClick="openChangeInput(this)">...</button>
-																			</span>
-																		</div>
-																		<div class="changable hide">
-																			<input type="text" class="short" value="{$file.word_count}">
-																			<span class="in_text_element">
-																				<button class="button primary" onClick="changeCellValue_2ids(this, '{$file.id}', '{$pair.id}', 'word_count', '/res/translations_manager.php', 'changeFileWordCount')">{$lg.done}
-																				</button>
-																				<button class="button primary" onClick="cancelUpdate(this)">
-																					✖
-																				</button>
-																			</span>
-																		</div>
-																	</td>
-																	<td class="job_language_pair_files_cell percent_15">
-																		{if !empty($pair.specialities)}
-																			{if !empty($file.speciality_id)}
-																				{foreach from=$pair.specialities item=g}
-																					{if $g.id == $file.speciality_id}
-																						{$g.name} {$g.rate} €
-																					{/if}
-																				{/foreach}
-																			{else}
-																				{foreach from=$pair.specialities item=g}
-																					{if $g.speciality == "regular"}
-																						{$lg.regular} {$g.rate} €
-																					{/if}
-																				{/foreach}
-																			{/if}
-																		{else}
-																			<span class="warning">{$lg.pair_not_exists}</span>
-																		{/if}
-																	</td>
-																	<td class="job_language_pair_files_cell price percent_10">
-																		{if !empty($file.price)}
-																			{if $file.price == 0}
-																			-
-																			{else}
-																				{$file.price} €
-																			{/if}
-																		{else}
-																			-
-																		{/if}
-																	</td>
-																	<td class="job_language_pair_files_cell percent_10">
-																		<button class="small" onClick="getFilePrice('{$file.id}', '{$pair.id}', 'price')">
-																			GO
-																		</button>
 																	</td>
 																</tr>
 															{/foreach}

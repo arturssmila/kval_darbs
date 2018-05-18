@@ -231,5 +231,18 @@
 		return $d && $d->format($format) == $date;
 	}
 	
+	function getOriginalPair($lang_from, $lang_to){
+		meta("S", array("template"=>"language_pair", "parent_id"=>$lang_from), $language_pairs_with_this_source);
+		if(!empty($language_pairs_with_this_source)){
+			foreach ($language_pairs_with_this_source as $keyy => $valuee) {
+				if($valuee["language_to_id"] == $lang_to){
+					return $valuee;
+					break;
+				}
+				//echo "<br>";
+			}
+		}
+		return false;
+	}
 	
 ?>

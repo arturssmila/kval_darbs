@@ -47,10 +47,12 @@ $(document).ready(function(){
 		if((form_data.date == "") || (typeof form_data.date == "undefined")){
 			$(".dropdown.date .select").before("<span class=\"error\">" + lg["field_required"] + "</span>");
 			$(".dropdown.date .select").addClass("redborder");
+			validated = 0;
 		}
 		if((form_data.time == "") || (typeof form_data.time == "undefined")){
 			$(".dropdown.small:not(.date) .select").before("<span class=\"error\">" + lg["field_required"] + "</span>");
 			$(".dropdown.small:not(.date) .select").addClass("redborder");
+			validated = 0;
 		}
 		$("#submit_work .segment.langs .language_dropdown_group").each(function(){
 			var this_rel = $(this).attr("rel");
@@ -75,9 +77,11 @@ $(document).ready(function(){
 			if(form_data.faili[this_rel] == null || form_data.faili[this_rel] == ""){
 				$(this).find(".file_sector label").addClass("redborder");
 				$(this).find(".file_sector").before("<span class=\"error file_sec\">" + lg["field_required"] + "</span>");
+				validated = 0;
 			}else if(form_data.faili[this_rel].length == 0){
 				$(this).find(".file_sector label").addClass("redborder");
 				$(this).find(".file_sector").before("<span class=\"error file_sec\">" + lg["field_required"] + "</span>");
+				validated = 0;
 			}
 		});
 		if(validated == 1){
@@ -413,7 +417,42 @@ function changeCellValue_2ids(clicked, main_id, second_id, field, file, action){
     }
 }
 
-
+function approvePrice(job_id){
+	if (confirm(lg.approve_price+"?")) {
+		$.ajax({
+			type: "POST",
+			url: "/res/translations_manager.php",
+			data: {
+				main_id: job_id,
+				action: "approvePrice"
+			},
+			async: true,
+			cache: false,
+			success: function(response)
+			{
+				//response = JSON.parse(response);
+				console.log(response);
+				if(response == "ok"){
+					$("tr[job_id='"+job_id+"']").remove();
+					$("tr.to_toggle[toggle_id='"+job_id+"_job']").remove();
+				}else if(response == "error"){
+					alert(lg.error);
+				}else if(response == "logged_out"){
+					alert(lg.session_ended_logged_out);
+					location.reload();
+				}else{
+					alert("could not approve!");
+				} 
+			},
+			error: function(response)
+			{
+				console.log(response);
+				alert("could not approve!");
+			}
+		});
+    	} else {
+	}
+}
 
 function cancelUpdate(clicked){
     $parent = $(clicked).parent().parent();

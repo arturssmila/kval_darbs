@@ -29,9 +29,11 @@
 							$result = mysql_query("SELECT * FROM `submitted_files` WHERE  (id='".$_POST["main_id"]."') AND (pair_id='".$_POST["second_id"]."')");
 							$check_row = getSqlRows($result);
 							if(!empty($check_row)){
-								if($check_field[0][$field] == $value){
-									echo(json_encode("ok"));
-									exit();
+								if(isset($check_row[0][$field])){
+									if($check_row[0][$field] == $value){
+										echo(json_encode("ok"));
+										exit();
+									}
 								}
 								$query = "UPDATE submitted_files
 										SET $field='$value', price='0'
@@ -48,17 +50,17 @@
 									echo(json_encode("ok"));
 									exit();
 								}else{
-						//echo __LINE__;
+									//echo __LINE__;
 									echo(json_encode("error"));
 									exit();
 								}
 							}else{
-						//echo __LINE__;
+								//echo __LINE__;
 								echo(json_encode("error"));
 								exit();
 							}
 						}else{
-						//echo __LINE__;
+							//echo __LINE__;
 							echo(json_encode("error"));
 							exit();
 						}
@@ -71,6 +73,7 @@
 				echo "empty";
 				exit();
 				break;
+				
 			case "getFilePrices":
 				if($_SESSION["user"]["soc"] != "00"){
 					echo(json_encode("error"));
@@ -102,11 +105,13 @@
 											$price = to_number($price);
 											//var_dump($price);
 											//exit();
-											if($check_row[0]["price"] == $price){
-												$out_data["price"] = $price." €";
-												$out_data["status"] = "OK";
-												echo(json_encode($out_data));
-												exit();
+											if(isset($check_field[0]["price"])){
+												if($check_row[0]["price"] == $price){
+													$out_data["price"] = $price." €";
+													$out_data["status"] = "OK";
+													echo(json_encode($out_data));
+													exit();
+												}
 											}
 											//var_dump($price);
 											if(!empty($price)){
@@ -384,10 +389,50 @@
 				exit();
 				break;
 			case "moveFromTrash":
-				var_dump($_POST);
-				exit();
-				echo("error");
-				exit();
+						if($_SESSION["user"]["soc"] != "00"){
+							echo("error");
+							exit();
+				}else if(!isset($_SESSION["user"]["admin"])){
+							echo("error");
+							exit();
+				}
+				//var_dump($_POST);
+				//exit();
+				if(!empty($_POST["main_id"])){
+					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
+					$selected_job = getSqlRows($result);
+					if(!empty($selected_job)){
+						if(!checkPermission(3, $selected_job[0]["user_id"])){
+							//echo __LINE__;
+							echo("error");
+							exit();
+						}
+						//updateWorkWordCount($selected_job[0]["id"]);//recount words
+						//$result = mysql_query("SELECT * FROM `submitted_files` WHERE  work_id='".$_POST["main_id"]."'");
+						//$selected_files = getSqlRows($result);
+						$now_state = $selected_job[0]["previous_state"];
+						$previous_state = $selected_job[0]["accepted"];
+						
+						$query = "UPDATE submitted_work
+								SET accepted='$now_state', previous_state='$previous_state'
+								WHERE id='".$_POST["main_id"]."'";
+						$result = mysql_query($query);
+						$numRows = mysql_affected_rows();
+						if($numRows){
+							echo("ok");
+							exit();
+						}else{
+							echo("error");
+							exit();
+						}
+					}else{
+				//echo __LINE__;
+							echo("error");
+							exit();
+					}
+				}
+					echo("empty");
+					exit();
 				break;
 			case "offerToClient":
 				if($_SESSION["user"]["soc"] != "00"){
@@ -445,8 +490,8 @@
 					echo(json_encode("error"));
 					exit();
 				}
-				var_dump($_POST);
-				exit();
+				//var_dump($_POST);
+				//exit();
 				if(!empty($_POST["main_id"])){
 					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
 					$selected_job = getSqlRows($result);
@@ -454,6 +499,13 @@
 						if(!checkPermission(3, $selected_job[0]["user_id"])){
 							//echo __LINE__;
 							echo("error");
+							exit();
+						}
+						if($selected_job[0]["accepted"] == "-1"){
+							echo("error");
+							exit();
+						}elseif($selected_job[0]["accepted"] == "2"){
+							echo("ok");
 							exit();
 						}
 						$previous_state = $selected_job[0]["accepted"];
@@ -577,10 +629,12 @@
 						if(!empty($check_field)) {
 							$result = mysql_query("SELECT * FROM `language_pair_specialities` WHERE  (pair_id='".$_POST["main_id"]."') AND (speciality_id='".$_POST["second_id"]."')");
 							$check_row = getSqlRows($result);
-							if(!empty($check_row)){					
-								if($check_row[0][$field] == $_POST["value"]){
-									echo(json_encode("ok"));
-									exit();
+							if(!empty($check_row)){		
+								if(isset($check_row[0][$field])){
+									if($check_row[0][$field] == $_POST["value"]){
+										echo(json_encode("ok"));
+										exit();
+									}
 								}
 								$query = "UPDATE language_pair_specialities
 										SET $field='$value'
@@ -634,9 +688,11 @@
 							$result = mysql_query("SHOW COLUMNS FROM `employee_language_pairs` LIKE '".$field."'");
 							$check_field = getSqlRows($result);
 							if(!empty($check_field)) {
-								if($check_field[0]["when_learned"] == $value){
-									echo(json_encode("ok"));
-									exit();
+								if(isset($check_field[0]["when_learned"])){
+									if($check_field[0]["when_learned"] == $value){
+										echo(json_encode("ok"));
+										exit();
+									}
 								}
 								$query = "UPDATE employee_language_pairs
 										SET when_learned=$value
@@ -686,9 +742,11 @@
 						$result = mysql_query("SHOW COLUMNS FROM `employee_language_pairs` LIKE '".$field."'");
 						$check_field = getSqlRows($result);
 						if(!empty($check_field)) {
-							if($check_field[0]["rate"] == $value){
-								echo(json_encode("ok"));
-								exit();
+							if(isset($check_field[0]["rate"])){
+								if($check_field[0]["rate"] == $value){
+									echo(json_encode("ok"));
+									exit();
+								}
 							}
 							$query = "UPDATE employee_language_pairs
 									SET rate=$value
@@ -872,6 +930,245 @@
 				echo "empty";
 				exit();
 				break;
+			case "getEmployeesList":
+				if(!empty($_POST["lang_pair"])){
+					if($_SESSION["user"]["soc"] != "00"){
+						echo(json_encode("error"));
+						exit();
+					}else if(!isset($_SESSION["user"]["admin"])){
+						echo(json_encode("error"));
+						exit();
+					}else if(!checkPermission(2, 0)){
+						echo(json_encode("error"));
+						exit();
+					}
+					if(is_array($_POST["lang_pair"])){
+						$query_part = "";
+						$count = 0;
+						foreach($_POST["lang_pair"] as $pair_key=>$pair_item){
+							$pair_item = intval($pair_item);
+							if(is_int($pair_item)){
+								if($count > 0){
+									$query_part .=  " OR (pair_id='".$pair_item."')";
+								}else{
+									$query_part .= "((pair_id='".$pair_item."')";
+								}
+								$count++;
+							}else{
+								//echo __LINE__;
+								echo(json_encode("error"));
+								exit();
+							}
+						}
+						$query_part .= ")";
+						$query = "SELECT * FROM employee_language_pairs WHERE $query_part AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";//get all language pairs of employee
+					}else{
+						$_POST["lang_pair"] = intval($_POST["lang_pair"]);
+						if(is_int($_POST["lang_pair"])){
+								$query = "SELECT * FROM employee_language_pairs WHERE (pair_id='".$_POST["lang_pair"]."') AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";
+						}else{
+							//echo $_POST["lang_pair"];
+							//echo __LINE__;
+							echo(json_encode("error"));
+							exit();
+						}
+					}
+					$rs= mysql_query($query);
+					$employee_pears = getSqlRows($rs);//yes, pears
+					if(!empty($employee_pears)){
+						$users = array();
+						foreach($employee_pears as $pair_key=>$pair_val){
+							$employee = array();
+							get_user("S", array("id"=>$pair_val["employee_id"]), $employee);
+							if(!empty($employee)){
+								unset($employee[0]["password"]);
+								unset($employee[0]["dr"]);
+								unset($employee[0]["fb"]);
+								unset($employee[0]["go"]);
+								unset($employee[0]["tw"]);
+								unset($employee[0]["ln"]);
+								unset($employee[0]["last_seen"]);
+								unset($employee[0]["soc_id"]);
+								unset($employee[0]["soc"]);
+								$employee[0]["pair"] = $pair_val;
+								$users[] = $employee[0];
+							}
+						}
+						echo(json_encode($users));
+						exit();
+					}
+				//echo __LINE__;
+					echo(json_encode("no_pairs"));
+					exit();
+				}
+				//echo __LINE__;
+				echo "empty";
+				exit();
+				break;
+			case "assignMultipleEmployees":
+				if(!empty($_POST["file_id"]) && !empty($_POST["data"])){
+					if($_SESSION["user"]["soc"] != "00"){
+						echo(json_encode("error"));
+						exit();
+					}else if(!isset($_SESSION["user"]["admin"])){
+						echo(json_encode("error"));
+						exit();
+					}else if(!checkPermission(2, 0)){
+						echo(json_encode("error"));
+						exit();
+					}
+					var_dump(sizeof($_POST["data"]));
+					exit();
+					$file_id = intval($_POST["file_id"]);
+					$original_pair_exists = false;
+					if(is_int($file_id)){
+						$query = "SELECT * FROM submitted_files WHERE id=\"" . $file_id . "\"";//get all language pairs of employee
+						$rs= mysql_query($query);
+						$submitted_file = getSqlRows($rs);
+						if(!empty($submitted_file)){
+							$lang_pair_submitted = $submitted_file[0]["pair_id"];
+							$query = "SELECT * FROM submitted_pairs WHERE id=\"" . $lang_pair_submitted . "\"";//get all language pairs of employee
+							$rs= mysql_query($query);
+							$submitted_pair = getSqlRows($rs);
+							if(!empty($submitted_pair)){
+								$lang_from = $submitted_pair[0]["lang_from"];
+								$lang_to = $submitted_pair[0]["lang_to"];
+								$original_pair = getOriginalPair($lang_from, $lang_to);
+								if(!empty($original_pair)){
+									$original_pair_id = $original_pair["id"];
+									$original_pair_exists = true;
+								}
+							}else{
+								echo(json_encode("error"));
+								exit();
+							}
+						}else{
+							echo(json_encode("error"));
+							exit();
+						}
+					}else{
+						echo(json_encode("error"));
+						exit();
+					}
+					if($original_pair_exists && !empty($original_pair_id) && !empty($submitted_file)){
+						if(sizeof($_POST["data"]) == 1){
+							if(checkUserPair($_POST["data"][0]["user_id"], $original_pair_id)){
+								if($submitted_file[0]["word_count"] == $_POST["data"][0]["word_count"]){
+									$page_from = intval($_POST["data"][0]["page_from"]);
+									if(!is_int($page_from)){
+										echo(json_encode("error"));
+										exit();
+									}
+									$page_to = intval($_POST["data"][0]["page_to"]);
+									if(!is_int($page_to)){
+										echo(json_encode("error"));
+										exit();
+									}
+								}else{
+									echo(json_encode("error"));
+									exit();
+								}
+							}else{
+								echo(json_encode("error"));
+								exit();
+							}
+						}else{
+							$employee_word_count = 0;
+							foreach($_POST["data"] as $tr_key=>$tr_val){
+								$employee_word_count+=$tr_val["word_count"];
+								if(isset($tr_val["page_from"]) && isset($tr_val["page_to"])){
+									$page_from = intval($tr_val["page_from"]);
+									if(!is_int($page_from)){
+										echo(json_encode("error"));
+										exit();
+									}
+									$page_to = intval($tr_val["page_to"]);
+									if(!is_int($page_to)){
+										echo(json_encode("error"));
+										exit();
+									}
+									if(!checkUserPair($tr_val["user_id"], $original_pair_id)){
+										echo(json_encode("error"));
+										exit();
+									}
+								}
+							}
+							if($submitted_file[0]["word_count"] == $employee_word_count){
+								foreach($_POST["data"] as $tr_key=>$tr_val){
+									
+								}
+							}else{
+								echo(json_encode("word count does not match with file"));
+								exit();
+							}
+						}
+					}else{
+						echo(json_encode("error"));
+						exit();
+					}
+					if(is_array($_POST["lang_pair"])){
+						$query_part = "";
+						$count = 0;
+						foreach($_POST["lang_pair"] as $pair_key=>$pair_item){
+							$pair_item = intval($pair_item);
+							if(is_int($pair_item)){
+								if($count > 0){
+									$query_part .=  " OR (pair_id='".$pair_item."')";
+								}else{
+									$query_part .= "((pair_id='".$pair_item."')";
+								}
+								$count++;
+							}else{
+								//echo __LINE__;
+								echo(json_encode("error"));
+								exit();
+							}
+						}
+						$query_part .= ")";
+						$query = "SELECT * FROM employee_language_pairs WHERE $query_part AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";//get all language pairs of employee
+					}else{
+						$_POST["lang_pair"] = intval($_POST["lang_pair"]);
+						if(is_int($_POST["lang_pair"])){
+								$query = "SELECT * FROM employee_language_pairs WHERE (pair_id='".$_POST["lang_pair"]."') AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";
+						}else{
+							//echo $_POST["lang_pair"];
+							//echo __LINE__;
+							echo(json_encode("error"));
+							exit();
+						}
+					}
+					$rs= mysql_query($query);
+					$employee_pears = getSqlRows($rs);//yes, pears
+					if(!empty($employee_pears)){
+						$users = array();
+						foreach($employee_pears as $pair_key=>$pair_val){
+							$employee = array();
+							get_user("S", array("id"=>$pair_val["employee_id"]), $employee);
+							if(!empty($employee)){
+								unset($employee[0]["password"]);
+								unset($employee[0]["dr"]);
+								unset($employee[0]["fb"]);
+								unset($employee[0]["go"]);
+								unset($employee[0]["tw"]);
+								unset($employee[0]["ln"]);
+								unset($employee[0]["last_seen"]);
+								unset($employee[0]["soc_id"]);
+								unset($employee[0]["soc"]);
+								$employee[0]["pair"] = $pair_val;
+								$users[] = $employee[0];
+							}
+						}
+						echo(json_encode($users));
+						exit();
+					}
+				//echo __LINE__;
+					echo(json_encode("no_pairs"));
+					exit();
+				}
+				//echo __LINE__;
+				echo "empty";
+				exit();
+				break;
 			case "create_request":
 				$form_data = json_decode($_POST["form_data"]);
 				//var_dump($form_data);
@@ -929,10 +1226,16 @@
 								if(!empty($form_data->time_zone)){
 									$time_string .= ", '" . $form_data->time_zone . "'";
 									$time_names .= ", time_zone";
+								}else{
+									echo "empty";
+									exit();
 								}
+							}else{
+								echo "empty";
+								exit();
 							}
 						}else{
-							echo __LINE__;
+							//echo __LINE__;
 							echo "empty";
 							exit();
 						}
@@ -1068,6 +1371,37 @@
 				$result = mysql_query($query);
 				$numRows = mysql_affected_rows();
 			}
+		}
+	}
+	
+	function checkUserPair($user_id, $pair_id){
+		$user_id = intval($user_id);
+		if(is_int($user_id)){
+			$query = "SELECT * FROM employee_language_pairs WHERE (user_id='$user_id') AND (pair_id='$pair_id') AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";
+			$rs= mysql_query($query);
+			$empl_pair = getSqlRows($rs);
+			if(!empty($empl_pair)){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
+	}
+	function checkAllFileOccupancy($work_id){//check if all files have a translator and change status
+		$user_id = intval($user_id);
+		if(is_int($user_id)){
+			$query = "SELECT * FROM employee_language_pairs WHERE (user_id='$user_id') AND (pair_id='$pair_id') AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";
+			$rs= mysql_query($query);
+			$empl_pair = getSqlRows($rs);
+			if(!empty($empl_pair)){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return false;
 		}
 	}
 ?>

@@ -1,4 +1,4 @@
-<h1>{$manager.route.lg}</h1>
+<h1>{$lg.submit_work}</h1>
 <div class="contents">
 	<div class="centered_text">
 		<div id="submit_work" class="noselect quote_block">

@@ -1,4 +1,4 @@
-<h1>{$manager.route.lg}</h1>
+<h1>{$lg.clients}</h1>
 <div class="contents">
 	<div class="table_header">
 		<div class="cell small_cell">{$lg.client_type}</div>
