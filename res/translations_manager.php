@@ -931,6 +931,8 @@
 				exit();
 				break;
 			case "getEmployeesList":
+				//var_dump($_POST);
+				//exit();
 				if(!empty($_POST["lang_pair"])){
 					if($_SESSION["user"]["soc"] != "00"){
 						echo(json_encode("error"));
@@ -942,7 +944,7 @@
 						echo(json_encode("error"));
 						exit();
 					}
-					if(is_array($_POST["lang_pair"])){
+					if(is_array($_POST["lang_pair"])){//if multiple language pairs are selected
 						$query_part = "";
 						$count = 0;
 						foreach($_POST["lang_pair"] as $pair_key=>$pair_item){
@@ -974,27 +976,60 @@
 						}
 					}
 					$rs= mysql_query($query);
-					$employee_pears = getSqlRows($rs);//yes, pears
+					$employee_pears = getSqlRows($rs);//get all employee language pairs with the sent langugage pair id
 					if(!empty($employee_pears)){
+						$speciality_needed = false;
+						if(!empty($_POST["speciality"])){
+							$spec = intval($_POST["speciality"]);
+							if(is_int($spec)){
+								$speciality_needed = true;
+							}
+						}
 						$users = array();
 						foreach($employee_pears as $pair_key=>$pair_val){
+							$add_employee = false;
 							$employee = array();
 							get_user("S", array("id"=>$pair_val["employee_id"]), $employee);
 							if(!empty($employee)){
-								unset($employee[0]["password"]);
-								unset($employee[0]["dr"]);
-								unset($employee[0]["fb"]);
-								unset($employee[0]["go"]);
-								unset($employee[0]["tw"]);
-								unset($employee[0]["ln"]);
-								unset($employee[0]["last_seen"]);
-								unset($employee[0]["soc_id"]);
-								unset($employee[0]["soc"]);
-								$employee[0]["pair"] = $pair_val;
-								$users[] = $employee[0];
+								if($speciality_needed){//if a certain speciality is required, then we select those employee language pairs, which are mentioned in the language_pair_specialities table with the needed speciality
+									$query = "SELECT * FROM language_pair_prices WHERE (id='".$spec."')";
+									$rs= mysql_query($query);
+									$official_price_speciality = getSqlRows($rs);
+									if(!empty($official_price_speciality)){
+										if($official_price_speciality[0]["speciality"] == "regular"){
+											$add_employee = true;
+										}else{
+											$query = "SELECT * FROM language_pair_specialities WHERE (pair_id='".$pair_val["id"]."') AND (speciality_id='".$official_price_speciality[0]["speciality"]."')";
+											$rs= mysql_query($query);
+											$employee_price_speciality = getSqlRows($rs);
+											if(!empty($employee_price_speciality)){//if there is such a row which has the employee pair id and the speciality id, then we take that row and add the pairs employee to the returnable employee array
+												$add_employee = true;
+											}
+										}
+									}
+								}else{//if no speciality is set, then we just select employees who have this language pair
+									$add_employee = true;
+								}
+								if($add_employee){
+									unset($employee[0]["password"]);
+									unset($employee[0]["dr"]);
+									unset($employee[0]["fb"]);
+									unset($employee[0]["go"]);
+									unset($employee[0]["tw"]);
+									unset($employee[0]["ln"]);
+									unset($employee[0]["last_seen"]);
+									unset($employee[0]["soc_id"]);
+									unset($employee[0]["soc"]);
+									$employee[0]["pair"] = $pair_val;
+									$users[] = $employee[0];
+								}
 							}
 						}
-						echo(json_encode($users));
+						if(sizeof($users) > 0){
+							echo(json_encode($users));
+						}else{
+							echo(json_encode("no_pairs"));
+						}
 						exit();
 					}
 				//echo __LINE__;
@@ -1017,11 +1052,11 @@
 						echo(json_encode("error"));
 						exit();
 					}
-					var_dump(sizeof($_POST["data"]));
-					exit();
+					//var_dump(sizeof($_POST["data"]));
+					//exit();
 					$file_id = intval($_POST["file_id"]);
 					$original_pair_exists = false;
-					if(is_int($file_id)){
+					if(is_int($file_id)){//check if file exists
 						$query = "SELECT * FROM submitted_files WHERE id=\"" . $file_id . "\"";//get all language pairs of employee
 						$rs= mysql_query($query);
 						$submitted_file = getSqlRows($rs);
@@ -1030,135 +1065,118 @@
 							$query = "SELECT * FROM submitted_pairs WHERE id=\"" . $lang_pair_submitted . "\"";//get all language pairs of employee
 							$rs= mysql_query($query);
 							$submitted_pair = getSqlRows($rs);
-							if(!empty($submitted_pair)){
+							if(!empty($submitted_pair)){//check if the language pair page in cms exists (since the system is based on the cms language pair pages)
 								$lang_from = $submitted_pair[0]["lang_from"];
 								$lang_to = $submitted_pair[0]["lang_to"];
 								$original_pair = getOriginalPair($lang_from, $lang_to);
 								if(!empty($original_pair)){
 									$original_pair_id = $original_pair["id"];
 									$original_pair_exists = true;
-								}
-							}else{
-								echo(json_encode("error"));
-								exit();
-							}
-						}else{
-							echo(json_encode("error"));
-							exit();
-						}
-					}else{
-						echo(json_encode("error"));
-						exit();
-					}
-					if($original_pair_exists && !empty($original_pair_id) && !empty($submitted_file)){
-						if(sizeof($_POST["data"]) == 1){
-							if(checkUserPair($_POST["data"][0]["user_id"], $original_pair_id)){
-								if($submitted_file[0]["word_count"] == $_POST["data"][0]["word_count"]){
-									$page_from = intval($_POST["data"][0]["page_from"]);
-									if(!is_int($page_from)){
-										echo(json_encode("error"));
-										exit();
-									}
-									$page_to = intval($_POST["data"][0]["page_to"]);
-									if(!is_int($page_to)){
-										echo(json_encode("error"));
-										exit();
-									}
 								}else{
+									echo __LINE__;
 									echo(json_encode("error"));
 									exit();
 								}
 							}else{
+								echo __LINE__;
 								echo(json_encode("error"));
 								exit();
 							}
 						}else{
+							echo __LINE__;
+							echo(json_encode("error"));
+							exit();
+						}
+					}else{
+						echo __LINE__;
+						echo(json_encode("error"));
+						exit();
+					}
+					if($original_pair_exists && !empty($original_pair_id) && !empty($submitted_file)){
+						$success = true;
+						if(sizeof($_POST["data"]) == 1){//if 1 user selected
+							//var_dump($_POST["data"][0]["user_id"]);
+							//var_dump($original_pair_id);
+							//exit();
+							if(checkUserPair($_POST["data"][0]["user_id"], $original_pair_id)){//check if user exists and has this language pair
+								if($submitted_file[0]["word_count"] == $_POST["data"][0]["word_count"]){//check if word counts are correct with the original file
+									$timestamp = date("Y-m-d H:i:s");
+									$query = "INSERT INTO appointed_employees (assigner_id, file_id, work_id, employee_id, offered, word_count)
+							VALUES ('".$_SESSION["user"]["id"]."', '".$file_id."', '" . $submitted_file[0]["work_id"] . "', '" . $_POST["data"][0]["user_id"] . "', '" . $timestamp ."', '".$_POST["data"][0]["word_count"]."')";
+									$assigned = mysql_query($query) or die('Error: ' . mysql_error());
+									if(!$assigned){
+										$success = false;
+										//echo __LINE__;
+										echo(json_encode("error"));
+										exit();
+									}
+								}else{
+									$success = false;
+									//echo __LINE__;
+									//var_dump($submitted_file[0]["word_count"]);
+									//var_dump($_POST["data"][0]["word_count"]);
+									//exit();
+									echo(json_encode("word_count"));
+									exit();
+								}
+							}else{
+								$success = false;
+								//echo __LINE__;
+								echo(json_encode("wrong_pair"));
+								exit();
+							}
+						}else{//if more than one user selected
 							$employee_word_count = 0;
 							foreach($_POST["data"] as $tr_key=>$tr_val){
 								$employee_word_count+=$tr_val["word_count"];
-								if(isset($tr_val["page_from"]) && isset($tr_val["page_to"])){
+								if(isset($tr_val["page_from"]) && isset($tr_val["page_to"])){//check if word counts are correct with the original file
 									$page_from = intval($tr_val["page_from"]);
-									if(!is_int($page_from)){
-										echo(json_encode("error"));
+									if(!is_int($page_from)){//check if page from and page to are given when assigning multiple employees
+										$success = false;
+										//echo __LINE__;
+										echo(json_encode("page"));
 										exit();
 									}
 									$page_to = intval($tr_val["page_to"]);
 									if(!is_int($page_to)){
-										echo(json_encode("error"));
+										$success = false;
+										//echo __LINE__;
+										echo(json_encode("page"));
 										exit();
 									}
-									if(!checkUserPair($tr_val["user_id"], $original_pair_id)){
-										echo(json_encode("error"));
+									if(!checkUserPair($tr_val["user_id"], $original_pair_id)){//check if user exists and has this language pair
+										$success = false;
+										//echo __LINE__;
+										echo(json_encode("wrong_pair"));
 										exit();
 									}
 								}
 							}
-							if($submitted_file[0]["word_count"] == $employee_word_count){
+							if($submitted_file[0]["word_count"] == $employee_word_count){//check if word counts are correct with the original file
 								foreach($_POST["data"] as $tr_key=>$tr_val){
-									
+									$timestamp = date("Y-m-d H:i:s");
+									$query = "INSERT INTO appointed_employees (assigner_id, file_id, work_id, employee_id, offered, page_from, page_to, word_count)
+							VALUES ('".$_SESSION["user"]["id"]."', '".$file_id."', '" . $submitted_file[0]["work_id"] . "', '" . $_POST["data"][0]["user_id"] . "', '" . $timestamp ."', '" .$tr_val["page_from"]. "', '" .$tr_val["page_to"]. "', '".$_POST["data"][0]["word_count"]."')";
+									$assigned = mysql_query($query) or die('Error: ' . mysql_error());
+									if(!$assigned){
+										$success = false;
+										//echo __LINE__;
+										echo(json_encode("error"));
+										exit();
+									}
 								}
 							}else{
-								echo(json_encode("word count does not match with file"));
+								echo(json_encode("word_count"));
 								exit();
 							}
 						}
 					}else{
+										//echo __LINE__;
 						echo(json_encode("error"));
 						exit();
 					}
-					if(is_array($_POST["lang_pair"])){
-						$query_part = "";
-						$count = 0;
-						foreach($_POST["lang_pair"] as $pair_key=>$pair_item){
-							$pair_item = intval($pair_item);
-							if(is_int($pair_item)){
-								if($count > 0){
-									$query_part .=  " OR (pair_id='".$pair_item."')";
-								}else{
-									$query_part .= "((pair_id='".$pair_item."')";
-								}
-								$count++;
-							}else{
-								//echo __LINE__;
-								echo(json_encode("error"));
-								exit();
-							}
-						}
-						$query_part .= ")";
-						$query = "SELECT * FROM employee_language_pairs WHERE $query_part AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";//get all language pairs of employee
-					}else{
-						$_POST["lang_pair"] = intval($_POST["lang_pair"]);
-						if(is_int($_POST["lang_pair"])){
-								$query = "SELECT * FROM employee_language_pairs WHERE (pair_id='".$_POST["lang_pair"]."') AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";
-						}else{
-							//echo $_POST["lang_pair"];
-							//echo __LINE__;
-							echo(json_encode("error"));
-							exit();
-						}
-					}
-					$rs= mysql_query($query);
-					$employee_pears = getSqlRows($rs);//yes, pears
-					if(!empty($employee_pears)){
-						$users = array();
-						foreach($employee_pears as $pair_key=>$pair_val){
-							$employee = array();
-							get_user("S", array("id"=>$pair_val["employee_id"]), $employee);
-							if(!empty($employee)){
-								unset($employee[0]["password"]);
-								unset($employee[0]["dr"]);
-								unset($employee[0]["fb"]);
-								unset($employee[0]["go"]);
-								unset($employee[0]["tw"]);
-								unset($employee[0]["ln"]);
-								unset($employee[0]["last_seen"]);
-								unset($employee[0]["soc_id"]);
-								unset($employee[0]["soc"]);
-								$employee[0]["pair"] = $pair_val;
-								$users[] = $employee[0];
-							}
-						}
-						echo(json_encode($users));
+					if($success){
+						echo(json_encode("ok"));
 						exit();
 					}
 				//echo __LINE__;
@@ -1340,7 +1358,7 @@
 							exit();
 						}
 					}else{
-						echo __LINE__;
+						//echo __LINE__;
 						echo(json_encode("empty"));
 						exit();
 					}
@@ -1376,9 +1394,13 @@
 	
 	function checkUserPair($user_id, $pair_id){
 		$user_id = intval($user_id);
+		//var_dump($user_id);
+		//exit();
 		if(is_int($user_id)){
-			$query = "SELECT * FROM employee_language_pairs WHERE (user_id='$user_id') AND (pair_id='$pair_id') AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";
+			$query = "SELECT * FROM employee_language_pairs WHERE (employee_id='$user_id') AND (pair_id='$pair_id') AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";
 			$rs= mysql_query($query);
+			//var_dump($rs);
+			//exit();
 			$empl_pair = getSqlRows($rs);
 			if(!empty($empl_pair)){
 				return true;
@@ -1390,18 +1412,6 @@
 		}
 	}
 	function checkAllFileOccupancy($work_id){//check if all files have a translator and change status
-		$user_id = intval($user_id);
-		if(is_int($user_id)){
-			$query = "SELECT * FROM employee_language_pairs WHERE (user_id='$user_id') AND (pair_id='$pair_id') AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";
-			$rs= mysql_query($query);
-			$empl_pair = getSqlRows($rs);
-			if(!empty($empl_pair)){
-				return true;
-			}else{
-				return false;
-			}
-		}else{
-			return false;
-		}
+
 	}
 ?>

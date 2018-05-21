@@ -209,20 +209,20 @@ function createEmployee(){
 	}
 };
 
-function getEmployeesListOnePair(lang_pair, file_id){
+function getEmployeesListOnePair(lang_pair, speciality, file_id){
 	  $.ajax({
         type: "POST",
         url: "/res/translations_manager.php",
         data:
         {
             action:     "getEmployeesList",
-            lang_pair:    lang_pair
+            lang_pair:    lang_pair,
+            speciality: speciality
         },
         async: true,
 	dataType: 'json',
         success: function(response)
         {
-        	//console.log(response);
 		if(response instanceof Array){
 			$("#employee_settings_modal").addClass("hide");
 			$("#employee_select_modal").removeClass("hide");
@@ -240,6 +240,7 @@ function getEmployeesListOnePair(lang_pair, file_id){
 			}
 			$("#select_translators").css("display", "table");
 		}else if(response == "no_pairs"){
+			$("#employee_select_modal .contents tbody").html("");
 			$("#employee_select_modal .contents tbody").append("<tr><td colspan='5'>"+lg["no_employees_available"]+"</td></tr>");
 			$("#select_translators #employee_select_moda .done_container").addClass("hide");
 			$("#select_translators").css("display", "table");

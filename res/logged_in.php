@@ -38,8 +38,8 @@
 				"url" => url($original_link, "3")
 			),
 			"4" => array(
-				"name" => "unpaid_jobs",
-				"lg" => $data["lg"]["unpaid_jobs"],
+				"name" => "in_progress",
+				"lg" => $data["lg"]["in_progress"],
 				"url" => url($original_link, "4")
 			),
 			"5" => array(
@@ -96,12 +96,12 @@
 						"name" => "needs_employees",
 						"lg" => $data["lg"]["needs_employees"],
 						"url" => url($original_link, "3")
-					)/*,
-					"4" => array(
-						"name" => "client_declined",
-						"lg" => $data["lg"]["client_declined"],
-						"url" => url($original_link, "4")
 					),
+					"4" => array(
+						"name" => "in_progress",
+						"lg" => $data["lg"]["in_progress"],
+						"url" => url($original_link, "4")
+					)/*,
 					"5" => array(
 						"name" => "employee_declined",
 						"lg" => $data["lg"]["employee_declined"],
@@ -135,11 +135,11 @@
 						"lg" => $data["lg"]["needs_employees"],
 						"url" => url($original_link, "3")
 					),
-					"2" => array(
-						"name" => "declined",
-						"lg" => $data["lg"]["declined"],
+					"4" => array(
+						"name" => "in_progress",
+						"lg" => $data["lg"]["in_progress"],
 						"url" => url($original_link, "2")
-					),
+					)/*,
 					"3" => array(
 						"name" => "submitted_for_checking",
 						"lg" => $data["lg"]["submitted_for_checking"],
@@ -149,30 +149,35 @@
 						"name" => "completed",
 						"lg" => $data["lg"]["completed"],
 						"url" => url($original_link, "4")
-					)
+					)*/
 				);
 			}
 		}elseif(!empty($curr_user[0]["translator"]) || !empty($curr_user[0]["editor"])){
 			$data["routes"] = array(//pages for translators/editors
 				"0" => array(
-					"name" => "submit_work",
-					"lg" => $data["lg"]["submit_work"],
+					"name" => "new_jobs",
+					"lg" => $data["lg"]["new_jobs"],
 					"url" => url($original_link, "0")
 				),
 				"1" => array(
-					"name" => "submitted_projects",
-					"lg" => $data["lg"]["submitted_projects"],
+					"name" => "in_progress",
+					"lg" => $data["lg"]["in_progress"],
 					"url" => url($original_link, "1")
 				),
 				"2" => array(
-					"name" => "work_not_accepted",
-					"lg" => $data["lg"]["work_not_accepted"],
+					"name" => "in_correction",
+					"lg" => $data["lg"]["in_correction"],
 					"url" => url($original_link, "2")
 				),
 				"3" => array(
-					"name" => "accepted_jobs",
-					"lg" => $data["lg"]["accepted_jobs"],
+					"name" => "completed",
+					"lg" => $data["lg"]["completed"],
 					"url" => url($original_link, "3")
+				),
+				"4" => array(
+					"name" => "declined",
+					"lg" => $data["lg"]["declined"],
+					"url" => url($original_link, "4")
 				)
 			);
 		}elseif(!empty($curr_user[0]["client"])){
@@ -327,10 +332,18 @@
 				if(!is_numeric($lin1)){
  					header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"."/0");
 				}else if((is_numeric($lin1)) && (!is_numeric($lin2))){
-					if(($_SESSION["user"]["admin"] == 1) || (($_SESSION["user"]["admin"] == 2) && ($_SESSION["user"]["manager"] == 1))){
-						$data["manager"]["jobs"] = getJobs(array(2,3,4), $data["lg"], $_SESSION["user"]["id"], false);
+					if($_SESSION["user"]["admin"] == 1){
+						$data["manager"]["jobs"] = getJobs(array(2,3,4), $data["lg"], $_SESSION["user"]["id"], "2");
+					}elseif(($_SESSION["user"]["admin"] == 2) && (!empty($_SESSION["user"]["manager"]))){
+						if($_SESSION["user"]["manager"] == 1){
+							$data["manager"]["jobs"] = getJobs(array(2,3,4), $data["lg"], $_SESSION["user"]["id"], "2");
+						}else{
+							one_back();	
+						}
 					}elseif(($_SESSION["user"]["admin"] == 0) && ($_SESSION["user"]["client"] == 1)){
 						$data["manager"]["jobs"] = getJobs(array(2,3,4), $data["lg"], $_SESSION["user"]["id"], false);
+					}else{
+						one_back();
 					}
 				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (!is_numeric($lin3))){
 						one_back();
@@ -382,6 +395,29 @@
 						$data["manager"]["jobs"] = getJobs(0, $data["lg"], 0, false);
 					}elseif(($_SESSION["user"]["admin"] == 0) && ($_SESSION["user"]["project_manager"] == 1)){
 						$data["manager"]["jobs"] = getJobs(0, $data["lg"], 0, false);
+					}
+				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (!is_numeric($lin3))){
+						one_back();
+				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (is_numeric($lin3))){
+						one_back();
+				}
+				
+				break;
+
+			case "new_jobs":
+				/*require_once '/Paginator.class.php';
+				$limit      = ( (isset( $_GET['cat2'] )) && (!empty($_GET['cat2'])) ) ? ((!is_numeric($_GET['cat2'])) ? "all" : $_GET['cat2']) : 20;
+				$page       = ( isset( $_GET['cat1'] ) ) ? ((is_numeric($_GET['cat1'])) ? $_GET['cat1'] : 1) : 1;
+				$links      = ( isset( $_GET['links'] ) ) ? $_GET['links'] : 7;*/
+				//$Paginator  = new Paginator( "SELECT * FROM submitted_work WHERE accepted='0' ORDER BY created DESC" );		 
+				//$data["manager"]["jobs"] = $Paginator->getData( $limit, $page );
+				if(!is_numeric($lin1)){
+ 					header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"."/0");
+				}else if((is_numeric($lin1)) && (!is_numeric($lin2))){
+					if((!empty($_SESSION["user"]["editor"])) || (!empty($_SESSION["user"]["translator"]))){
+						$data["manager"]["jobs"] = getIndividualJobs(0, $data["lg"], 0, "2");
+					}else{
+						one_back();
 					}
 				}else if(((is_numeric($lin1))) && (is_numeric($lin2)) && (!is_numeric($lin3))){
 						one_back();
@@ -794,6 +830,11 @@
 	}
 	
 	function getJobs($accepted, $lang, $submitter, $file_employee_status){
+		//file_employee_status:
+		/*
+		state: 1 - unassigned employees for "appoint employees" page
+		state: 2 - assigned employees for "in progress" page
+		*/
 		if(!empty($submitter)){
 			if(is_array($accepted)){
 				$query_part = "";
@@ -856,26 +897,10 @@
 							$total_file_count = 0;
 							foreach($pairs as $pair_key=>$pair_value){
 								if(is_numeric($pair_value["lang_from"]) && is_numeric($pair_value["lang_to"])){
+									
 									/********************getting original language pair id**************************/
-									meta("S", array("template"=>"language_pair", "parent_id"=>$pair_value["lang_from"]), $language_pairs_with_this_source);
-									if(!empty($language_pairs_with_this_source)){
-										//echo "work_id:".$pair_value["work_id"]. ". ";
-											//echo "<br>";
-										foreach ($language_pairs_with_this_source as $keyy => $valuee) {
-											//echo $valuee["language_to_id"];
-											//echo " - ";
-											//echo $pair_value["lang_to"];
-											if($valuee["language_to_id"] == $pair_value["lang_to"]){
-												$pairs[$pair_key]["language_pair_original"] = $valuee;
-												//echo "BIJA";
-												//out($pairs[$pair_key]["language_pair_original"]);
-												break;
-											}
-											//echo "<br>";
-										}
-									}
+									$pairs[$pair_key]["language_pair_original"] = getOriginalPair($pair_value["lang_from"], $pair_value["lang_to"]);
 									/***************************************************************************************/
-										//out($pairs[$pair_key]["language_pair_original"]);
 									
 									/***********************getting language pair names*****************************/
 									meta("S", array("template"=>"language", "id"=>$pair_value["lang_from"]), $language_from);
@@ -895,9 +920,20 @@
 									if(!empty($pair_files)){
 										foreach($pair_files as $file_key=>$file_value){
 											$pair_files[$file_key]["file_path"] = getFileLink("images", $pair_files[$file_key]["file_path"]);
+											if(!empty($file_value["speciality_id"])){
+												$query = "SELECT * FROM language_pair_prices WHERE (id = '" . $file_value["speciality_id"] . "')";
+												$res = mysql_query($query);
+												$speciality = getSqlRows($res);
+												if(!empty($speciality)){
+													meta("S", array("template"=>"expertise_item", "id"=> $speciality[0]["speciality"]), $expertises);
+													if(!empty($expertises)){
+														$pair_files[$file_key]["speciality"] = $expertises[0];
+													}
+												}
+											}
 											if(!empty($file_employee_status)){
-												if($file_employee_status == true){//if info needed if file has an employee assigned
-													$query = "SELECT * FROM appointed_employees WHERE (file_id = '" . $file_value["id"] . "') AND (work_id = '" . $value["id"] . "')";
+												if($file_employee_status == "1"){//if info needed if file has an employee assigned
+													$query = "SELECT * FROM appointed_employees WHERE (file_id = '" . $file_value["id"] . "') AND (work_id = '" . $value["id"] . "')" AND "((accepted = '0') OR (accepted='-1'))";
 													$res = mysql_query($query);
 													$file_translators = getSqlRows($res);
 													if(!empty($file_translators)){
@@ -909,6 +945,7 @@
 																}
 																if($word_count == $file_value["word_count"]){
 																	$pair_files[$file_key]["has_employee"] = true;
+																	$pair_files[$file_key]["appointed_employees"] = $file_translators;
 																}else{
 																	$pair_files[$file_key]["has_employee"] = false;
 																}
@@ -920,6 +957,36 @@
 														}
 													}else{
 														$pair_files[$file_key]["has_employee"] = false;
+													}
+												}elseif($file_employee_status == "2"){//if info needed if file has an employee assigned
+													$query = "SELECT * FROM appointed_employees WHERE (file_id = '" . $file_value["id"] . "') AND (work_id = '" . $value["id"] . "') AND (accepted = '1')";
+													$res = mysql_query($query);
+													$file_translators = getSqlRows($res);
+													if(!empty($file_translators)){
+														if(isset($file_value["word_count"])){
+															if(!empty($file_value["word_count"])){
+																$word_count = 0;
+																foreach($file_translators as $tr_key=>$tr_val){//count all the involved translators word count
+																	$word_count += $tr_val["word_count"];
+																}
+																if($word_count == $file_value["word_count"]){
+																	$pair_files[$file_key]["has_employee"] = true;
+																	$pair_files[$file_key]["appointed_employees"] = $file_translators;
+																}else{
+																	$pair_files[$file_key]["has_employee"] = false;
+																	unset($jobs[$key]);
+																}
+															}else{
+																$pair_files[$file_key]["has_employee"] = false;
+																unset($jobs[$key]);
+															}
+														}else{
+															$pair_files[$file_key]["has_employee"] = false;
+															unset($jobs[$key]);
+														}
+													}else{
+														$pair_files[$file_key]["has_employee"] = false;
+														unset($jobs[$key]);
 													}
 												}
 											}
@@ -967,6 +1034,22 @@
 			}
 			return $jobs;
 		}
+	}
+	
+	function getIndividualJobs($accepted, $employee_id, $completed){
+		/*$query = "SELECT * FROM appointed_employees WHERE (employee_id = '" . $employee_id . "') AND (completed = '" . $completed . "') AND (accepted = '$accepted')";
+		$res = mysql_query($query);
+		$jobs = getSqlRows($res);
+		if(!empty($jobs)){
+			foreach($jobs as $job_key=>$job_val){
+				$query = "SELECT * FROM appointed_employees WHERE (employee_id = '" . $employee_id . "') AND (completed = '" . $completed . "') AND (accepted = '$accepted')";
+				$res = mysql_query($query);
+				$jobs = getSqlRows($res);
+			}
+		}else{
+			$pair_files[$file_key]["has_employee"] = false;
+			unset($jobs[$key]);
+		}*/
 	}
 
 ?>
