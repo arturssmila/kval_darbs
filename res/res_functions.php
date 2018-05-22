@@ -245,4 +245,13 @@
 		return false;
 	}
 	
+	function getPrice($word_count, $rate){
+		global $settings;
+		$page_percent = $word_count / $settings["standard_page_word_count"];
+		$price = $page_percent * $rate;
+		$price = round( $price, 2, PHP_ROUND_HALF_UP);
+		$price = to_number($price);
+		return $price;
+	}
+	
 ?>

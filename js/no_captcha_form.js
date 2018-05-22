@@ -2,7 +2,11 @@
 $(document).ready(function() {
 	$('input#modal_file_input:file').unbind();
 	$('input#modal_file_input:file').on("change", function(){
-		checkFilesAdmin(this.files, curr_rel, "submit_work", form_data);
+		if($(this).attr("mode") == "submit_job"){
+			checkFilesAdmin(this.files, curr_rel, "submit_job", form_data);
+		}else{
+			checkFilesAdmin(this.files, curr_rel, "submit_work", form_data);
+		}
 	});
 });
 
@@ -175,9 +179,16 @@ function uploadFileLogged(formD, form_id, form_data){//upload files to tmp dir
                         }else if(data[i]["path"] == "format"){
                             alert(lg["bad_file_size"] + " " + data[i]["name"]);
                         }else{
-                            form_data.faili[curr_rel].push(data[i]["path"]);  
-                            form_data.file_names[curr_rel].push(data[i]["name"]);
-                            form_data.file_sizes[curr_rel].push(data[i]["size"]);
+                        	if(form_id == "submit_job"){
+					form_data.faili[curr_rel][0]=data[i]["path"];  
+					form_data.file_names[curr_rel][0]=data[i]["name"];
+					form_data.file_sizes[curr_rel][0]=data[i]["size"];
+					uploadJobFile($("#job_id").attr("job_id"), data[i]["path"], data[i]["name"]);
+					}else{
+					form_data.faili[curr_rel].push(data[i]["path"]);  
+					form_data.file_names[curr_rel].push(data[i]["name"]);
+					form_data.file_sizes[curr_rel].push(data[i]["size"]);
+                            }
                         }
                     }
 				updateDropdownFileList(curr_rel, "submit_work", form_data);
@@ -200,7 +211,11 @@ function callFileUploadModalAdmin(thiss, id, mode) {//open file upload modal
     	}else{
     		$(".file_label_content").html("<strong>" + lg["choose_file"] + "</strong>.");
     	}
-	$("#modal_file_input").attr("mode", mode).attr("multiple","");
+    	if(mode != "submit_job"){
+    		$("#modal_file_input").attr("mode", mode).attr("multiple","");
+    	}else{
+    		$("#modal_file_input").attr("mode", mode).removeAttr("multiple");
+    	}
 	$("#file_upload_modal_center .contents .subtitle").removeClass("hide");
 	$("#file_upload_modal_center > .title").text(lg["quote_two"].toUpperCase());
 	$("#file_upload_modal_center .size_warning").text(lg["file_size_limit"]);
@@ -261,5 +276,42 @@ function checkFilesAdmin(filesList, curr_rel, form_id, form_data){//prepare file
     $("#modal_file_input").val("");
     //$("#inbox_svg").show();
     //$("#file_upload_modal .box__input .loading").removeClass("show");
+}
+
+function uploadJobFile(job_id, path, name){
+	$.ajax({
+		type: "POST",
+		url: "/res/translations_manager.php",
+		data: {
+			job_id: job_id,
+			path: path,
+			name: name,
+			action: "uploadJobResult"
+		},
+		async: true,
+		cache: false,
+		success: function(response)
+		{
+			response = JSON.parse(response);
+			console.log(response);
+			if(response["status"] == "ok"){
+				alert("Uploaded!");
+				$("#file_div").html("<div class=\"language_file_item\"><a target='_blank' href='"+response["file_path"]+"'>"+response["file_name"]+"</a></div>");
+                        	
+			}else if(response["status"] == "error"){
+				alert(lg.error);
+			}else if(response["status"] == "logged_out"){
+				alert(lg.session_ended_logged_out);
+				location.reload();
+			}else{
+				alert("could not upload!");
+			} 
+		},
+		error: function(response)
+		{
+			console.log(response);
+			alert("could not upload!");
+		}
+	});
 }
 

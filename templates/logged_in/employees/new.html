@@ -1,0 +1,63 @@
+<div id="create_employee_form" class="centered_form">
+			<h3 class="title">{$lg.add_employee}</h3>
+			<div class="segment names">
+				<div class="input_container">
+					<input class="required" info_type="user" name="name" type="text" placeholder="{$lg.first_name}*">
+				</div>
+				<div class="input_container">
+					<input class="required" info_type="user" name="surname" type="text" placeholder="{$lg.last_name}*">
+				</div>
+			</div>
+			<div class="segment email">
+				<input class="required" info_type="user" name="mail" type="email" placeholder="{$lg.email}*">
+			</div>
+			<div class="segment phone">
+				<span class="title">
+					{$lg.phone}*:
+				</span>
+				<input class="required" name="phone" type="phone" info_type="user_data">
+			</div>
+			<div class="segment prof">
+				<span class="title">
+					{$lg.choose_vacancy}:
+				</span>
+				<div class="dropdown text_left">
+					<span class="item"><input class="inline_checkbox" type="checkbox" name="translator" check_type="position" info_type="user_data" value="1">{$lg.translator}</span>
+					<span class="item"><input class="inline_checkbox" type="checkbox" name="editor" check_type="position" info_type="user_data" value="1">{$lg.editor}</span>
+					<span class="item"><input class="inline_checkbox" type="checkbox" name="project_manager" check_type="position" info_type="user_data" value="1">{$lg.project_manager}</span>
+					{*<div class="select">
+						<span class="text">
+							{$lg.translator_editor}
+						</span>
+						<input class="required" name="position_id" id="position_id" type="hidden" info_type="user_data" value="0">
+						{include file="./css/svg/down.svg"}
+					</div>
+					<div class="items">
+						<div class="contents scrollable">
+							<span class="item" onclick="set_position(this);" position="0">{$lg.translator_editor}</span>
+							<span class="item" onclick="set_position(this);" position="1">{$lg.translator}</span>
+							<span class="item" onclick="set_position(this);" position="2">{$lg.editor}</span>
+							<span class="item" onclick="set_position(this);" position="3">{$lg.project_manager}</span>
+						</div>
+					</div>*}
+				</div>
+			</div>
+			<div class="segment passwords" mode="b">
+				<span class="title">
+					{$lg.password}*:
+				</span>
+				<input class="required" name="password" type="password" info_type="user">
+				<span class="title">
+					{$lg.password_again}*:
+				</span>
+				<input class="required" name="password2" type="password" info_type="user">
+			</div>
+			<div class="controls center">
+				<span onClick="createEmployee();" class="bloated primary submit button" id="create_employee">
+					{$lg.send_application}
+				</span>
+				<img class="loading hide" src="/css/images/loading.gif" >
+				<span class="text hide" id="registration_done">{$lg.registration_done}</span>
+			</div>
+		</div>
+		

@@ -39,7 +39,7 @@
 							<td>	
 								{if (!empty($job.date_due) && !empty($job.time_due))}
 									{$job.date_due} {$job.time_due}
-								{elseif (!empty($i["date_due"]))}
+								{elseif (!empty($job.date_due))}
 									{$job.date_due}
 								{else}
 									-

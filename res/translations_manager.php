@@ -4,6 +4,14 @@
 	require_once($_SERVER['DOCUMENT_ROOT'] . "/cms/libs/functions.inc");
 	require_once($_SERVER['DOCUMENT_ROOT'] . "/cms/libs/set_user.inc");
 	require_once($_SERVER['DOCUMENT_ROOT'] . "/cms/libs/users.inc");
+	
+	if($_SESSION["user"]["soc"] != "00"){
+		echo(json_encode("error"));
+		exit();
+	}else if(!isset($_SESSION["user"]["admin"])){
+		echo(json_encode("error"));
+		exit();
+	}
 	if(!empty($_POST["action"])){
 		switch($_POST["action"]){
 			case "changeFileWordCount":
@@ -99,10 +107,11 @@
 										$result = mysql_query("SELECT * FROM `language_pair_prices` WHERE id='".$_POST["speciality_price_id"]."'");
 										$get_rates = getSqlRows($result);
 										if(!empty($get_rates)){
-											$page_percent = $check_row[0]["word_count"] / $settings["standard_page_word_count"];
-											$price = $page_percent * $get_rates[0]["rate"];
-											$price = round( $price, 2, PHP_ROUND_HALF_UP);
-											$price = to_number($price);
+											//$page_percent = $check_row[0]["word_count"] / $settings["standard_page_word_count"];
+											//$price = $page_percent * $get_rates[0]["rate"];
+											//$price = round( $price, 2, PHP_ROUND_HALF_UP);
+											//$price = to_number($price);
+											$price = getPrice($check_row[0]["word_count"], $get_rates[0]["rate"]);
 											//var_dump($price);
 											//exit();
 											if(isset($check_field[0]["price"])){
@@ -533,6 +542,147 @@
 				echo(json_encode($out_data));
 				exit();
 				break;
+			case "acceptJob":
+				if($_SESSION["user"]["soc"] != "00"){
+					echo(json_encode("error"));
+					exit();
+				}else if(!isset($_SESSION["user"]["admin"])){
+					echo(json_encode("error"));
+					exit();
+				}
+				//var_dump($_POST);
+				//exit();
+				if(!empty($_POST["main_id"]) && !empty($_POST["accept"])){
+					$result = mysql_query("SELECT * FROM `appointed_employees` WHERE  id='".$_POST["main_id"]."'");
+					$selected_job = getSqlRows($result);
+					if(!empty($selected_job)){
+						if(!checkPermission(3, $selected_job[0]["employee_id"])){
+							//echo __LINE__;
+							echo("error");
+							exit();
+						}
+						if($_POST["accept"] == "accept"){
+							$accept = 1;
+						}else{
+							$accept = 0;
+						}
+						
+						$query = "SELECT * FROM submitted_files WHERE (id = '" . $selected_job[0]["file_id"] . "')";//select file details and add to job
+						$res = mysql_query($query);
+						$file = getSqlRows($res);
+						$price_set = false;
+						$price = "";
+						if(!empty($file)){
+							if(!empty($file[0]["speciality_id"])){
+								$query = "SELECT * FROM language_pair_prices WHERE (id = '" . $file[0]["speciality_id"] . "')";//select agency rates
+								$res = mysql_query($query);
+								$speciality = getSqlRows($res);
+								if(!empty($speciality)){
+									if($speciality[0]["speciality"] == "regular"){//select employee rate from regular language pair
+										$query = "SELECT * FROM employee_language_pairs WHERE (pair_id = '" . $speciality[0]["pair_id"] . "') AND (employee_id = '$employee_id')";
+										$res = mysql_query($query);
+										$employee_pair = getSqlRows($res);
+										if(!empty($employee_pair)){
+											$price = getPrice($selected_job[0]["word_count"], $employee_pair[0]["rate"]);
+											$price_set = true;
+										}
+									}else{
+										$query = "SELECT * FROM employee_language_pairs WHERE (pair_id = '" . $speciality[0]["pair_id"] . "') AND (employee_id = '".$_SESSION["user"]["id"]."')";
+										$res = mysql_query($query);
+										$employee_pair = getSqlRows($res);
+										if(!empty($employee_pair)){
+											$speciality_id = $speciality[0]["speciality"];//select employee rate from language pair with speciality
+											$query = "SELECT * FROM language_pair_specialities WHERE (speciality_id = '" . $speciality_id . "') AND (pair_id='".$employee_pair[0]["id"]."')";
+											//var_dump($query);
+											$res = mysql_query($query);
+											$employee_speciality = getSqlRows($res);
+											if(!empty($employee_speciality)){
+												//var_dump($employee_speciality);
+												$price = getPrice($selected_job[0]["word_count"], $employee_speciality[0]["rate"]);
+												$price_set = true;
+											}
+										}
+									}
+								}
+							}
+						}
+						
+						if($price_set){
+							$price = ", price='$price'";
+						}
+							
+						$timestamp = date("H:i:s");
+						$datestamp = date("Y-m-d");
+						$query = "UPDATE `appointed_employees`
+								SET accepted='$accept', date_accepted='$datestamp', time_accepted='$timestamp'$price
+								WHERE id='".$_POST["main_id"]."'";
+						$result = mysql_query($query);
+						$numRows = mysql_affected_rows();
+						if($numRows){
+							echo("ok");
+							exit();
+						}else{
+							echo("error");
+							exit();
+						}
+					}else{
+				//echo __LINE__;
+						echo("error");
+						exit();
+					}
+				}
+				$out_data["status"] = "empty";
+				echo(json_encode($out_data));
+				exit();
+				break;
+			case "submitJob":
+				if($_SESSION["user"]["soc"] != "00"){
+					echo(json_encode("error"));
+					exit();
+				}else if(!isset($_SESSION["user"]["admin"])){
+					echo(json_encode("error"));
+					exit();
+				}
+				//var_dump($_POST);
+				//exit();
+				if(!empty($_POST["job_id"])){
+					$job_id = intval($_POST["job_id"]);
+					if(is_int($job_id)){
+						$result = mysql_query("SELECT * FROM `appointed_employees` WHERE  id='".$_POST["job_id"]."'");
+						$selected_job = getSqlRows($result);
+					}
+					if(!empty($selected_job)){
+						if(!checkPermission(3, $selected_job[0]["employee_id"])){
+							echo("error");
+							exit();
+						}
+						if(!empty($selected_job[0]["file_path"]) && !empty($selected_job[0]["file_name"])){
+							$timestamp = date("Y-m-d H:i:s");
+							$query = "UPDATE `appointed_employees`
+									SET completed='1', completed_time='$timestamp'
+									WHERE id='".$_POST["job_id"]."'";
+									//var_dump($query);
+									//exit();
+							$result = mysql_query($query);
+							$numRows = mysql_affected_rows();
+						}
+						if($numRows){
+							echo("ok");
+							exit();
+						}else{
+							echo("error");
+							exit();
+						}
+					}else{
+				//echo __LINE__;
+						echo("error");
+						exit();
+					}
+				}
+				$out_data["status"] = "empty";
+				echo(json_encode($out_data));
+				exit();
+				break;
 			case "changePairSpecialities":
 				if((!empty($_POST["data"])) && (!empty($_POST["pair_id"]))){
 					$query = "SELECT * FROM employee_language_pairs WHERE id=\"" . $_POST["pair_id"] . "\"";//get all language pairs of employee
@@ -803,6 +953,64 @@
 				echo(json_encode("no_files"));
 				exit();
 				break;
+			case "uploadJobResult":
+				if(!empty($_POST["path"]) && !empty($_POST["name"]) && !empty($_POST["job_id"])){
+					$job_id = intval($_POST["job_id"]);
+					if(is_int($job_id)){
+						$query = "SELECT * FROM appointed_employees WHERE id=\"" . $job_id . "\"";//get all language pairs of employee
+						$rs= mysql_query($query);
+						$some_result = getSqlRows($rs);
+						if(!empty($some_result)){
+							if(!checkPermission(3, $some_result[0]["employee_id"])){
+								$return_value["status"] = "error";
+								echo(json_encode($return_value));
+								exit();
+							}
+						}else{
+							$return_value["status"] = "error";
+							echo(json_encode($return_value));
+							exit();
+						}
+					}else{
+						$return_value["status"] = "error";
+						echo(json_encode($return_value));
+						exit();
+					}
+					if($_POST["path"] != "big" && $_POST["path"] != "error" && $_POST["path"] != "format"){
+						$res = moveUploaded($_POST["path"], "completed_jobs");
+						$name = mysql_real_escape_string($_POST["name"]);
+						//var_dump($res);
+						if($res != false){
+							$query = "UPDATE appointed_employees SET file_path='$res', file_name='$name'
+							WHERE id='$job_id'";
+							//var_dump($query);
+							//exit();
+							$query_result = mysql_query($query);
+							if(!$query_result){
+											//echo __LINE__;
+								$return_value["status"] = "empty";
+								echo(json_encode($return_value));
+								exit();
+							}else{
+								$return_value["status"] = "ok";
+								$return_value["file_path"] = getFileLink("images", $res);
+								$return_value["file_name"] = $name;
+								echo(json_encode($return_value));
+								exit();
+							}
+						}else{
+							//echo __LINE__;
+							$return_value["status"] = "empty";
+							echo(json_encode($return_value));
+							exit();
+						}
+					}else{
+						$return_value["status"] = "empty";
+						echo(json_encode($return_value));
+						exit();
+					}
+				}
+				break;
 			case "removeEmployeePairs":
 				if(!empty($_POST["data"])){
 					if($_SESSION["user"]["soc"] != "00"){
@@ -999,10 +1207,11 @@
 										if($official_price_speciality[0]["speciality"] == "regular"){
 											$add_employee = true;
 										}else{
-											$query = "SELECT * FROM language_pair_specialities WHERE (pair_id='".$pair_val["id"]."') AND (speciality_id='".$official_price_speciality[0]["speciality"]."')";
+											$query = "SELECT * FROM language_pair_specialities WHERE (pair_id='".$pair_val["id"]."') AND (speciality_id='".$official_price_speciality[0]["speciality"]."') AND ((rate != '0.000') AND (rate IS NOT NULL) AND (rate !=''))";
 											$rs= mysql_query($query);
 											$employee_price_speciality = getSqlRows($rs);
 											if(!empty($employee_price_speciality)){//if there is such a row which has the employee pair id and the speciality id, then we take that row and add the pairs employee to the returnable employee array
+												$pair_val["rate"] = $employee_price_speciality[0]["rate"];
 												$add_employee = true;
 											}
 										}

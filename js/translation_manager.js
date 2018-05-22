@@ -279,6 +279,83 @@ function changeDateDue(clicked_obj, job_id, action){
 	}
 }
 
+function AcceptJob(job_id, accept){
+	if (confirm(accept+"?")) {
+		$.ajax({
+			type: "POST",
+			url: "/res/translations_manager.php",
+			data: {
+				main_id: job_id,
+				accept: accept,
+				action: "acceptJob"
+			},
+			async: true,
+			cache: false,
+			success: function(response)
+			{
+				//response = JSON.parse(response);
+				console.log(response);
+				if(response == "ok"){
+					alert("Done!");
+					$("tr[job_id='"+job_id+"']").remove();
+					$("tr.to_toggle[toggle_id='"+job_id+"_job']").remove();
+				}else if(response == "error"){
+					alert(lg.error);
+				}else if(response == "logged_out"){
+					alert(lg.session_ended_logged_out);
+					location.reload();
+				}else{
+					alert("could not change status!");
+				} 
+			},
+			error: function(response)
+			{
+				console.log(response);
+				alert("could not change status!");
+			}
+		});
+    	} else {
+	}
+}
+
+function submitJob(job_id){
+	if (confirm("submit?")) {
+		$.ajax({
+			type: "POST",
+			url: "/res/translations_manager.php",
+			data: {
+				job_id: job_id,
+				action: "submitJob"
+			},
+			async: true,
+			cache: false,
+			success: function(response)
+			{
+				//response = JSON.parse(response);
+				console.log(response);
+				if(response == "ok"){
+					alert("Done!");
+					$("tr[job_id='"+job_id+"']").remove();
+					$("tr.to_toggle[toggle_id='"+job_id+"_job']").remove();
+				}else if(response == "error"){
+					alert(lg.error);
+				}else if(response == "logged_out"){
+					alert(lg.session_ended_logged_out);
+					location.reload();
+				}else{
+					alert("could not change status!");
+				} 
+			},
+			error: function(response)
+			{
+				console.log(response);
+				alert("could not change status!");
+			}
+		});
+    	} else {
+	}
+}
+
 function moveFromTrash(job_id, action){
 	if (confirm(lg.restore+"?")) {
 		$.ajax({

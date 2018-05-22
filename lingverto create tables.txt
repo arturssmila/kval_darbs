@@ -90,7 +90,7 @@ ALTER TABLE `employee_language_pairs` ADD `currency` VARCHAR(3) CHARACTER SET ut
 ALTER TABLE `employee_language_pairs` CHANGE `rate` `rate` DECIMAL(10,3) NULL DEFAULT NULL;
 
 
-CREATE TABLE language_pair_specialities (
+CREATE TABLE language_pair_specialities (//table used to assigned rate for employee language pair specialities
 	id INT(11) AUTO_INCREMENT NOT NULL,
 	pair_id INT(11) NOT NULL,
 	speciality_id INT(11) NOT NULL,
@@ -102,10 +102,10 @@ ALTER TABLE `language_pair_specialities` CHANGE `rate` `rate` DECIMAL(10,3) NULL
 
 CREATE TABLE language_pair_prices(
 	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	pair_id INT(11) NOT NULL,
+	pair_id INT(11) NOT NULL,//points to the CMS language pair pages
 	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	rate decimal(10,2) NOT NULL,
-	speciality varchar(11) NOT NULL
+	speciality varchar(11) NOT NULL//points to the CMS speciality pages
 );
 
 ALTER TABLE `language_pair_prices` CHANGE `rate` `rate` DECIMAL(10,3) NULL DEFAULT NULL;
@@ -190,4 +190,6 @@ CREATE TABLE appointed_employees(
 	FOREIGN KEY (work_id) REFERENCES submitted_work(id)
 )
 ENGINE=InnoDB;
+ALTER TABLE `appointed_employees` ADD `file_name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL AFTER `file_path`;
+ALTER TABLE `appointed_employees` ADD `price` FLOAT(10,2) NULL DEFAULT NULL AFTER `word_count`;
 

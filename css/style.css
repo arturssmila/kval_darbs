@@ -3407,6 +3407,7 @@ display: none; }
 
 #manager #submitted_jobs{
 	margin-bottom: 40px;
+	width: 100%;
 }
 
 button.inline{

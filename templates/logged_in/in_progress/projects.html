@@ -1,0 +1,68 @@
+<table id="submitted_jobs" class="hidden_rows">
+			<thead>
+				<tr>
+					<th style="width: 20px">ID</th>
+					<th>{$lg.first_name}</th>
+					<th>{$lg.last_name}</th>
+					<th>{$lg.company}</th>
+					<th>{$lg.date_due}</th>
+					<th>{$lg.number_of_tasks}</th>
+					<th>{$lg.submitted}</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{if (!empty($manager.jobs))}
+					{foreach from=$manager.jobs key=key item=job}
+					{*<pre>{$job.customer|print_r}</pre>*}
+					<tr class="ui hover" job_id="{$job.id}">
+							<td>
+								{$job.id}
+							</td>
+							<td>	
+								{$job.customer.0.name}
+							</td>
+							<td>	
+								{$job.customer.0.surname}
+							</td>
+							<td>	
+								{if !empty($job.customer.0.company)}
+									{$job.customer.0.company}
+								{else}
+									-
+								{/if}
+							</td>
+							<td>	
+								{if (!empty($job.date_due) && !empty($job.time_due))}
+									{$job.date_due} {$job.time_due}
+								{elseif (!empty($job.date_due))}
+									{$job.date_due}
+								{else}
+									-
+								{/if}
+							</td>
+							<td>	
+							{*<pre>{$job.pairs|print_r}</pre>*}
+								{if !empty($job.file_count)}
+									{$job.file_count}
+								{else}
+									-
+								{/if}
+							</td>
+							<td>	
+							{*<pre>{$job.pairs|print_r}</pre>*}
+								{if !empty($job.created)}
+									{$job.created}
+								{else}
+									-
+								{/if}
+							</td>
+							<td class="toggle_specialities noselect" onClick="hiddenRow('{$job.id}_job', 'submitted_jobs', 'to_toggle')"><button class="small">{$lg.toggle_details}</button></td>
+						</tr>
+					</tr>
+					{/foreach}
+				{else}
+					NO JOBS FOR YOU
+				{/if}
+			</tbody>	
+		</table>
