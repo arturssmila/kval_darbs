@@ -5,7 +5,7 @@
 				<header class="header">
 					<div class="contents">
 						<span class="title">
-							{$manager.user.name} {$manager.user.surname}
+							{$cat.0.name}
 						</span>
 						<span class="subtitle">
 							{$cat.0.teaser}

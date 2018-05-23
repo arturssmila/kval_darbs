@@ -129,6 +129,7 @@ ALTER TABLE `submitted_work` ADD `price` FLOAT(10,3) NULL DEFAULT NULL AFTER `wo
 ALTER TABLE `submitted_work` ADD `moved_from_trash` timestamp NULL DEFAULT NULL AFTER `created`;
 ALTER TABLE `submitted_work` ADD `previous_state` ENUM('0', '1', '2', '3', '4', '-1') default '0' NOT NULL;
 ALTER TABLE `submitted_work` CHANGE `previous_state` `previous_state` ENUM('0','1','2','3','4','5','6','-1','-2') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0';
+ALTER TABLE `submitted_work` ADD `let_customer_see` BOOLEAN NOT NULL DEFAULT FALSE AFTER `previous_state`;
 
 //for submitted_work table above - accepted 1 = work manager has stated the price and sent for customer to confirm
 //accepted 2 = customer has confirmed the price and employees are not appointed

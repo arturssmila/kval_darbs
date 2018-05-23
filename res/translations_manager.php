@@ -685,6 +685,81 @@
 				echo(json_encode($out_data));
 				exit();
 				break;
+			case "transferToClient":
+				if($_SESSION["user"]["soc"] != "00"){
+					echo(json_encode("error"));
+					exit();
+				}
+				if(!isset($_SESSION["user"]["admin"])){
+					echo(json_encode("error"));
+					exit();
+				}
+				if(!checkPermission(2, 0)){
+					echo("error");
+					exit();
+				}
+				//var_dump($_POST);
+				//exit();
+				if(!empty($_POST["job_id"])){
+					$job_id = intval($_POST["job_id"]);
+					if(is_int($job_id)){
+						$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["job_id"]."'");
+						$selected_job = getSqlRows($result);
+					}else{
+						echo("error");
+						exit();
+					}
+					if(!empty($selected_job)){
+						//var_dump($selected_job);
+						//exit();
+						if($selected_job[0]["accepted"] != 6 && $selected_job[0]["accepted"] != 5){
+							echo("error");
+							exit();
+						}
+						$result = mysql_query("SELECT * FROM `appointed_employees` WHERE  work_id='".$job_id."'");
+						$jobs = getSqlRows($result);
+						if(!empty($jobs)){
+							$all_is_fine = true;
+							foreach($jobs as $job_key=>$job_val){
+								if($job_val["completed"] == 0){
+									$all_is_fine = false;
+								}
+							}
+							if($all_is_fine){
+								$query = "UPDATE `appointed_employees`
+										SET let_customer_see='1'
+										WHERE work_id='".$job_id."'";
+								$result = mysql_query($query);
+								$query = "UPDATE `submitted_work`
+										SET let_customer_see='1'
+										WHERE id='".$job_id."'";
+										//var_dump($query);
+										//exit();
+								$result = mysql_query($query);
+								$numRows = mysql_affected_rows();
+								if($numRows){
+									//changeWorkStatus($selected_job[0]["work_id"]);
+									echo("ok");
+									exit();
+								}else{
+									echo("error");
+									exit();
+								}
+							}else{
+								echo("error");
+								exit();
+							}
+							//$timestamp = date("Y-m-d H:i:s");
+						}
+					}else{
+						echo __LINE__;
+						echo("error");
+						exit();
+					}
+				}
+				echo("error");
+				exit();
+				break;
 			case "changePairSpecialities":
 				if((!empty($_POST["data"])) && (!empty($_POST["pair_id"]))){
 					$query = "SELECT * FROM employee_language_pairs WHERE id=\"" . $_POST["pair_id"] . "\"";//get all language pairs of employee

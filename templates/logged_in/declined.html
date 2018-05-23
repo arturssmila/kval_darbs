@@ -1,0 +1,69 @@
+<h1>{$manager.route.lg}</h1>
+<div class="contents">
+<table id="submitted_jobs" class="hidden_rows">
+	<thead>
+		<tr>
+			<th style="width: 20px">ID</th>
+			<th>{$lg.source_language}</th>
+			<th>{$lg.target_language}</th>
+			<th>{$lg.date_due}</th>
+			<th>{$lg.speciality}</th>
+			<th>{$lg.word_count}</th>
+			<th>{$lg.price}</th>
+			{*<th></th>*}
+		</tr>
+	</thead>
+	<tbody>
+		{if (!empty($manager.jobs))}
+			{foreach from=$manager.jobs key=key item=job}
+			{*<pre>{$job|print_r}</pre>*}
+			<tr class="ui hover" job_id="{$job.id}">
+					<td>
+						{$job.id}
+					</td>
+					<td>	
+						{$job.pair.lang_from}
+					</td>
+					<td>	
+						{$job.pair.lang_to}
+					</td>
+					<td>	
+						{if (!empty($job.project.date_due) && !empty($job.project.time_due))}
+							{$job.project.date_due} {$job.project.time_due}
+						{elseif (!empty($job.project.date_due))}
+							{$job.project.date_due}
+						{else}
+							-
+						{/if}
+					</td>
+					<td>	
+						{if !empty($job.file.speciality)}
+							{$job.file.speciality}
+						{else}
+							-
+						{/if}
+					</td>
+					<td>	
+						{if !empty($job.file.word_count)}
+							{$job.file.word_count}
+						{else}
+							-
+						{/if}
+					</td>
+					<td class="price">	
+						{if !empty($job.file.employee_price)}
+							{$job.file.employee_price|string_format:"%.2f"}
+						{else}
+							-
+						{/if}
+					</td>
+					{*<td class="noselect"><a href="{$manager.route.url}/{$job.id}">{$lg.open}</a></td>*}
+				</tr>
+			</tr>
+			{/foreach}
+		{else}
+			NO JOBS FOR YOU
+		{/if}
+	</tbody>	
+</table>
+</div>

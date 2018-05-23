@@ -253,7 +253,7 @@ function getEmployeesListOnePair(lang_pair, speciality, file_id){
 			//console.log(response);
 			//alert("error");
 		}else{
-			alert("error");
+			alert(lg.error);
 		}
         },
         error: function(response){
@@ -360,7 +360,7 @@ function assignMultipleEmployees(clicked){
 			}
 		});
 	}else{
-		alert("error");
+		alert(lg.error);
 	}
 	//console.log(data);
 	
@@ -403,10 +403,35 @@ function changeRegistrationStatus(action, user_id){
                 });
             }else{
                 console.log(data);
-                alert("error");
+                alert(lg.error);
             }
         }
     });
+}
+
+function transferToClient(job_id){
+	if(confirm(lg.transfer_to_client+"?")){
+		$.ajax({
+			type: "POST",
+			url: "/res/translations_manager.php",
+			data:
+			{
+				action:     "transferToClient",
+				job_id:    job_id
+			},
+			async: true,
+			success: function(data)
+			{
+				console.log(data);
+				if(data == "ok"){
+					$("tr[job_id='"+job_id+"']").remove();
+				}else{
+					//console.log(data);
+					alert(lg.error);
+				}
+			}
+		});
+    	}
 }
 
 function getFilePrice(main_id, second_id, field){
