@@ -147,11 +147,10 @@
 															<thead>
 																<tr>
 																	<th class="percent_5">ID</th>
-																	<th class="percent_30">{$lg.name}</th>
 																	<th class="percent_20">{$lg.file}</th>
 																	<th>{$lg.word_count}</th>
 																	<th>{$lg.expertise}</th>
-																	<th>{$lg.has_employee}</th>
+																	<th class="percent_30">{$lg.has_employee}</th>
 																	<th class="percent_20">{$lg.assign_employees}</th>
 																</tr>
 															</thead>
@@ -160,13 +159,6 @@
 																	<td class="job_language_pair_files_cell percent_5">
 																			{$file.id}
 																	</td>
-																	<td class="job_language_pair_files_cell percent_30">
-																		{if !empty($file.file_name)}
-																			{$file.file_name}
-																		{else}
-																			-
-																		{/if}
-																	</td>
 																	<td class="job_language_pair_files_cell percent_20">
 																		{if !empty($file.file_path)}
 																			<a target="_blank" href="{$file.file_path}">{$file.file_name}</a>
@@ -174,30 +166,42 @@
 																			-
 																		{/if}
 																	</td>
-																	<td class="job_language_pair_files_cell percent_20">
+																	<td class="job_language_pair_files_cell percent_15">
 																		{if !empty($file.word_count)}
 																			{$file.word_count}
 																		{else}
 																			-
 																		{/if}
 																	</td>
-																	<td class="job_language_pair_files_cell percent_20">
+																	<td class="job_language_pair_files_cell percent_15">
 																		{if !empty($file.speciality)}
 																			{$file.speciality.name} ({$file.speciality.rate})
 																		{else}
 																			-
 																		{/if}
 																	</td>
-																	<td class="job_language_pair_files_cell percent_20">
+																	<td class="job_language_pair_files_cell percent_30">
+																	{*<pre>{$file|print_r}</pre>*}
 																		{if !empty($file.has_employee)}
-																			{$lg.yes}
-																		<pre>{$file.appointed_employees|print_r}</pre>
+																			{if ($file.appointed_employees|sizeof) == 1}
+																				<div>(ID: {$file.appointed_employees.0.employee.id}) {$file.appointed_employees.0.employee.name} {$file.appointed_employees.0.employee.surname} {if $file.appointed_employees.0.accepted == 1}<span class="green">{$lg.accepted}</span>{elseif $file.appointed_employees.0.accepted == 0}<span class="yellow">{$lg.not_accepted}</span>{else}<span class="red">{$lg.declined}</span>{/if}</div>
+																				<div>{$lg.word_count}: {$file.appointed_employees.0.word_count}</div>
+																			{else}
+																				{foreach from=$file.appointed_employees key=empl_key item=empl}
+																					<div>(ID: {$empl.employee.id}) {$empl.employee.name} {$empl.employee.surname} {if $empl.accepted == 1}<span class="green">{$lg.accepted}</span>{elseif $empl.accepted == 0}<span class="yellow">{$lg.not_accepted}</span>{else}<span class="red">{$lg.declined}</span>{/if}</div>
+																					<div>{$lg.word_count}: {$empl.word_count}</div>
+																					<div>{$lg.page_from}: {$empl.page_from}</div>
+																					<div>{$lg.page_to}: {$empl.page_to}</div>
+																				{/foreach}
+																			{/if}
 																		{else}
 																			{$lg.no}
 																		{/if}
 																	</td>
 																	<td class="job_language_pair_files_cell percent_20">
-																		<button onClick="getEmployeesListOnePair('{$pair.language_pair_original.id}', '{$file.speciality_id}', '{$file.id}');"></button>
+																		{if empty($file.all_assigned)}
+																			<button onClick="getEmployeesListOnePair('{$pair.language_pair_original.id}', '{$file.speciality_id}', '{$file.id}');">{$lg.assign}</button>
+																		{/if}
 																	</td>
 																</tr>
 															{/foreach}

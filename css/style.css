@@ -3410,6 +3410,18 @@ display: none; }
 	width: 100%;
 }
 
+#manager span.yellow{
+	background-color: yellow;
+}
+
+#manager span.green{
+	background-color: green;
+}
+
+#manager span.red{
+	background-color: red;
+}
+
 button.inline{
 	display: inline;
 }

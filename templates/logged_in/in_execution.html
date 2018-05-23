@@ -1,7 +1,6 @@
 <h1>{$manager.route.lg}</h1>
 <div class="contents">
-	{if !empty($manager.jobs)}
-		<table id="submitted_jobs" class="hidden_rows">
+<table id="submitted_jobs" class="hidden_rows">
 			<thead>
 				<tr>
 					<th style="width: 20px">ID</th>
@@ -17,7 +16,7 @@
 			<tbody>
 				{if (!empty($manager.jobs))}
 					{foreach from=$manager.jobs key=key item=job}
-					{*<pre>{$job|print_r}</pre>*}
+					{*<pre>{$job.customer|print_r}</pre>*}
 					<tr class="ui hover" job_id="{$job.id}">
 							<td>
 								{$job.id}
@@ -149,14 +148,12 @@
 																	<th class="percent_5">ID</th>
 																	<th class="percent_30">{$lg.name}</th>
 																	<th class="percent_20">{$lg.file}</th>
-																	<th>{$lg.word_count}</th>
-																	<th>{$lg.expertise}</th>
-																	<th>{$lg.has_employee}</th>
-																	<th class="percent_20">{$lg.assign_employees}</th>
+																	<th class="percent_20">{$lg.assigned_employees}</th>
 																</tr>
 															</thead>
 															{foreach from=$pair.files key=file_key item=file}
-																<tr class="job_language_pair_files_row" file_id="{$file.id}" original_pair_id="{$pair.language_pair_original.id}">
+															{*<pre>{$file|print_r}</pre>*}
+																<tr class="job_language_pair_files_row" file_id="{$file.id}">
 																	<td class="job_language_pair_files_cell percent_5">
 																			{$file.id}
 																	</td>
@@ -174,30 +171,23 @@
 																			-
 																		{/if}
 																	</td>
-																	<td class="job_language_pair_files_cell percent_20">
-																		{if !empty($file.word_count)}
-																			{$file.word_count}
-																		{else}
-																			-
-																		{/if}
-																	</td>
-																	<td class="job_language_pair_files_cell percent_20">
-																		{if !empty($file.speciality)}
-																			{$file.speciality.name} ({$file.speciality.rate})
-																		{else}
-																			-
-																		{/if}
-																	</td>
-																	<td class="job_language_pair_files_cell percent_20">
+																	<td class="job_language_pair_files_cell percent_30">
+																	{*<pre>{$file|print_r}</pre>*}
 																		{if !empty($file.has_employee)}
-																			{$lg.yes}
-																		<pre>{$file.appointed_employees|print_r}</pre>
+																			{if ($file.appointed_employees|sizeof) == 1}
+																				<div>(ID: {$file.appointed_employees.0.employee.id}) {$file.appointed_employees.0.employee.name} {$file.appointed_employees.0.employee.surname} {if $file.appointed_employees.0.accepted == 1}<span class="green">{$lg.accepted}</span>{elseif $file.appointed_employees.0.accepted == 0}<span class="yellow">{$lg.not_accepted}</span>{else}<span class="red">{$lg.declined}</span>{/if}</div>
+																				<div>{$lg.word_count}: {$file.appointed_employees.0.word_count}</div>
+																			{else}
+																				{foreach from=$file.appointed_employees key=empl_key item=empl}
+																					<div>(ID: {$empl.employee.id}) {$empl.employee.name} {$empl.employee.surname} {if $empl.accepted == 1}<span class="green">{$lg.accepted}</span>{elseif $empl.accepted == 0}<span class="yellow">{$lg.not_accepted}</span>{else}<span class="red">{$lg.declined}</span>{/if}</div>
+																					<div>{$lg.word_count}: {$empl.word_count}</div>
+																					<div>{$lg.page_from}: {$empl.page_from}</div>
+																					<div>{$lg.page_to}: {$empl.page_to}</div>
+																				{/foreach}
+																			{/if}
 																		{else}
 																			{$lg.no}
 																		{/if}
-																	</td>
-																	<td class="job_language_pair_files_cell percent_20">
-																		<button onClick="getEmployeesListOnePair('{$pair.language_pair_original.id}', '{$file.speciality_id}', '{$file.id}');"></button>
 																	</td>
 																</tr>
 															{/foreach}
@@ -217,7 +207,4 @@
 				{/if}
 			</tbody>	
 		</table>
-	{else}
-		<div class="empty centered_text show"><h1>{$lg.no_info}</h1></div>
-	{/if}
-{*$manager.pending_users|print_r*}</div>
+		</div>

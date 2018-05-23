@@ -1,9 +1,7 @@
 <h1>{$manager.route.lg}</h1>
 <div class="contents">
 	{if !empty($manager.jobs)}
-		{if $manager.job_type == "projects"}
-			{include file="./templates/logged_in/in_progress/projects.html"}
-		{else if $manager.job_type == "jobs"}
+		{if $manager.job_type == "jobs"}
 			{if $manager.single_job}
 				{include file="./templates/logged_in/in_progress/job_page.html"}
 			{else}

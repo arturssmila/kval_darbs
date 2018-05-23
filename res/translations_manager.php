@@ -564,7 +564,7 @@
 						if($_POST["accept"] == "accept"){
 							$accept = 1;
 						}else{
-							$accept = 0;
+							$accept = -1;
 						}
 						
 						$query = "SELECT * FROM submitted_files WHERE (id = '" . $selected_job[0]["file_id"] . "')";//select file details and add to job
@@ -579,7 +579,7 @@
 								$speciality = getSqlRows($res);
 								if(!empty($speciality)){
 									if($speciality[0]["speciality"] == "regular"){//select employee rate from regular language pair
-										$query = "SELECT * FROM employee_language_pairs WHERE (pair_id = '" . $speciality[0]["pair_id"] . "') AND (employee_id = '$employee_id')";
+										$query = "SELECT * FROM employee_language_pairs WHERE (pair_id = '" . $speciality[0]["pair_id"] . "') AND (employee_id = '".$_SESSION["user"]["id"]."')";
 										$res = mysql_query($query);
 										$employee_pair = getSqlRows($res);
 										if(!empty($employee_pair)){
@@ -619,6 +619,7 @@
 						$result = mysql_query($query);
 						$numRows = mysql_affected_rows();
 						if($numRows){
+							changeWorkStatus($selected_job[0]["work_id"]);
 							echo("ok");
 							exit();
 						}else{
@@ -667,6 +668,7 @@
 							$numRows = mysql_affected_rows();
 						}
 						if($numRows){
+							changeWorkStatus($selected_job[0]["work_id"]);
 							echo("ok");
 							exit();
 						}else{
@@ -1219,6 +1221,12 @@
 								}else{//if no speciality is set, then we just select employees who have this language pair
 									$add_employee = true;
 								}
+								$query = "SELECT * FROM appointed_employees WHERE (employee_id=\"" . $employee[0]["id"] . "\") AND (accepted='-11')";//get all language pairs of employee
+								$rs= mysql_query($query);
+								$already_assigned = getSqlRows($rs);
+								if(!empty($already_assigned)){
+									$add_employee = false;//if employee has previously denied this offer then he will not be offered
+								}
 								if($add_employee){
 									unset($employee[0]["password"]);
 									unset($employee[0]["dr"]);
@@ -1302,25 +1310,53 @@
 						exit();
 					}
 					if($original_pair_exists && !empty($original_pair_id) && !empty($submitted_file)){
-						$success = true;
+						$success = false;
 						if(sizeof($_POST["data"]) == 1){//if 1 user selected
 							//var_dump($_POST["data"][0]["user_id"]);
 							//var_dump($original_pair_id);
 							//exit();
 							if(checkUserPair($_POST["data"][0]["user_id"], $original_pair_id)){//check if user exists and has this language pair
-								if($submitted_file[0]["word_count"] == $_POST["data"][0]["word_count"]){//check if word counts are correct with the original file
+								$employee_word_count = 0;
+								$employee_word_count += $_POST["data"][0]["word_count"];
+								$query = "SELECT * FROM appointed_employees WHERE (file_id=\"" . $file_id . "\") AND ((accepted='0') OR (accepted='1'))";//get all language pairs of employee
+								$rs= mysql_query($query);
+								$already_assigned = getSqlRows($rs);
+								if(!empty($already_assigned)){
+									foreach($already_assigned as $alr_key=>$alr_val){
+										$employee_word_count += $alr_val["word_count"];
+									}
+								}
+								if($submitted_file[0]["word_count"] == $employee_word_count){//check if word counts are correct with the original file
 									$timestamp = date("Y-m-d H:i:s");
-									$query = "INSERT INTO appointed_employees (assigner_id, file_id, work_id, employee_id, offered, word_count)
+									if(!empty($_POST["data"][0]["page_from"]) && !empty($_POST["data"][0]["page_to"])){
+										$page_from = intval($_POST["data"][0]["page_from"]);
+										if(!is_int($page_from)){//check if page from and page to are given when assigning multiple employees
+											//echo __LINE__;
+											echo(json_encode("page"));
+											exit();
+										}
+										$page_to = intval($_POST["data"][0]["page_to"]);
+										if(!is_int($page_to)){
+											//echo __LINE__;
+											echo(json_encode("page"));
+											exit();
+										}
+										$query = "INSERT INTO appointed_employees (assigner_id, file_id, work_id, employee_id, offered, page_from, page_to, word_count)
+							VALUES ('".$_SESSION["user"]["id"]."', '".$file_id."', '" . $submitted_file[0]["work_id"] . "', '" . $_POST["data"][0]["user_id"] . "', '" . $timestamp ."', '" .$_POST["data"][0]["page_from"]. "', '" .$_POST["data"][0]["page_to"]. "', '".$_POST["data"][0]["word_count"]."')";
+									}else{
+										$query = "INSERT INTO appointed_employees (assigner_id, file_id, work_id, employee_id, offered, word_count)
 							VALUES ('".$_SESSION["user"]["id"]."', '".$file_id."', '" . $submitted_file[0]["work_id"] . "', '" . $_POST["data"][0]["user_id"] . "', '" . $timestamp ."', '".$_POST["data"][0]["word_count"]."')";
+									}
+									
 									$assigned = mysql_query($query) or die('Error: ' . mysql_error());
 									if(!$assigned){
-										$success = false;
 										//echo __LINE__;
 										echo(json_encode("error"));
 										exit();
+									}else{
+										$success = true;
 									}
 								}else{
-									$success = false;
 									//echo __LINE__;
 									//var_dump($submitted_file[0]["word_count"]);
 									//var_dump($_POST["data"][0]["word_count"]);
@@ -1329,52 +1365,61 @@
 									exit();
 								}
 							}else{
-								$success = false;
 								//echo __LINE__;
 								echo(json_encode("wrong_pair"));
 								exit();
 							}
 						}else{//if more than one user selected
 							$employee_word_count = 0;
+							//var_dump($_POST["data"]);
 							foreach($_POST["data"] as $tr_key=>$tr_val){
 								$employee_word_count+=$tr_val["word_count"];
 								if(isset($tr_val["page_from"]) && isset($tr_val["page_to"])){//check if word counts are correct with the original file
 									$page_from = intval($tr_val["page_from"]);
 									if(!is_int($page_from)){//check if page from and page to are given when assigning multiple employees
-										$success = false;
 										//echo __LINE__;
 										echo(json_encode("page"));
 										exit();
 									}
 									$page_to = intval($tr_val["page_to"]);
 									if(!is_int($page_to)){
-										$success = false;
 										//echo __LINE__;
 										echo(json_encode("page"));
 										exit();
 									}
 									if(!checkUserPair($tr_val["user_id"], $original_pair_id)){//check if user exists and has this language pair
-										$success = false;
 										//echo __LINE__;
 										echo(json_encode("wrong_pair"));
 										exit();
 									}
 								}
 							}
+							$query = "SELECT * FROM appointed_employees WHERE (file_id=\"" . $file_id . "\") AND ((accepted='0') OR (accepted='1'))";//get all language pairs of employee
+							$rs= mysql_query($query);
+							$already_assigned = getSqlRows($rs);
+							if(!empty($already_assigned)){
+								foreach($already_assigned as $alr_key=>$alr_val){
+									$employee_word_count += $alr_val["word_count"];
+								}
+							}
 							if($submitted_file[0]["word_count"] == $employee_word_count){//check if word counts are correct with the original file
 								foreach($_POST["data"] as $tr_key=>$tr_val){
 									$timestamp = date("Y-m-d H:i:s");
 									$query = "INSERT INTO appointed_employees (assigner_id, file_id, work_id, employee_id, offered, page_from, page_to, word_count)
-							VALUES ('".$_SESSION["user"]["id"]."', '".$file_id."', '" . $submitted_file[0]["work_id"] . "', '" . $_POST["data"][0]["user_id"] . "', '" . $timestamp ."', '" .$tr_val["page_from"]. "', '" .$tr_val["page_to"]. "', '".$_POST["data"][0]["word_count"]."')";
+							VALUES ('".$_SESSION["user"]["id"]."', '".$file_id."', '" . $submitted_file[0]["work_id"] . "', '" . $tr_val["user_id"] . "', '" . $timestamp ."', '" .$tr_val["page_from"]. "', '" .$tr_val["page_to"]. "', '".$tr_val["word_count"]."')";
 									$assigned = mysql_query($query) or die('Error: ' . mysql_error());
 									if(!$assigned){
-										$success = false;
 										//echo __LINE__;
 										echo(json_encode("error"));
 										exit();
+									}else{
+										$success = true;
 									}
 								}
 							}else{
+								//var_dump($submitted_file[0]["word_count"]);
+								//var_dump($already_assigned[0]["word_count"]);
+								//var_dump($employee_word_count);
 								echo(json_encode("word_count"));
 								exit();
 							}
@@ -1385,6 +1430,7 @@
 						exit();
 					}
 					if($success){
+						changeWorkStatus($submitted_file[0]["work_id"]);
 						echo(json_encode("ok"));
 						exit();
 					}
@@ -1620,7 +1666,112 @@
 			return false;
 		}
 	}
-	function checkAllFileOccupancy($work_id){//check if all files have a translator and change status
-
+	function fileOccupancyCompletion($work_id){//check if all files have a translator and change status
+		$work_id = intval($work_id);
+		if(is_int($work_id)){
+			$query = "SELECT * FROM submitted_files WHERE work_id=\"" . $work_id . "\"";//get all language pairs of employee
+			$rs= mysql_query($query);
+			$work_files = getSqlRows($rs);
+			if(!empty($work_files)){
+				$files_count = sizeof($work_files);
+				$appointed_count = 0;
+				$completed_count = 0;
+				foreach($work_files as $file_key=>$file_val){
+					$query = "SELECT * FROM appointed_employees WHERE (file_id=\"" . $file_val["id"] . "\") AND (accepted='1')";//get all language pairs of employee
+					$rs= mysql_query($query);
+					$appointed = getSqlRows($rs);
+					if(!empty($appointed)){
+						if(sizeof($appointed) == 1){
+							if($appointed[0]["word_count"] == $file_val["word_count"]){
+								$appointed_count++;
+								if($appointed[0]["completed"] == "1"){
+									$completed_count++;
+								}
+							}
+						}else{
+							$curr_count = 0;
+							$compl_count = 0;
+							foreach($appointed as $app_key=>$app_val){
+								$curr_count += $app_val["word_count"];
+								if($app_val["completed"] == "1"){
+									$compl_count++;
+								}
+							}
+							if($curr_count == $file_val["word_count"]){
+								$appointed_count++;
+								if($compl_count == sizeof($appointed)){
+									$completed_count++;
+								}
+							}
+						}
+					}
+				}
+				if($appointed_count == 0){
+					return 0;//no one appointed
+				}elseif($appointed_count < $files_count){
+					return 1; //some appointed
+				}elseif($appointed_count == $files_count){
+					if($completed_count == 0){
+						return 2; //every one appointed, none completed
+					}elseif($completed_count < $appointed_count){
+						return 3; //every one appointed, some completed
+					}elseif($completed_count == $appointed_count){
+						return 4; //every one appointed, all completed
+					}else{
+						//echo __LINE__;
+						return "error";
+					}
+				}else{
+						//echo __LINE__;
+					return "error";
+				}
+			}else{
+						//echo __LINE__;
+				return "error";
+			}
+		}else{
+						//echo __LINE__;
+			return "error";
+		}
+	}
+	function changeWorkStatus($work_id){
+		$new_work_status = fileOccupancyCompletion($work_id);
+		if($new_work_status != "error"){
+			$accepted = 2;
+			switch($new_work_status){
+				case "0":
+					//echo "ree0";
+					$accepted = 2;
+					break;
+				case "1":
+					//echo "ree1";
+					$accepted = 3;
+					break;
+				case "2":
+					//echo "ree2";
+					$accepted = 4;
+					break;
+				case "3":
+					//echo "ree3";
+					$accepted = 5;
+					break;
+				case "4":
+					//echo "ree4";
+					$accepted = 6;
+					break;
+			}
+			$query = "SELECT * FROM submitted_work WHERE id=\"" . $work_id . "\"";
+			$rs= mysql_query($query);
+			$work = getSqlRows($rs);
+			if(!empty($work)){
+				if($work[0]["accepted"] != $accepted){
+					$previous_state = $work[0]["accepted"];
+					$query = "UPDATE submitted_work
+							SET accepted='$accepted', previous_state='$previous_state'
+							WHERE id='".$work[0]["id"]."'";
+					$result = mysql_query($query);
+				}
+			}
+		}
 	}
 ?>

@@ -232,6 +232,9 @@ function getEmployeesListOnePair(lang_pair, speciality, file_id){
 			$("#select_translators #employee_select_modal .done_container .bloated.primary.button").attr("file_id", file_id);
 			$("#select_translators #employee_select_modal .done_container .bloated.primary.button").attr("pair_id", lang_pair);
 			$("#employee_select_modal").removeClass("hide");
+			$(".selected_employees").removeClass("hide");
+			$("#select_multiple_employees").prop("checked", false);
+			$("#employee_select_modal .pages").addClass("hide");
 			if (!($( "#select_translators .thead_row .last_th" ).length)){
 				$("#select_translators .thead_row").append("<th></th>");
 			}
@@ -243,6 +246,9 @@ function getEmployeesListOnePair(lang_pair, speciality, file_id){
 			$("#employee_select_modal .contents tbody").html("");
 			$("#employee_select_modal .contents tbody").append("<tr><td colspan='5'>"+lg["no_employees_available"]+"</td></tr>");
 			$("#select_translators #employee_select_moda .done_container").addClass("hide");
+			$(".selected_employees").addClass("hide");
+			$("#select_multiple_employees").prop("checked", false);
+			$("#employee_select_modal .pages").addClass("hide");
 			$("#select_translators").css("display", "table");
 			//console.log(response);
 			//alert("error");
@@ -340,7 +346,13 @@ function assignMultipleEmployees(clicked){
 		dataType: 'json',
 			success: function(response)
 			{
-				console.log(response);
+				if(response == "ok"){
+					$("#select_translators").css("display", "none");
+					$(".job_language_pair_files_row[file_id='"+file_id+"']").remove();
+					console.log(response);
+				}else if(response == "word_count"){
+					alert(response);
+				}
 			},
 			error: function(response){
 				console.log(response);

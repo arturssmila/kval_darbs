@@ -209,6 +209,151 @@ function createEmployee(){
 	}
 };
 
+function getEmployeesListOnePair(lang_pair, speciality, file_id){
+	  $.ajax({
+        type: "POST",
+        url: "/res/translations_manager.php",
+        data:
+        {
+            action:     "getEmployeesList",
+            lang_pair:    lang_pair,
+            speciality: speciality
+        },
+        async: true,
+	dataType: 'json',
+        success: function(response)
+        {
+		if(response instanceof Array){
+			$("#employee_settings_modal").addClass("hide");
+			$("#employee_select_modal").removeClass("hide");
+			$("#employee_select_modal .contents tbody").html("");
+			$("#employee_select_modal .selected_employees").removeClass("hide");
+			$("#select_translators #employee_select_modal .done_container").removeClass("hide");
+			$("#select_translators #employee_select_modal .done_container .bloated.primary.button").attr("file_id", file_id);
+			$("#select_translators #employee_select_modal .done_container .bloated.primary.button").attr("pair_id", lang_pair);
+			$("#employee_select_modal").removeClass("hide");
+			if (!($( "#select_translators .thead_row .last_th" ).length)){
+				$("#select_translators .thead_row").append("<th></th>");
+			}
+			for(x in response) {
+				$("#employee_select_modal .contents tbody").append("<tr><td>"+response[x]["name"]+"</td><td>"+response[x]["surname"]+"</td><td>"+response[x]["pair"]["when_learned"]+"</td><td>"+response[x]["pair"]["rate"]+"</td><td><input class='small' type='text' name='word_count' user_id='"+response[x]["id"]+"'></td><td class='pages hide'><input class='small' type='text' name='page_from' user_id='"+response[x]["id"]+"'></td><td class='pages hide'><input class='small' type='text' name='page_to' user_id='"+response[x]["id"]+"'></td><td><input type='checkbox' onChange='disableOther(this);' class='select_employee' value='"+response[x]["id"]+"'></td></tr>");
+			}
+			$("#select_translators").css("display", "table");
+		}else if(response == "no_pairs"){
+			$("#employee_select_modal .contents tbody").html("");
+			$("#employee_select_modal .contents tbody").append("<tr><td colspan='5'>"+lg["no_employees_available"]+"</td></tr>");
+			$("#select_translators #employee_select_moda .done_container").addClass("hide");
+			$("#select_translators").css("display", "table");
+			//console.log(response);
+			//alert("error");
+		}else{
+			alert("error");
+		}
+        },
+        error: function(response){
+			console.log(response);
+		
+        }
+    });
+}
+
+function toggleMultipleEmployee(clicked){
+	if($(clicked).is(":checked")){
+		$("th.pages, td.pages").removeClass("hide");
+	}else{
+		$("th.pages, td.pages").addClass("hide");
+		$("#employee_select_modal .select_employee").prop("checked", false);
+	}
+}
+
+function disableOther(clicked){
+	if($(clicked).is(":checked")){
+		if(!($("#select_multiple_employees").is(":checked"))){
+			$("#employee_select_modal .select_employee").prop("checked", false);
+			$(clicked).prop("checked", true);
+		}
+	}else{
+	}
+}
+
+function assignMultipleEmployees(clicked){
+	var file_id = $(clicked).attr("file_id");
+	//console.log(file_id);
+	var data = {};
+	var i = 0;
+	var validated = true;
+	$("#employee_select_modal .contents tbody tr .redborder").removeClass("redborder");
+	$("#employee_select_modal .contents tbody tr").each(function(){
+		if($("#select_multiple_employees").is(":checked")){
+			if($(this).find("input[type='checkbox']").is(':checked')){
+				data[i] = {};
+				data[i]["user_id"] = $(this).find("input[type='checkbox']").val();
+				var word_count = $(this).find("input[name='word_count']").val();
+				if(word_count != ""){
+					data[i]["word_count"] = word_count;
+				}else{
+					$(this).find("input[name='word_count']").addClass("redborder");
+					validated = false;
+				}
+				var page_from = $(this).find("input[name='page_from']").val();
+				if(page_from != ""){
+					data[i]["page_from"] = page_from;
+				}else{
+					$(this).find("input[name='page_from']").addClass("redborder");
+					validated = false;
+				}
+				var page_to = $(this).find("input[name='page_to']").val();
+				if(page_to != ""){
+					data[i]["page_to"] = page_to;
+				}else{
+					$(this).find("input[name='page_to']").addClass("redborder");
+					validated = false;
+				}
+				i++;
+			}
+		}else{
+			if($(this).find("input[type='checkbox']").is(':checked')){
+				data[i] = {};
+				data[i]["user_id"] = $(this).find("input[type='checkbox']").val();
+				var word_count = $(this).find("input[name='word_count']").val();
+				if(word_count != ""){
+					data[i]["word_count"] = word_count;
+				}else{
+					$(this).find("input[name='word_count']").addClass("redborder");
+					validated = false;
+				}
+				i++;
+			}
+		}
+	});
+	if(validated){  
+		$.ajax({
+			type: "POST",
+			url: "/res/translations_manager.php",
+			data:
+			{
+				action:     "assignMultipleEmployees",
+				file_id: file_id,
+				data:    data
+			},
+			async: true,
+		dataType: 'json',
+			success: function(response)
+			{
+				console.log(response);
+			},
+			error: function(response){
+				console.log(response);
+			
+			}
+		});
+	}else{
+		alert("error");
+	}
+	//console.log(data);
+	
+}
+
 function changeRegistrationStatus(action, user_id){
     $.ajax({
         type: "POST",

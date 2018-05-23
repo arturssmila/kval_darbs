@@ -104,6 +104,14 @@ input[type="button"]:focus {
   border-color: #888;
   outline: 0; }
 
+  input.small{
+  	  width: 80px;
+  }
+  input.normal_height{
+  	  line-height: auto;
+  	  height: auto;
+  }
+  
 .button.button-primary,
 button.button-primary,
 input[type="submit"].button-primary,
@@ -3399,6 +3407,7 @@ display: none; }
 
 #manager #submitted_jobs{
 	margin-bottom: 40px;
+	width: 100%;
 }
 
 button.inline{

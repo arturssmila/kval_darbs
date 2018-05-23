@@ -1,7 +1,6 @@
 <h1>{$manager.route.lg}</h1>
 <div class="contents">
-	{if (!empty($manager.jobs))}
-		<table id="submitted_jobs" class="hidden_rows">
+<table id="submitted_jobs" class="hidden_rows">
 			<thead>
 				<tr>
 					<th style="width: 20px">ID</th>
@@ -15,6 +14,7 @@
 				</tr>
 			</thead>
 			<tbody>
+				{if (!empty($manager.jobs))}
 					{foreach from=$manager.jobs key=key item=job}
 					{*<pre>{$job|print_r}</pre>*}
 					<tr class="ui hover" job_id="{$job.id}">
@@ -125,9 +125,9 @@
 						</tr>
 					</tr>
 					{/foreach}
+				{else}
+					NO JOBS FOR YOU
+				{/if}
 			</tbody>	
 		</table>
-	{else}
-		NO JOBS FOR YOU
-	{/if}
-</div>
+		</div>

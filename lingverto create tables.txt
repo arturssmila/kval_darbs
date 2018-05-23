@@ -131,11 +131,11 @@ ALTER TABLE `submitted_work` ADD `previous_state` ENUM('0', '1', '2', '3', '4', 
 ALTER TABLE `submitted_work` CHANGE `previous_state` `previous_state` ENUM('0','1','2','3','4','5','6','-1','-2') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0';
 
 //for submitted_work table above - accepted 1 = work manager has stated the price and sent for customer to confirm
-//accepted 2 = customer has confirmed the price - not paid
-//accepted 3 = some files are done but user cant access any - not paid
-//accepted 4 = some files are done and user can access those that are done - paid
-//accepted 5 = all files done but user cant any - not paid
-//accepted 6 = all files done and user can access all files - paid
+//accepted 2 = customer has confirmed the price and employees are not appointed
+//accepted 3 = customer has confirmed the price and some employees are appointed
+//accepted 4 = all files have an employee on them, no files completed
+//accepted 5 = all files have an employee on them, some are completed
+//accepted 6 = all files are done
 //accepted -1 = customer has denied because of price etc. - not paid
 //accepted -2 = work manager has denied because of something. - not paid
 
