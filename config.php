@@ -81,7 +81,7 @@ function temp_close()
 }
 
 
-$link = "";
+$db_link = "";
 function connect_db()
 {
 	global $db_link;

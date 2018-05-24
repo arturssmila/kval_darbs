@@ -93,9 +93,9 @@ $(document).ready(function(){
 				success: function(data) {
 					console.log(data);
 					if(data == "big"){
-						alert("the files exceed 30 mb");
+						alert(lg.file_30_exceed+"!");
 					}else if(data == "empty"){
-						alert("empty form!");
+						alert(lg.empty_form+"!");
 					}else if(data == "ok"){
 						alert(lg.form_submitted);
 						form_data.from_langs = [];
@@ -126,12 +126,12 @@ $(document).ready(function(){
 					}
 				},
 				error: function(data) {
-					alert("Something went wrong!");  
+					alert(lg.error);  
 					console.log(data);
 				}
 			});
 		}else{
-			console.log("user error");
+			console.log(lg.error);
 		}
     });
 
@@ -228,13 +228,13 @@ function moveJobToTrash(job_id, action){
 					alert(lg.session_ended_logged_out);
 					location.reload();
 				}else{
-					alert("could not remove!");
+					alert(lg.could_not_rem+"!");
 				} 
 			},
 			error: function(response)
 			{
 				console.log(response);
-				alert("could not remove!");
+				alert(lg.could_not_rem+"!");
 			}
 		});
     	} else {
@@ -259,20 +259,20 @@ function changeDateDue(clicked_obj, job_id, action){
 				//response = JSON.parse(response);
 				console.log(response);
 				if(response == "ok"){
-					alert("Date due changed!");
+					alert(lg.date_due_changed+"!");
 				}else if(response == "error"){
 					alert(lg.error);
 				}else if(response == "logged_out"){
 					alert(lg.session_ended_logged_out);
 					location.reload();
 				}else{
-					alert("could not change!");
+					alert(lg.could_not_ch+"!");
 				} 
 			},
 			error: function(response)
 			{
 				console.log(response);
-				alert("could not change!");
+				alert(lg.could_not_ch+"!");
 			}
 		});
     	} else {
@@ -296,7 +296,7 @@ function AcceptJob(job_id, accept){
 				//response = JSON.parse(response);
 				console.log(response);
 				if(response == "ok"){
-					alert("Done!");
+					alert(lg.done+"!");
 					$("tr[job_id='"+job_id+"']").remove();
 					$("tr.to_toggle[toggle_id='"+job_id+"_job']").remove();
 				}else if(response == "error"){
@@ -305,13 +305,13 @@ function AcceptJob(job_id, accept){
 					alert(lg.session_ended_logged_out);
 					location.reload();
 				}else{
-					alert("could not change status!");
+					alert(lg.could_not_ch_st+"!");
 				} 
 			},
 			error: function(response)
 			{
 				console.log(response);
-				alert("could not change status!");
+				alert(lg.could_not_ch_st+"!");
 			}
 		});
     	} else {
@@ -334,7 +334,7 @@ function submitJob(job_id){
 				//response = JSON.parse(response);
 				console.log(response);
 				if(response == "ok"){
-					alert("Done!");
+					alert(lg.done+"!");
 					$("tr[job_id='"+job_id+"']").remove();
 					$("tr.to_toggle[toggle_id='"+job_id+"_job']").remove();
 				}else if(response == "error"){
@@ -343,13 +343,13 @@ function submitJob(job_id){
 					alert(lg.session_ended_logged_out);
 					location.reload();
 				}else{
-					alert("could not change status!");
+					alert(lg.could_not_ch_st+"!");
 				} 
 			},
 			error: function(response)
 			{
 				console.log(response);
-				alert("could not change status!");
+				alert(lg.could_not_ch_st+"!");
 			}
 		});
     	} else {
@@ -380,13 +380,13 @@ function moveFromTrash(job_id, action){
 					alert(lg.session_ended_logged_out);
 					location.reload();
 				}else{
-					alert("could not remove!");
+					alert(lg.could_not_rem+"!");
 				} 
 			},
 			error: function(response)
 			{
 				console.log(response);
-				alert("could not remove!");
+				alert(lg.could_not_rem+"!");
 			}
 		});
     	} else {
@@ -427,16 +427,16 @@ function changeCellValue(clicked, main_id, field, file, action){
                         $parent.prev(".original").removeClass("hide");
                         $parent.addClass("hide");
                     }else if(response == "logged_out"){
-                        alert(lg.session_ended_logged_out);
+                        alert(lg["session_ended_logged_out"]);
                         location.reload();
                     }else{
-                        alert("could not update!");
+                        alert(lg.could_not_upd+"!");
                     }     
                 },
                 error: function(response)
                 {
                     console.log(response);
-                    alert("could not update!");
+                    alert(lg.could_not_upd+"!");
                 }
             });
         }
@@ -481,13 +481,13 @@ function changeCellValue_2ids(clicked, main_id, second_id, field, file, action){
                         alert(lg.session_ended_logged_out);
                         location.reload();
                     }else{
-                        alert("could not update!");
+                        alert(lg.could_not_upd+"!");
                     }     
                 },
                 error: function(response)
                 {
                     console.log(response);
-                    alert("could not update!");
+                    alert(lg.could_not_upd+"!");
                 }
             });
         }
@@ -518,13 +518,13 @@ function approvePrice(job_id){
 					alert(lg.session_ended_logged_out);
 					location.reload();
 				}else{
-					alert("could not approve!");
+					alert(lg.could_not_appr+"!");
 				} 
 			},
 			error: function(response)
 			{
 				console.log(response);
-				alert("could not approve!");
+				alert(lg.could_not_appr+"!");
 			}
 		});
     	} else {

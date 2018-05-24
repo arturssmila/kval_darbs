@@ -1,3 +1,11 @@
+var documentClicked = false;
+$(document).on('touchstart', function(){
+	documentClicked = true;
+});
+
+$(document).on('touchmove', function(){
+	documentClicked = false;
+});
 $(document).ready(function()
 {
 	/*************************************************************************************/
@@ -661,6 +669,41 @@ function two_digits(digit,side)
 	}
 	return str;
 }
+
+jQuery.fn.mClick = function(e) {
+	
+	if(e && typeof(e) === "function")
+	{
+		var tas = this;
+		
+		if(
+			!window.MSStream
+			&&
+			("userAgent" in navigator)
+			&&
+			/iPad|iPhone|iPod/.test(navigator.userAgent)
+			&&
+			("platform" in navigator)
+			&&
+			/iPad|iPhone|iPod/.test(navigator.platform)
+		)
+		{
+			tas.on('touchend', function(event){
+					//nočeko, vai nebīda pirkstu pa ekrānu..
+					if(documentClicked)
+					{
+						e.apply(this, arguments);
+					}					
+				});
+		}
+		else
+		{
+			tas.click(e);
+		}
+		return this;
+	}
+};
+
 function check_field(e,type)
 {
 	$(e).removeClass('redborder');

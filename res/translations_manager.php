@@ -43,6 +43,10 @@
 										exit();
 									}
 								}
+								if(!filter_var($value, FILTER_VALIDATE_INT)){
+									echo(json_encode("error"));
+									exit();
+								}
 								$query = "UPDATE submitted_files
 										SET $field='$value', price='0'
 										WHERE (id='".$_POST["main_id"]."') AND (pair_id='".$_POST["second_id"]."')";
@@ -95,9 +99,15 @@
 					exit();
 				}
 				if((!empty($_POST["main_id"])) && (!empty($_POST["second_id"])) && (!empty($_POST["field"]))){
-						$result = mysql_query("SHOW COLUMNS FROM `submitted_files` LIKE '".$_POST["field"]."'");
+						$field = htmlspecialchars($_POST["field"], ENT_QUOTES, "UTF-8", true);
+						$result = mysql_query("SHOW COLUMNS FROM `submitted_files` LIKE '".$field."'");
 						$check_field = getSqlRows($result);
 						if(!empty($check_field)) {
+							if(!filter_var($_POST["main_id"], FILTER_VALIDATE_INT) || !filter_var($_POST["second_id"], FILTER_VALIDATE_INT)){
+								$out_data["status"] = "error";
+								echo(json_encode($out_data));
+								exit();
+							}
 							$result = mysql_query("SELECT * FROM `submitted_files` WHERE  (id='".$_POST["main_id"]."') AND (pair_id='".$_POST["second_id"]."')");
 							$check_row = getSqlRows($result);
 							if(!empty($check_row)){
@@ -180,15 +190,21 @@
 				if($_SESSION["user"]["soc"] != "00"){
 					echo(json_encode("error"));
 					exit();
-				}else if(!isset($_SESSION["user"]["admin"])){
+				}
+				if(!isset($_SESSION["user"]["admin"])){
 					echo(json_encode("error"));
 					exit();
-				}else if(!checkPermission(2, 0)){
+				}
+				if(!checkPermission(2, 0)){
 					//echo __LINE__;
 					echo(json_encode("error"));
 					exit();
 				}
 				if(!empty($_POST["main_id"])){
+					if(!filter_var($_POST["main_id"], FILTER_VALIDATE_INT)){
+						echo("error");
+						exit();
+					}
 					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
 					$selected_job = getSqlRows($result);
 					if(!empty($selected_job)){
@@ -268,6 +284,10 @@
 				//var_dump($_POST);
 				//exit();
 				if(!empty($_POST["main_id"])){
+					if(!filter_var($_POST["main_id"], FILTER_VALIDATE_INT)){
+						echo("error");
+						exit();
+					}
 					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
 					$selected_job = getSqlRows($result);
 					if(!empty($selected_job)){
@@ -310,6 +330,10 @@
 				//var_dump($_POST);
 				//exit();
 				if(!empty($_POST["main_id"])){
+					if(!filter_var($_POST["main_id"], FILTER_VALIDATE_INT)){
+						echo("error");
+						exit();
+					}
 					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
 					$selected_job = getSqlRows($result);
 					if(!empty($selected_job)){
@@ -355,6 +379,10 @@
 							exit();
 				}
 				if(!empty($_POST["main_id"]) && !empty($_POST["date_due"])){
+					if(!filter_var($_POST["main_id"], FILTER_VALIDATE_INT)){
+						echo("error");
+						exit();
+					}
 					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
 					$selected_job = getSqlRows($result);
 					if(!empty($selected_job)){
@@ -408,6 +436,10 @@
 				//var_dump($_POST);
 				//exit();
 				if(!empty($_POST["main_id"])){
+					if(!filter_var($_POST["main_id"], FILTER_VALIDATE_INT)){
+						echo("error");
+						exit();
+					}
 					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
 					$selected_job = getSqlRows($result);
 					if(!empty($selected_job)){
@@ -458,6 +490,10 @@
 				//var_dump($_POST);
 				//exit();
 				if(!empty($_POST["main_id"])){
+					if(!filter_var($_POST["main_id"], FILTER_VALIDATE_INT)){
+						echo("error");
+						exit();
+					}
 					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
 					$selected_job = getSqlRows($result);
 					if(!empty($selected_job)){
@@ -502,6 +538,10 @@
 				//var_dump($_POST);
 				//exit();
 				if(!empty($_POST["main_id"])){
+					if(!filter_var($_POST["main_id"], FILTER_VALIDATE_INT)){
+						echo("error");
+						exit();
+					}
 					$result = mysql_query("SELECT * FROM `submitted_work` WHERE  id='".$_POST["main_id"]."'");
 					$selected_job = getSqlRows($result);
 					if(!empty($selected_job)){
@@ -553,6 +593,10 @@
 				//var_dump($_POST);
 				//exit();
 				if(!empty($_POST["main_id"]) && !empty($_POST["accept"])){
+					if(!filter_var($_POST["main_id"], FILTER_VALIDATE_INT)){
+						echo("error");
+						exit();
+					}
 					$result = mysql_query("SELECT * FROM `appointed_employees` WHERE  id='".$_POST["main_id"]."'");
 					$selected_job = getSqlRows($result);
 					if(!empty($selected_job)){
@@ -762,6 +806,10 @@
 				break;
 			case "changePairSpecialities":
 				if((!empty($_POST["data"])) && (!empty($_POST["pair_id"]))){
+					if(!filter_var($_POST["pair_id"], FILTER_VALIDATE_INT)){
+						echo(json_encode("error"));
+						exit();
+					}
 					$query = "SELECT * FROM employee_language_pairs WHERE id=\"" . $_POST["pair_id"] . "\"";//get all language pairs of employee
 					$rs= mysql_query($query);
 					$employee_pear = getSqlRows($rs);//yes, pears
@@ -847,8 +895,16 @@
 					exit();
 				}
 				if((!empty($_POST["main_id"])) && (!empty($_POST["second_id"])) && (!empty($_POST["field"])) && (!empty($_POST["value"]))){
+					if(!filter_var($_POST["main_id"], FILTER_VALIDATE_INT) || !filter_var($_POST["second_id"], FILTER_VALIDATE_INT)){
+						echo(json_encode("error"));
+						exit();
+					}
 					$value = $_POST["value"];
 					$value = str_replace(",", ".", $value);
+					if(!filter_var($value, FILTER_VALIDATE_FLOAT)){
+						echo("error");
+						exit();
+					}
 					$field = htmlspecialchars($_POST["field"], ENT_QUOTES, "UTF-8", true);
 					if((!empty($value)) && ((is_numeric($value)) || (is_float($value)))){
 						$result = mysql_query("SHOW COLUMNS FROM `language_pair_specialities` LIKE '".$field."'");
@@ -895,6 +951,10 @@
 				break;
 			case "changeDateLearned":
 				if((!empty($_POST["main_id"])) && (!empty($_POST["field"])) && (!empty($_POST["value"]))){
+					if(!filter_var($_POST["main_id"], FILTER_VALIDATE_INT)){
+						echo(json_encode("error"));
+						exit();
+					}
 					$query = "SELECT * FROM employee_language_pairs WHERE id=\"" . $_POST["main_id"] . "\"";//get all language pairs of employee
 					$rs= mysql_query($query);
 					$some_result = getSqlRows($rs);
@@ -1032,6 +1092,11 @@
 				break;
 			case "uploadJobResult":
 				if(!empty($_POST["path"]) && !empty($_POST["name"]) && !empty($_POST["job_id"])){
+					if(!filter_var($_POST["job_id"], FILTER_VALIDATE_INT)){
+						$return_value["status"] = "error";
+						echo(json_encode($return_value));
+						exit();
+					}
 					$job_id = intval($_POST["job_id"]);
 					if(is_int($job_id)){
 						$query = "SELECT * FROM appointed_employees WHERE id=\"" . $job_id . "\"";//get all language pairs of employee
@@ -1101,6 +1166,10 @@
 						exit();
 					}
 					foreach ($_POST["data"] as $key => $value) {
+						if(!filter_var($value, FILTER_VALIDATE_INT)){
+							echo(json_encode("error"));
+							exit();
+						}
 						$query = "SELECT employee_id FROM employee_language_pairs WHERE id=\"" . $value . "\"";//get all language pairs of employee
 						$rs= mysql_query($query);
 						$some_result = getSqlRows($rs);
@@ -1188,6 +1257,10 @@
 						exit();
 					}else if(!checkPermission(3, $_POST["employee_id"])){
 						echo(json_encode("error"));
+						exit();
+					}
+					if(!filter_var($_POST["employee_id"], FILTER_VALIDATE_INT)){
+						echo("error");
 						exit();
 					}
 					$query = "SELECT * FROM employee_language_pairs WHERE employee_id=\"" . $_POST["employee_id"] . "\"";//get all language pairs of employee

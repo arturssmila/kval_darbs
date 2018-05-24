@@ -351,7 +351,7 @@ function assignMultipleEmployees(clicked){
 					$(".job_language_pair_files_row[file_id='"+file_id+"']").remove();
 					console.log(response);
 				}else if(response == "word_count"){
-					alert(response);
+					alert(lg["word_count_error"]+"!");
 				}
 			},
 			error: function(response){

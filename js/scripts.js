@@ -433,9 +433,9 @@ $(document).ready(function() {
 					async: true,
 					success: function(data) {  
 						if(data == "big"){
-							alert("the files exceed 30 mb");
+							alert(lg.file_30_exceed+"!");
 						}else if(data == "empty"){
-							alert("empty form!");
+							alert(lg.empty_form+"!");
 						}else if(data == "ok"){
 							alert(lg.form_submitted);
 							form_data.from_langs = [];
@@ -466,7 +466,7 @@ $(document).ready(function() {
 						}
 					},
 					error: function(data) {
-						alert("Something went wrong!");  
+						alert(lg.error+"!");  
 						console.log(data);
 					}
 				});
@@ -1066,7 +1066,7 @@ function uploadFile(formD, form_id, form_data){//upload files to tmp dir
                 }
             },
             error: function(data) {
-                alert("Something went wrong! PDF or plain text only!");
+                alert(lg.error+"!");
                 console.log(data);
                 //alert(JSON.stringify(data));
             }

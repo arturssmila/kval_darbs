@@ -163,6 +163,9 @@
 																				<a target="_blank" href="{$file.appointed_employees.0.file_path}">{$file.appointed_employees.0.file_name}</a>
 																			{else}
 																				{foreach from=$file.appointed_employees key=empl_key item=empl}
+																					{if $empl_key > 0}
+																						<div class="border_top"></div>
+																					{/if}
 																					<a target="_blank" href="{$empl.file_path}">{$empl.file_name}</a>
 																				{/foreach}
 																			{/if}
