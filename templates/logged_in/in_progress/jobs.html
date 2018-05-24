@@ -14,6 +14,7 @@
 			<tbody>
 				{if (!empty($manager.jobs))}
 					{foreach from=$manager.jobs key=key item=job}
+					{if $key != "total_count" || $key == "0"}
 					{*<pre>{$job|print_r}</pre>*}
 					<tr class="ui hover" job_id="{$job.id}">
 							<td>
@@ -58,9 +59,12 @@
 							<td class="noselect"><a href="{$manager.route.url}/{$job.id}">{$lg.open}</a></td>
 						</tr>
 					</tr>
+					{/if}
 					{/foreach}
 				{else}
 					NO JOBS FOR YOU
 				{/if}
 			</tbody>	
 		</table>
+		{include file="./templates/logged_in/pagination_limits.html"}
+		{include file="./templates/logged_in/pagination_pages.html"}

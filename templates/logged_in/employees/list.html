@@ -10,7 +10,9 @@
 				</form>
 			</div>
 				{foreach from=$manager.translators key=key item=i}
-					<div><a href="{$smarty.server.REQUEST_URI}/{$i.id}">{$i.name} {$i.surname}</a></div>
-					{assign var="count" value=$count+1}
+					{if $key != "total_count" || $key == "0"}
+						<div><a href="{$smarty.server.REQUEST_URI}/{$i.id}">{$i.name} {$i.surname}</a></div>
+						{assign var="count" value=$count+1}
+					{/if}
 				{/foreach}
 			</div>

@@ -1,0 +1,155 @@
+<h1>{$manager.route.lg}</h1>
+<div class="contents">
+	{if !empty($manager.jobs)}
+		<table id="submitted_jobs" class="hidden_rows">
+			<thead>
+				<tr>
+					<th style="width: 20px">ID</th>
+					<th>{$lg.source_language}</th>
+					<th>{$lg.target_language}</th>
+					<th>{$lg.date_due}</th>
+					<th>{$lg.speciality}</th>
+					<th>{$lg.word_count}</th>
+					<th>{$lg.estimated_price}</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{if (!empty($manager.jobs))}
+					{foreach from=$manager.jobs key=key item=job}
+					{if $key != "total_count" || $key == "0"}
+					{*<pre>{$job|print_r}</pre>*}
+					<tr class="ui hover" job_id="{$job.id}">
+							<td>
+								{$job.id}
+							</td>
+							<td>	
+								{$job.pair.lang_from}
+							</td>
+							<td>	
+								{$job.pair.lang_to}
+							</td>
+							<td>	
+								{if (!empty($job.project.date_due) && !empty($job.project.time_due))}
+									{$job.project.date_due} {$job.project.time_due}
+								{elseif (!empty($job.project.date_due))}
+									{$job.project.date_due}
+								{else}
+									-
+								{/if}
+							</td>
+							<td>	
+								{if !empty($job.file.speciality)}
+									{$job.file.speciality}
+								{else}
+									-
+								{/if}
+							</td>
+							<td>	
+								{if !empty($job.word_count)}
+									{$job.word_count}
+								{else}
+									-
+								{/if}
+							</td>
+							<td class="price">	
+								{if !empty($job.file.employee_price)}
+									{$job.file.employee_price|string_format:"%.2f"}
+								{else}
+									-
+								{/if}
+							</td>
+							<td class="toggle_specialities noselect" onClick="hiddenRow('{$job.id}_job', 'submitted_jobs', 'to_toggle')"><button class="small">{$lg.toggle_details}</button></td>
+						</tr>
+						<tr class="hide to_toggle" toggle_id="{$job.id}_job">
+							<td class="job_language_pairs" colspan="9">
+								<table id="details_{$job.id}" class="">
+									<thead>
+										<tr>
+											<th>{$lg.time_zone}</th>
+											{if !empty($job.page_from) && !empty($job.page_to)}
+												<th>{$lg.page_from}</th>
+												<th>{$lg.page_to}</th>
+											{/if}
+											<th>{$lg.when_assigned}</th>
+											<th>{$lg.assigned_by}</th>
+											<th>{$lg.vacancy_rate}</th>
+											<th>{$lg.file}</th>
+										</tr>
+									</thead>
+									<tr>
+										<td>	
+											{if !empty($job.project.time_zone)}
+												{$job.project.time_zone}
+											{else}
+												-
+											{/if}
+										</td>
+										{if !empty($job.page_from) && !empty($job.page_to)}
+											<td>{$job.page_from}</td>
+											<td>{$job.page_to}</td>
+										{/if}
+										<td>
+											{if !empty($job.offered)}
+												{$job.offered}
+											{else}
+												-
+											{/if}
+										</td>
+										<td>
+											{if !empty($job.assigner)}
+												{$job.assigner}
+											{else}
+												-
+											{/if}
+										</td>
+										<td>	
+											{if !empty($job.file.employee_rate)}
+												{$job.file.employee_rate}
+											{else}
+												-
+											{/if}
+										</td>
+										<td>	
+											{if !empty($job.file.file_path)}
+												<a target="_blank" href="{$job.file.file_path}">{$job.file.file_name}</a>
+											{else}
+												-
+											{/if}
+										</td>
+									</tr>
+									<tr>
+										<td colspan="1">	
+											{$lg.comments}:
+										</td>
+										<td colspan="4">
+											{if !empty($job.comment_text)}
+												{$job.comment_text}
+											{else}
+												 -
+											{/if}
+										</td>
+									</tr>
+									<tr colspan="5">
+										<td>	
+											<button onClick="AcceptJob({$job.id}, 'accept')">{$lg.accept}</button>
+										</td>
+										<td>
+											<button onClick="AcceptJob({$job.id}, 'decline')">{$lg.decline}</button>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</tr>
+					{/if}
+					{/foreach}
+				{else}
+					NO JOBS FOR YOU
+				{/if}
+			</tbody>	
+		</table>
+	{else}
+		<div class="empty centered_text show"><h1>{$lg.no_info}</h1></div>
+	{/if}
+{*$manager.pending_users|print_r*}</div>

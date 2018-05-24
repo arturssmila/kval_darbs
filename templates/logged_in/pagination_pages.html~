@@ -1,0 +1,25 @@
+{*<pre>{$manager.jobs.total_count|print_r}</pre>*}
+<div class="paginator">
+	<div class="paginator_pages">
+		{if $manager.jobs.total_count.page != 1}
+			<form class="paginator_page_form" action="" method="post">
+				<input name="page_limit" type="hidden" value="{$manager.jobs.total_count.limit}">
+				<input name="page_nr" type="hidden" value="{($manager.jobs.total_count.page)-1}">
+				<input class="paginate_left" type="submit" value="«">
+			</form>
+		{/if}
+		{for $foo=1 to $manager.jobs.total_count.page_count}
+			<form class="paginator_page_form" action="" method="post">
+				<input name="page_limit" type="hidden" value="{$manager.jobs.total_count.limit}">
+				<input {if $foo == ($manager.jobs.total_count.page)}class="disabled"{/if} name="page_nr" type="submit" {if $foo == ($manager.jobs.total_count.page)}disabled{/if} value="{$foo}">
+			</form>
+		{/for}
+		{if $manager.jobs.total_count.page != $manager.jobs.total_count.page_count}
+			<form class="paginator_page_form" action="" method="post">
+				<input name="page_limit" type="hidden" value="{$manager.jobs.total_count.limit}">
+				<input name="page_nr" type="hidden" value="{($manager.jobs.total_count.page)+1}">
+				<input class="paginate_right" type="submit" value="»">
+			</form>
+		{/if}
+	</div>
+</div>

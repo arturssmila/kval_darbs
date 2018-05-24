@@ -1,6 +1,7 @@
 <h1>{$manager.route.lg}</h1>
 <div class="contents">
 	{if !empty($manager.jobs)}
+		{include file="./templates/logged_in/pagination_pages.html"}
 		<table id="submitted_jobs" class="hidden_rows">
 			<thead>
 				<tr>
@@ -20,6 +21,8 @@
 				{if (!empty($manager.jobs))}
 				{assign var=multiple_job_picker value=true}
 					{foreach from=$manager.jobs key=key item=job}
+					{*<pre>{$key}</pre>*}
+					{if $key != "total_count" || $key == "0"}
 					{*<pre>{$job.customer|print_r}</pre>*}
 					<tr class="ui hover" job_id="{$job.id}">
 							<td>
@@ -59,9 +62,9 @@
 								
 							</td>
 							<td>	
-							{if (!empty($job.date_due) && !empty($job.time_due))}
-									{$job.date_due} {$job.time_due}
-								{elseif (!empty($i["date_due"]))}
+								{if !empty($job.time_due)}
+									{$job.time_due}
+								{elseif (!empty($job.time_due))}
 								<div class="dropdown small date">
 									<input type="text" id="date" name="date">
 									<div class="select">
@@ -309,12 +312,15 @@
 							</tr>
 						{/if}
 					</tr>
+					{/if}
 					{/foreach}
 				{else}
 					NO JOBS FOR YOU
 				{/if}
 			</tbody>	
-		</table>
+		</table>	
+		{include file="./templates/logged_in/pagination_limits.html"}
+		{include file="./templates/logged_in/pagination_pages.html"}
 	{else}
 		<div class="empty centered_text show"><h1>{$lg.no_info}</h1></div>
 	{/if}

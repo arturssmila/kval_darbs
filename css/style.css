@@ -3444,6 +3444,36 @@ button.small_choice{
 #manager .border_top{
 	border-top: 1px solid #000;
 }
+#manager .paginator{
+	margin-bottom: 30px;
+	font-size: 0px;
+	line-height: 0px;
+}
+#manager .paginator_page_form{
+	display: inline-block;
+}
+#manager .paginator_page_form+.paginator_page_form{
+	padding-left: 10px;
+}
+#manager .paginate_left, #manager .paginate_right{
+	font-size: 14px;
+	line-height: 14px;
+}
+#manager input.disabled{
+	background-color: #7da7d9;
+	color: #fff;
+}
+#manager input.disabled:hover{
+	border-color: #bbb;
+}
+#manager .paginator_limits+.paginator{
+	padding-top: 20px;
+}
+#manager .paginator_limits .title{
+	font-size: 20px;
+	line-height: 24px;
+	padding-bottom: 10px;
+}
 .in_text_element{
     padding-left: 10px;
 }

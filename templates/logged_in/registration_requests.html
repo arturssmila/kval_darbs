@@ -12,6 +12,7 @@
 	{assign var="count" value=0}
 	{if !empty($manager.pending_users)}
 		{foreach from=$manager.pending_users key=key item=i}
+			{if $key != "total_count" || $key == "0"}
 			<div class="row_table" person_id="{$i.id}">
 				<div class="visible_row">
 					<div class="cell small_cell">{if $i.user_type == "J"}{$lg.legal_person}{else}{$lg.individual}{/if}</div>
@@ -36,6 +37,7 @@
 				</div>
 			</div>
 			{assign var="count" value=$count+1}
+			{/if}
 		{/foreach}
 	{/if}
 	<div class="empty centered_text{if $count == 0} show{/if}"><h1>{$lg.no_info}</h1></div>

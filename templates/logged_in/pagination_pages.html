@@ -1,0 +1,25 @@
+{*<pre>{$manager.paginator_info|print_r}</pre>*}
+<div class="paginator">
+	<div class="paginator_pages">
+		{if $manager.paginator_info.page != 1}
+			<form class="paginator_page_form" action="" method="post">
+				<input name="page_limit" type="hidden" value="{$manager.paginator_info.limit}">
+				<input name="page_nr" type="hidden" value="{($manager.paginator_info.page)-1}">
+				<input class="paginate_left" type="submit" value="«">
+			</form>
+		{/if}
+		{for $foo=1 to $manager.paginator_info.page_count}
+			<form class="paginator_page_form" action="" method="post">
+				<input name="page_limit" type="hidden" value="{$manager.paginator_info.limit}">
+				<input {if $foo == ($manager.paginator_info.page)}class="disabled"{/if} name="page_nr" type="submit" {if $foo == ($manager.paginator_info.page)}disabled{/if} value="{$foo}">
+			</form>
+		{/for}
+		{if $manager.paginator_info.page != $manager.paginator_info.page_count}
+			<form class="paginator_page_form" action="" method="post">
+				<input name="page_limit" type="hidden" value="{$manager.paginator_info.limit}">
+				<input name="page_nr" type="hidden" value="{($manager.paginator_info.page)+1}">
+				<input class="paginate_right" type="submit" value="»">
+			</form>
+		{/if}
+	</div>
+</div>

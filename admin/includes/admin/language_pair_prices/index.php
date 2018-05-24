@@ -8,7 +8,7 @@
 		$lang_count = count($expertise_items);
 		$lang_count++;
 	}
-	function getPrice($id){
+	function getPairPriceTable($id){
 		$query = "SELECT * FROM language_pair_prices WHERE pair_id=\"" . $id . "\"";//get all language pairs of employee
 		$rs= mysql_query($query);
 		$returnable = getSqlRows($rs);
@@ -43,7 +43,7 @@
 		<tbody>
 			<?php if(!empty($language_pairs)):?>
 				<?php foreach ($language_pairs as $i): ?>
-					<?php $prices = getPrice($i["id"]);?>
+					<?php $prices = getPairPriceTable($i["id"]);?>
 					<tr class="ui hover">
 						<td class="head_td right_black_border top_bottom_black_border">
 							<?= $i["name"] ?>

@@ -16,6 +16,7 @@
 			</thead>
 			<tbody>
 					{foreach from=$manager.jobs key=key item=job}
+					{if $key != "total_count" || $key == "0"}
 					{*<pre>{$job|print_r}</pre>*}
 					<tr class="ui hover" job_id="{$job.id}">
 							<td id="job_id" job_id="{$job.id}">
@@ -124,10 +125,13 @@
 							</td>
 						</tr>
 					</tr>
+					{/if}
 					{/foreach}
 			</tbody>
 		{else}
 			NO JOBS FOR YOU
 		{/if}	
 	</table>
+		{include file="./templates/logged_in/pagination_limits.html"}
+		{include file="./templates/logged_in/pagination_pages.html"}
 </div>

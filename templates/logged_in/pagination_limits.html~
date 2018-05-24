@@ -1,0 +1,15 @@
+<div class="paginator_limits">
+	<div class="title">{$lg.display_per_page}:</div>
+	<form class="paginator_page_form" action="" method="post">
+		<input name="page_limit"{if ($manager.paginator_info.total_count.limit) == 5}class="disabled" disabled{/if} type="submit" value="5">
+	</form>
+	<form class="paginator_page_form" action="" method="post">
+		<input name="page_limit"{if ($manager.paginator_info.total_count.limit) == 10}class="disabled" disabled{/if} type="submit" value="10">
+	</form>
+	<form class="paginator_page_form" action="" method="post">
+		<input name="page_limit"{if ($manager.paginator_info.total_count.limit) == 20}class="disabled" disabled{/if} type="submit" value="20">
+	</form>
+	<form class="paginator_page_form" action="" method="post">
+		<input name="page_limit"{if ($manager.paginator_info.total_count.limit) == 30}class="disabled" disabled{/if} type="submit" value="30">
+	</form>
+</div>

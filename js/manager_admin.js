@@ -257,6 +257,7 @@ function getEmployeesListOnePair(lang_pair, speciality, file_id){
 		}
         },
         error: function(response){
+			alert(lg.error);
 			console.log(response);
 		
         }

@@ -10,7 +10,6 @@ function out_time($end_time = 0, $file = __FILE__, $line = __LINE__)
 }
 
 //out_time(microtime(true), __FILE__, __LINE__);
-
 require('config.php');
 out_time(microtime(true), __FILE__, __LINE__);
 $data = array();

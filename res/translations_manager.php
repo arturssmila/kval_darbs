@@ -502,6 +502,14 @@
 							echo("error");
 							exit();
 						}
+						//var_dump($selected_job[0]["price"]);
+						if(empty($selected_job[0]["price"])){
+							echo("error");
+							exit();
+						}elseif($selected_job[0]["price"] == 0){
+							echo("error");
+							exit();
+						}
 						$previous_state = $selected_job[0]["accepted"];
 						
 						$query = "UPDATE submitted_work
@@ -1402,7 +1410,7 @@
 					exit();
 				}
 				//echo __LINE__;
-				echo "empty";
+				echo (json_encode("empty"));
 				exit();
 				break;
 			case "assignMultipleEmployees":
