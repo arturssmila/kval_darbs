@@ -135,6 +135,7 @@
 																	<th class="percent_5">ID</th>
 																	<th class="percent_30">{$lg.name}</th>
 																	<th class="percent_20">{$lg.file}</th>
+																	<th class="percent_20">{$lg.when_completed}</th>
 																	<th class="percent_20">{$lg.completed_file}</th>
 																</tr>
 															</thead>
@@ -154,6 +155,19 @@
 																	<td class="job_language_pair_files_cell percent_20">
 																		{if !empty($file.file_path)}
 																			<a target="_blank" href="{$file.file_path}">{$file.file_name}</a>
+																		{else}
+																			-
+																		{/if}
+																	</td>
+																	<td>
+																		{if !empty($file.appointed_employees)}
+																			{if ($file.appointed_employees|sizeof) == 1}
+																				{$file.appointed_employees.0.completed_time}
+																			{else}
+																				{foreach from=$file.appointed_employees key=empl_key item=empl}
+																					<div>{$empl.completed_time}</div>
+																				{/foreach}
+																			{/if}
 																		{else}
 																			-
 																		{/if}

@@ -3421,15 +3421,7 @@ display: none; }
 #manager span.red{
 	background-color: red;
 }
-#profile_content{
-	margin-bottom: 40px;
-}
-#employee_list{
-	margin-bottom: 40px;
-}
-.mini_title+#translator_pairs{
-	margin-top: 40px;
-}
+
 button.inline{
 	display: inline;
 }
@@ -3481,14 +3473,6 @@ button.small_choice{
 	font-size: 20px;
 	line-height: 24px;
 	padding-bottom: 10px;
-}
-#manager .profile_row+.profile_row{
-	padding-top: 15px;
-}
-#manager .mini_title{
-	font-size: 20px;
-	line-height: 24px;
-	font-weight: 700;
 }
 .in_text_element{
     padding-left: 10px;

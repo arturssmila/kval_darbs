@@ -1,14 +1,14 @@
 
-			<div>
-			<div class="controls">
-				<form action="" method="post">
-					<label class="inline">{$lg.translators}</label><input type="checkbox" name="tr" value="true" {if !empty($manager.all_selected) || !empty($manager.tr)}checked{/if}>
-					<label class="inline">{$lg.editors}</label><input type="checkbox" name="ed" value="true" {if !empty($manager.all_selected) || !empty($manager.ed)}checked{/if}>
-					<label class="inline">{$lg.project_managers}</label><input type="checkbox" name="pr" value="true" {if !empty($manager.all_selected) || !empty($manager.pr)}checked{/if}>
-					<input type="hidden" name="link" value="{$smarty.server.REQUEST_URI}">
-					<input type="submit">
-				</form>
-			</div>
+			<div id="employee_list">
+				<div class="controls">
+					<form action="" method="post">
+						<label class="inline">{$lg.translators}</label><input type="checkbox" name="tr" value="true" {if !empty($manager.all_selected) || !empty($manager.tr)}checked{/if}>
+						<label class="inline">{$lg.editors}</label><input type="checkbox" name="ed" value="true" {if !empty($manager.all_selected) || !empty($manager.ed)}checked{/if}>
+						<label class="inline">{$lg.project_managers}</label><input type="checkbox" name="pr" value="true" {if !empty($manager.all_selected) || !empty($manager.pr)}checked{/if}>
+						<input type="hidden" name="link" value="{$smarty.server.REQUEST_URI}">
+						<input type="submit" value="{$lg.select}">
+					</form>
+				</div>
 				{foreach from=$manager.translators key=key item=i}
 					{if $key != "total_count" || $key == "0"}
 						<div><a href="{$smarty.server.REQUEST_URI}/{$i.id}">{$i.name} {$i.surname}</a></div>

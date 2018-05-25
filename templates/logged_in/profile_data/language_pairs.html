@@ -1,0 +1,109 @@
+{if !empty($manager.user.language_pairs)}
+			<span class="mini_title">{$lg.employee_pair}:</span>
+			<table id="translator_pairs" class="hidden_rows">
+				<thead>
+					<tr>
+						<th>
+							{$lg.select_for_action}
+						</th>
+						<th>
+							{$lg.language_pair}
+						</th>
+						<th>
+							{$lg.known_since}
+						</th>
+						<th>
+							{$lg.vacancy_rate}
+						</th>
+						<th>{$lg.show_specialities}</th>
+					</tr>
+				</thead>
+				<tbody>
+				{if !empty($manager.user.language_pairs)}
+				{*<pre>{$manager.user.language_pairs|print_r}</pre>*}
+						{foreach from=$manager.user.language_pairs key=key item=i}
+							<tr>		
+								<td>
+									<input class="main_select" value="{$i.employee_pair_id}" type="checkbox">
+								</td>
+								<td>
+									<div class="original">
+										<span class="cell_content">
+											{$i.menu_name}
+										</span>
+									</div>
+								</td>
+								<td>
+									<div class="original">
+										<span class="cell_content">{$i.when_learned}</span>
+										<span class="in_text_element">
+											<button class="button" onClick="openChangeInput(this)">...</button>
+										</span>
+									</div>
+									<div class="changable hide"><input type="text" class="short" value="{$i.when_learned}"><span class="in_text_element"><button class="button primary" onClick="changeCellValue(this, '{$i.employee_pair_id}', 'when_learned', '/res/translations_manager.php', 'changeDateLearned')">{$lg.done}</button>
+											<button class="button primary" onClick="cancelUpdate(this)">
+												✖
+											</button></span></div>
+								</td>
+								<td>
+									{if !empty($i.rate) && !empty($i.currency)}
+										<span class="cell_content">{$i.rate}</span><span> {$i.currency}</span>
+									{else}
+										<span class="cell_content">-</span>
+									{/if}
+									<div class="changable hide">
+										<input type="text" class="short" value="{$i.rate}">
+										<span class="in_text_element">
+											<button class="button primary" onClick="changeCellValue(this, '{$i.employee_pair_id}', 'rate', '/res/translations_manager.php', 'changePairRate')">{$lg.done}
+											</button>
+											<button class="button primary" onClick="cancelUpdate(this)">
+												✖
+											</button>
+										</span>
+									</div>
+								</td>
+								<td class="toggle_specialities noselect" onClick="hiddenRow({$i.employee_pair_id}, 'translator_pairs', 'to_toggle')">{$lg.show_specialities}</td>
+							</tr>
+							{if !empty($manager.expertise_items)}
+								<tr class="hide to_toggle" toggle_id="{$i.employee_pair_id}">
+									<td class="employee_specialities" colspan="5">
+										<table class="employee_specialities_table">
+											<thead><tr><th>{$lg.speciality}</th><th>{$lg.vacancy_rate}</th></tr></thead>
+											{foreach from=$manager.expertise_items key=keyy item=ii}
+												{assign var="has_this" value=false}
+												{assign var='speciality_rate' value='-'}
+												{if !empty($i.pair_specialities)}
+													{foreach from=$i.pair_specialities key=keyyy item=iii}
+														{if $ii.id == $iii.speciality_id}
+															{assign var="has_this" value=true}
+															{assign var='speciality_rate' value=$iii.rate}
+														{/if}
+													{/foreach}
+												{/if}
+												{if $has_this == true}
+													<tr class="employee_specialities_row">
+														<td class="employee_specialities_cell">
+															{$ii.name}
+														</td>
+														<td class="employee_specialities_cell">
+															{if !empty($speciality_rate)}
+																<span class="cell_content">{$speciality_rate}</span>
+															{else}
+																<div class="original"><span class="cell_content">-</span>
+															{/if}
+														</td>
+													</tr>
+												{/if}
+											{/foreach}
+										</table>
+									</td>
+								</tr>
+							{/if}
+						{/foreach}
+					{/if}
+					<tr>		
+						<td colspan="5" class="center"><span class="bloated primary submit button" onClick="tableAction('translator_pairs', '/res/translations_manager.php', 'removeEmployeePairs');">{$lg.remove}</span></td>
+					</tr>
+				</tbody>
+			</table>
+			{/if}

@@ -1,1 +1,213 @@
-<h1>profile_data</h1>
+<h1>{$manager.route.lg}</h1>
+<div class="contents">
+{*<pre>{$manager.user|print_r}</pre>*}
+<div id="profile_content">
+<div class="profile_row">
+	<span class="mini_title">{$lg.first_name}: </span>
+	<span>
+		<div class="original"><span class="cell_content">{$manager.user.name}</span>
+			<span class="in_text_element">
+				<button class="button" onClick="openChangeInput(this)">...</button>
+			</span>
+		</div>
+		<div class="changable hide">
+			<input type="text" value="{$manager.user.name}">
+			<span class="in_text_element">
+				<button class="button primary" onClick="changeUserInfo(this, false, '{$manager.user.id}', 'name', '/res/translations_manager.php', 'userInfo')">{$lg.done}
+				</button>
+				<button class="button primary" onClick="cancelUpdate(this)">
+					✖
+				</button>
+			</span>
+		</div>
+	</span>
+</div>
+<div class="profile_row">
+	<span class="mini_title">{$lg.last_name}: </span>
+	<span>
+		<div class="original"><span class="cell_content">{$manager.user.surname}</span>
+			<span class="in_text_element">
+				<button class="button" onClick="openChangeInput(this)">...</button>
+			</span>
+		</div>
+		<div class="changable hide">
+			<input type="text" value="{$manager.user.surname}">
+			<span class="in_text_element">
+				<button class="button primary" onClick="changeUserInfo(this, false, '{$manager.user.id}', 'surname', '/res/translations_manager.php', 'userInfo')">{$lg.done}
+				</button>
+				<button class="button primary" onClick="cancelUpdate(this)">
+					✖
+				</button>
+			</span>
+		</div>
+	</span>
+</div>
+<div class="profile_row">
+	<span class="mini_title">{$lg.email}: </span>
+	<div class="original">
+		<span class="cell_content">{$manager.user.mail}</span>
+	</div>
+</div>
+<div class="profile_row">
+	<span class="mini_title">{$lg.phone}: </span>
+	<span>
+		<div class="original"><span class="cell_content">{if !empty($manager.user.phone)}{$manager.user.phone}{else}-{/if}</span>
+			<span class="in_text_element">
+				<button class="button" onClick="openChangeInput(this)">...</button>
+			</span>
+		</div>
+		<div class="changable hide">
+			<input type="text" value="{$manager.user.phone}">
+			<span class="in_text_element">
+				<button class="button primary" onClick="changeUserInfo(this, true, '{$manager.user.id}', 'phone', '/res/translations_manager.php', 'userInfo')">{$lg.done}
+				</button>
+				<button class="button primary" onClick="cancelUpdate(this)">
+					✖
+				</button>
+			</span>
+		</div>
+	</span>
+</div>
+{if $manager.user.admin == 0}
+	{if !empty($manager.user.client)}
+		{if $manager.user.client == 1}
+			{if $manager.user.user_type == "F"}
+				<div class="profile_row">
+					<span class="mini_title">{$lg.personal_code}: </span>
+					<span>
+						<div class="original"><span class="cell_content">{if !empty($manager.user.personal_code)}{$manager.user.personal_code}{else}-{/if}</span>
+							<span class="in_text_element">
+								<button class="button" onClick="openChangeInput(this)">...</button>
+							</span>
+						</div>
+						<div class="changable hide">
+							<input type="text" value="{$manager.user.personal_code}">
+							<span class="in_text_element">
+								<button class="button primary" onClick="changeUserInfo(this, true, '{$manager.user.id}', 'personal_code', '/res/translations_manager.php', 'userInfo')">{$lg.done}
+								</button>
+								<button class="button primary" onClick="cancelUpdate(this)">
+									✖
+								</button>
+							</span>
+						</div>
+					</span>
+				</div>
+			{else}
+				<div class="profile_row">
+					<span class="mini_title">{$lg.company}: </span>
+					<span>
+						<div class="original"><span class="cell_content">{if !empty($manager.user.company)}{$manager.user.company}{else}-{/if}</span>
+							<span class="in_text_element">
+								<button class="button" onClick="openChangeInput(this)">...</button>
+							</span>
+						</div>
+						<div class="changable hide">
+							<input type="text" value="{$manager.user.company}">
+							<span class="in_text_element">
+								<button class="button primary" onClick="changeUserInfo(this, true, '{$manager.user.id}', 'company', '/res/translations_manager.php', 'userInfo')">{$lg.done}
+								</button>
+								<button class="button primary" onClick="cancelUpdate(this)">
+									✖
+								</button>
+							</span>
+						</div>
+					</span>
+				</div>
+				<div class="profile_row">
+					<span class="mini_title">{$lg.registration_nr}: </span>
+					<span>
+						<div class="original"><span class="cell_content">{if !empty($manager.user.registration_nr)}{$manager.user.registration_nr}{else}-{/if}</span>
+							<span class="in_text_element">
+								<button class="button" onClick="openChangeInput(this)">...</button>
+							</span>
+						</div>
+						<div class="changable hide">
+							<input type="text" value="{$manager.user.registration_nr}">
+							<span class="in_text_element">
+								<button class="button primary" onClick="changeUserInfo(this, true, '{$manager.user.id}', 'registration_nr', '/res/translations_manager.php', 'userInfo')">{$lg.done}
+								</button>
+								<button class="button primary" onClick="cancelUpdate(this)">
+									✖
+								</button>
+							</span>
+						</div>
+					</span>
+				</div>
+				<div class="profile_row">
+					<span class="mini_title">{$lg.pvn_reg_nr}: </span>
+					<span>
+						<div class="original"><span class="cell_content">{if !empty($manager.user.pvn_reg_nr)}{$manager.user.pvn_reg_nr}{else}-{/if}</span>
+							<span class="in_text_element">
+								<button class="button" onClick="openChangeInput(this)">...</button>
+							</span>
+						</div>
+						<div class="changable hide">
+							<input type="text" value="{$manager.user.pvn_reg_nr}">
+							<span class="in_text_element">
+								<button class="button primary" onClick="changeUserInfo(this, true, '{$manager.user.id}', 'pvn_reg_nr', '/res/translations_manager.php', 'userInfo')">{$lg.done}
+								</button>
+								<button class="button primary" onClick="cancelUpdate(this)">
+									✖
+								</button>
+							</span>
+						</div>
+					</span>
+				</div>
+			{/if}
+		{/if}
+	{elseif !empty($manager.user.project_manager)}
+		{if $manager.user.project_manager == 1}
+			{if !empty($manager.user.translator)}
+				{if $manager.user.translator == 1}
+					<div class="profile_row">
+						<span class="mini_title">{$lg.personal_code}: </span>
+						<span>
+							<div class="original"><span class="cell_content">{if !empty($manager.user.personal_code)}{$manager.user.personal_code}{else}-{/if}</span>
+								<span class="in_text_element">
+									<button class="button" onClick="openChangeInput(this)">...</button>
+								</span>
+							</div>
+							<div class="changable hide">
+								<input type="text" value="{if !empty($manager.user.personal_code)}{$manager.user.personal_code}{else}-{/if}">
+								<span class="in_text_element">
+									<button class="button primary" onClick="changeUserInfo(this, true, '{$manager.user.id}', 'personal_code', '/res/translations_manager.php', 'userInfo')">{$lg.done}
+									</button>
+									<button class="button primary" onClick="cancelUpdate(this)">
+										✖
+									</button>
+								</span>
+							</div>
+						</span>
+					</div>
+					{include file="./templates/logged_in/profile_data/language_pairs.html"}
+				{/if}
+			{else}
+				<div class="profile_row"><span class="mini_title">{$lg.personal_code}: </span><span>{$manager.personal_code}</span></div>
+			{/if}
+		{/if}
+	{elseif !empty($manager.user.translator)}
+		{if $manager.user.translator == 1}
+			<div class="profile_row"><span class="mini_title">{$lg.last_name}: </span><span>{$manager.user.surname}</span></div>
+			<div class="profile_row"><span class="mini_title">{$lg.last_name}: </span><span>{$manager.user.surname}</span></div>
+			{include file="./templates/logged_in/profile_data/language_pairs.html"}
+		{/if}
+	{/if}
+{elseif $manager.user.admin == 2}
+	{if !empty($manager.user.manager)}
+		{if $manager.user.manager == 1}
+			{if !empty($manager.user.translator)}
+				{if $manager.user.translator == 1}
+					<div class="profile_row"><span class="mini_title">{$lg.last_name}: </span><span>{$manager.user.surname}</span></div>
+					<div class="profile_row"><span class="mini_title">{$lg.last_name}: </span><span>{$manager.user.surname}</span></div>
+					{include file="./templates/logged_in/profile_data/language_pairs.html"}
+				{/if}
+			{else}
+				<div class="profile_row"><span class="mini_title">{$lg.last_name}: </span><span>{$manager.user.surname}</span></div>
+				<div class="profile_row"><span class="mini_title">{$lg.last_name}: </span><span>{$manager.user.surname}</span></div>
+			{/if}
+		{/if}
+	{/if}
+{elseif $manager.user.admin == 1}
+{/if}
+</div>
+</div>

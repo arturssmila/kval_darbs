@@ -23,7 +23,7 @@
 				</span>
 				<div class="dropdown text_left">
 					<span class="item"><input class="inline_checkbox" type="checkbox" name="translator" check_type="position" info_type="user_data" value="1">{$lg.translator}</span>
-					{*<span class="item"><input class="inline_checkbox" type="checkbox" name="editor" check_type="position" info_type="user_data" value="1">{$lg.editor}</span>*}
+					<span class="item"><input class="inline_checkbox" type="checkbox" name="editor" check_type="position" info_type="user_data" value="1">{$lg.editor}</span>
 					<span class="item"><input class="inline_checkbox" type="checkbox" name="project_manager" check_type="position" info_type="user_data" value="1">{$lg.project_manager}</span>
 					{*<div class="select">
 						<span class="text">

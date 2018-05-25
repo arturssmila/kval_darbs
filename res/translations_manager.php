@@ -14,6 +14,52 @@
 	}
 	if(!empty($_POST["action"])){
 		switch($_POST["action"]){
+			case "userInfo":
+				if($_SESSION["user"]["soc"] != "00"){
+					echo(json_encode("error"));
+					exit();
+				}
+				if(!isset($_SESSION["user"]["admin"])){
+					echo(json_encode("error"));
+					exit();
+				}
+				if(!empty($_POST["main_id"]) && !empty($_POST["field"]) && !empty($_POST["value"])){
+					if(!checkPermission(3, $_POST["main_id"])){
+						//echo __LINE__;
+						echo(json_encode("error"));
+						exit();
+					}
+					$user_id = intval($_POST["main_id"]);
+					if(is_int($user_id)){
+						$curr_user = array();
+						get_user("S", array("id"=>$user_id), $curr_user);
+						if(!empty($curr_user)){
+							if(isset($curr_user[0][$_POST["field"]])){
+								if($_POST["user_data"]){
+									get_user("U", array("user_data_0"=>array($_POST["field"]=>$_POST["value"]), "id"=>$user_id), $curr_user);
+								}else{
+									get_user("U", array($_POST["field"]=>$_POST["value"], "id"=>$user_id), $curr_user);
+								}
+							}else{
+								if($_POST["user_data"]){
+									get_user("I", array("user_data_0"=>array($_POST["field"]=>$_POST["value"]), "id"=>$user_id), $curr_user);
+								}else{
+									get_user("I", array($_POST["field"]=>$_POST["value"], "id"=>$user_id), $curr_user);
+								}
+							}
+							echo(json_encode("ok"));
+							exit();
+						}
+					}else{
+						echo(json_encode("error"));
+						exit();
+					}
+				}
+				echo(json_encode("error"));
+				exit();
+				
+				break;
+				
 			case "changeFileWordCount":
 				if($_SESSION["user"]["soc"] != "00"){
 					echo(json_encode("error"));
@@ -812,6 +858,71 @@
 				echo("error");
 				exit();
 				break;
+			
+			case "transferFileToClient":
+				if($_SESSION["user"]["soc"] != "00"){
+					echo(json_encode("error"));
+					exit();
+				}
+				if(!isset($_SESSION["user"]["admin"])){
+					echo(json_encode("error"));
+					exit();
+				}
+				if(!checkPermission(2, 0)){
+					echo("error");
+					exit();
+				}
+				//var_dump($_POST);
+				//exit();
+				if(!empty($_POST["file_id"])){
+					$file_id = intval($_POST["file_id"]);
+					if(is_int($file_id)){
+						$result = mysql_query("SELECT * FROM `appointed_employees` WHERE  id='".$_POST["file_id"]."'");
+						$selected_job = getSqlRows($result);
+					}else{
+						echo("error");
+						exit();
+					}
+					if(!empty($selected_job)){
+						//var_dump($selected_job);
+						//exit();
+						if($selected_job[0]["accepted"] != 1 || $selected_job[0]["completed"] != 1){
+							echo("error");
+							exit();
+						}
+						$query = "UPDATE `appointed_employees`
+								SET let_customer_see='1'
+								WHERE id='".$file_id."'";
+								//var_dump($query);
+						$result = mysql_query($query);
+						$numRows = mysql_affected_rows();
+						if($numRows){
+							/*$result = mysql_query("SELECT * FROM `appointed_employees` WHERE  work_id='".$_POST["file_id"]."' AND (completed='1') AND (let_customer_see='1')");
+							$selected_tasks = getSqlRows($result);
+							if(!empty($selected_tasks)){
+								$query = "UPDATE `submitted_work`
+										SET let_customer_see='1'
+										WHERE id='".$selected_job[0]["work_id"]."'";
+								$result = mysql_query($query);
+							}*/
+							changeWorkStatus($selected_job[0]["work_id"]);
+							echo("ok");
+							exit();
+						}else{
+							echo("error");
+							exit();
+						}
+					}else{
+						echo __LINE__;
+						echo("error");
+						exit();
+					}
+				}
+				echo("error");
+				exit();
+				
+				break;
+				
 			case "changePairSpecialities":
 				if((!empty($_POST["data"])) && (!empty($_POST["pair_id"]))){
 					if(!filter_var($_POST["pair_id"], FILTER_VALIDATE_INT)){

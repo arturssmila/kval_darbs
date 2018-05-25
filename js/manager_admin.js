@@ -435,6 +435,32 @@ function transferToClient(job_id){
     	}
 }
 
+function transferFileToClient(file_id){
+	if(confirm(lg.transf_file_to_client+"?")){
+		$.ajax({
+			type: "POST",
+			url: "/res/translations_manager.php",
+			data:
+			{
+				action:     "transferFileToClient",
+				file_id:    file_id
+			},
+			async: true,
+			success: function(data)
+			{
+				console.log(data);
+				if(data == "ok"){
+					$(".transfer_task[task_id='"+file_id+"']").remove();
+					alert(lg.done+"!");
+				}else{
+					//console.log(data);
+					alert(lg.error);
+				}
+			}
+		});
+    	}
+}
+
 function getFilePrice(main_id, second_id, field){
 	var speciality = $(".select.speciality[data_id='"+main_id+"'] input[name='speciality']").val();
 	//console.log(speciality);

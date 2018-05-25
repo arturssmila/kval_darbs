@@ -150,7 +150,11 @@
 																	<th>{$lg.word_count}</th>
 																	<th>{$lg.expertise}</th>
 																	<th class="percent_20">{$lg.file}</th>
-																	<th class="percent_20">{$lg.assigned_employees}</th>
+																	{if !empty($manager.user.client)}
+																		<th class="percent_20">{$lg.available_result}</th>
+																	{else}
+																		<th class="percent_20">{$lg.assigned_employees}</th>
+																	{/if}
 																</tr>
 															</thead>
 															{foreach from=$pair.files key=file_key item=file}
@@ -180,27 +184,79 @@
 																			-
 																		{/if}
 																	</td>
-																	<td class="job_language_pair_files_cell percent_30">
-																	{*<pre>{$file|print_r}</pre>*}
-																		{if !empty($file.has_employee)}
-																			{if ($file.appointed_employees|sizeof) == 1}
-																				<div>(ID: {$file.appointed_employees.0.employee.id}) {$file.appointed_employees.0.employee.name} {$file.appointed_employees.0.employee.surname} {if $file.appointed_employees.0.completed == 1}<span class="green">{$lg.job_completed}</span><div>{$file.appointed_employees.0.completed_time}</div>{elseif $file.appointed_employees.0.completed == 0}<span class="yellow">{$lg.not_completed}</span>{else}<span class="red">{$lg.declined}</span>{/if}</div>
-																				<div>{$lg.word_count}: {$file.appointed_employees.0.word_count}</div>
-																			{else}
-																				{foreach from=$file.appointed_employees key=empl_key item=empl}
-																				{if $empl_key > 0}
-																				<div class="border_top"></div>
+																	{if !empty($manager.user.client)}
+																		<td class="job_language_pair_files_cell percent_30">
+																		{*<pre>{$file|print_r}</pre>*}
+																			{if !empty($file.has_employee)}
+																				{if ($file.appointed_employees|sizeof) == 1}
+																					{*<pre>{$file.appointed_employees.0|print_r}</pre>*}
+																					{if !empty($file.appointed_employees.0.file_path) && !empty($file.appointed_employees.0.let_customer_see) && !empty($file.appointed_employees.0.completed)}
+																						<a target="_blank" href="{$file.appointed_employees.0.file_path}">{$file.appointed_employees.0.file_name}</a>
+																					{else}
+																						{$lg.no}
+																					{/if}
+																				{else}
+																					{assign var=was_available value=false}
+																					{foreach from=$file.appointed_employees key=empl_key item=empl}
+																						{if !empty($empl.file_path) && !empty($empl.let_customer_see) && !empty($empl.completed)}
+																							<a target="_blank" href="{$empl.file_path}">{$empl.file_name}</a>
+																							{assign var=was_available value=true}
+																						{/if}
+																					{/foreach}
+																					{if $was_available == false}
+																						{$lg.no}
+																					{/if}
 																				{/if}
-																					<div>(ID: {$empl.employee.id}) {$empl.employee.name} {$empl.employee.surname} {if $empl.completed == 1}<span class="green">{$lg.job_completed}</span><div>{$empl.completed_time}</div>{else}<span class="yellow">{$lg.not_completed}</span>{/if}</div>
-																					<div>{$lg.word_count}: {$empl.word_count}</div>
-																					<div>{$lg.page_from}: {$empl.page_from}</div>
-																					<div>{$lg.page_to}: {$empl.page_to}</div>
-																				{/foreach}
+																			{else}
+																				{$lg.no}
 																			{/if}
-																		{else}
-																			{$lg.no}
-																		{/if}
-																	</td>
+																		</td>
+																	{else}
+																		<td class="job_language_pair_files_cell percent_30">
+																		{*<pre>{$file|print_r}</pre>*}
+																			{if !empty($file.has_employee)}
+																				{if ($file.appointed_employees|sizeof) == 1}
+																					<div>(ID: {$file.appointed_employees.0.employee.id}) {$file.appointed_employees.0.employee.name} {$file.appointed_employees.0.employee.surname}
+																					{if $file.appointed_employees.0.completed == 1}
+																					<span class="green">{$lg.job_completed}</span>
+																					<div>
+																						{$file.appointed_employees.0.completed_time}
+																					</div>
+																					{if empty($file.appointed_employees.0.let_customer_see)}
+																						<div>
+																							<button class="transfer_task" task_id="{$file.appointed_employees.0.id}" onClick="transferFileToClient('{$file.appointed_employees.0.id}')">{$lg.transf_file_to_client}</button>
+																						</div>
+																					{else}
+																						<span class="green">{$lg.file_transfered}</span>
+																					{/if}
+																					{elseif $file.appointed_employees.0.completed == 0}<span class="yellow">{$lg.not_completed}</span>{else}<span class="red">{$lg.declined}</span>{/if}</div>
+																					<div>{$lg.word_count}: {$file.appointed_employees.0.word_count}</div>
+																				{else}
+																					{foreach from=$file.appointed_employees key=empl_key item=empl}
+																					{if $empl_key > 0}
+																					<div class="border_top"></div>
+																					{/if}
+																						<div>(ID: {$empl.employee.id}) {$empl.employee.name} {$empl.employee.surname} {if $empl.completed == 1}
+																						<span class="green">{$lg.job_completed}</span>
+																						<div>{$empl.completed_time}</div>	
+																						{if empty($empl.let_customer_see)}
+																							<div>
+																								<button class="transfer_task" task_id="{$empl.id}" onClick="transferFileToClient('{$empl.id}')">{$lg.transf_file_to_client}</button>
+																							</div>
+																						{else}
+																							<span class="green">{$lg.file_transfered}</span>
+																						{/if}
+																						{else}<span class="yellow">{$lg.not_completed}</span>{/if}</div>
+																						<div>{$lg.word_count}: {$empl.word_count}</div>
+																						<div>{$lg.page_from}: {$empl.page_from}</div>
+																						<div>{$lg.page_to}: {$empl.page_to}</div>
+																					{/foreach}
+																				{/if}
+																			{else}
+																				{$lg.no}
+																			{/if}
+																		</td>
+																	{/if}
 																</tr>
 															{/foreach}
 														</table>
