@@ -2,6 +2,7 @@
 <div class="contents">
 	{if !empty($manager.jobs)}
 		<table id="submitted_jobs" class="hidden_rows">
+				{if (!empty($manager.jobs))}
 			<thead>
 				<tr>
 					<th style="width: 20px">ID</th>
@@ -16,7 +17,6 @@
 				</tr>
 			</thead>
 			<tbody>
-				{if (!empty($manager.jobs))}
 					{foreach from=$manager.jobs key=key item=job}
 					{if $key != "total_count" || $key == "0"}
 					{*<pre>{$job.customer|print_r}</pre>*}
@@ -231,10 +231,10 @@
 					</tr>
 					{/if}
 					{/foreach}
+			</tbody>
 				{else}
-					NO JOBS FOR YOU
-				{/if}
-			</tbody>	
+					{$lg.no_info}
+				{/if}	
 		</table>
 		{include file="./templates/logged_in/pagination_limits.html"}
 		{include file="./templates/logged_in/pagination_pages.html"}

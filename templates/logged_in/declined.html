@@ -13,8 +13,8 @@
 			{*<th></th>*}
 		</tr>
 	</thead>
-	<tbody>
 		{if (!empty($manager.jobs))}
+	<tbody>
 			{foreach from=$manager.jobs key=key item=job}
 					{if $key != "total_count" || $key == "0"}
 			{*<pre>{$job|print_r}</pre>*}
@@ -63,11 +63,11 @@
 			</tr>
 			{/if}
 			{/foreach}
-		{else}
-			NO JOBS FOR YOU
-		{/if}
 	</tbody>	
+	{else}
+		NO JOBS FOR YOU
+	{/if}
 </table>
-		{include file="./templates/logged_in/pagination_limits.html"}
-		{include file="./templates/logged_in/pagination_pages.html"}
+		{*{include file="./templates/logged_in/pagination_limits.html"}
+		{include file="./templates/logged_in/pagination_pages.html"}*}
 </div>
