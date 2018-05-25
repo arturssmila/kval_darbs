@@ -10,7 +10,6 @@
 			<div class="cell">{$lg.email}</div>
 			<div class="cell">{$lg.company}</div>
 			<div class="cell">{$lg.phone}</div>
-			<div class="cell small_cell">{$lg.confirmation}</div>
 		</div>
 		{foreach from=$manager.clients key=key item=i}
 			<div class="row_table" person_id="{$i.id}">
@@ -21,10 +20,6 @@
 					<div class="cell">{$i.mail}</div>
 					<div class="cell">{if !empty($i.company)}{$i.company}{else}-{/if}</div>
 					<div class="cell">{$i.phone}</div>
-					<div class="cell small_cell controls">
-						<button class="confirm" onClick="">{include file="./css/svg/check.svg"}</button>
-						<button class="confirm decline" onClick="">X</button>
-					</div>
 				</div>
 				<div class="row show_more noselect" rel="{$count}"><span class="more show"><span class="inline_svg">{$lg.see_more_info}</span>{include file="./css/svg/down.svg"}</span><span class="less"><span class="inline_svg">{$lg.hide_info}</span>{include file="./css/svg/up.svg"}</span></div>
 				<div class="hidden_row" rel="{$count}">

@@ -58,7 +58,6 @@ function make_droppable_logged(id){
 }
 
 function language_select_nocapt(thiss, id, form_data, form_id){//open language select modal
-	$('#language_select_modal .contents .columns .select_item .multi_select_languages').removeAttr('disabled', "");
     if(id == "vacancies_modal"){
         $("#"+id+" .contents .columns ul li.other").removeClass("hide");
     }else{
@@ -81,15 +80,6 @@ function language_select_nocapt(thiss, id, form_data, form_id){//open language s
         });
 	if(thiss.hasClass("language_from")){
 	    from_to = "from";
-		if(curr_rel in form_data.to_langs){
-		    $('#language_select_modal .contents .columns .select_item .multi_select_languages').each(function () {
-				for(i = 0; i < form_data.to_langs[curr_rel].length; i++){
-					if((form_data.to_langs[curr_rel][i]) == $(this).val()){
-						$(this).attr('disabled', "");
-					}
-				}
-			});
-		}
 	    $("#language_select_modal > .title").text(lg.select_source.toUpperCase());
 	    if(curr_rel in form_data.from_langs){
 		$('#language_select_modal .contents .columns .select_item .multi_select_languages').each(function () {
@@ -114,10 +104,6 @@ function language_select_nocapt(thiss, id, form_data, form_id){//open language s
 		this_value = $(this).val();
 		$(this).prop("disabled", false);
 	    });*/
-	if(curr_rel in form_data.from_langs){
-		//console.log("reee");
-		$(".multi_select_languages[value='"+form_data.from_langs[curr_rel]+"']").attr('disabled', "");
-	}
 	    if(curr_rel in form_data.to_langs){
 		if(form_data.to_langs[curr_rel] !== null){
 		    $('#language_select_modal .contents .columns .select_item .multi_select_languages').each(function () {
