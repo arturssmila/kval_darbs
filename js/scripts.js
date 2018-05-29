@@ -1329,6 +1329,7 @@ function multi_select_langs(thiss, id, form_id, form_data){//function to control
                 $(thiss).next("span").addClass("active");
                 $("#language_select_modal .multi_select_languages").removeAttr('checked');
                 if($(thiss).val() != "other"){
+                    to_other = false;
                     form_data.to_langs[curr_rel] = $(thiss).val();
                     $('#language_select_modal .contents .columns .select_item .multi_select_languages').each(function () {
                         //console.log(form_data.from_langs[curr_rel]);
